@@ -1,0 +1,9 @@
+# Profil "local" : connexion au Supabase CLI lancé avec `supabase start` à la racine du projet.
+# Activer avec SPRING_PROFILES_ACTIVE=local (ou -Dspring.profiles.active=local).
+# Port de la base décalé à 54332 (au lieu du 54322 par défaut) : un autre projet Supabase local
+# tournait déjà sur les ports par défaut sur cette machine (voir supabase/config.toml).
+spring:
+  datasource:
+    url: jdbc:postgresql://127.0.0.1:54332/postgres
+    username: postgres
+    password: postgres

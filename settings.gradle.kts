@@ -43,6 +43,7 @@ include(
     ":server:settings",
     ":server:notifications",
     ":server:clubs",
+    ":server:deuxzero",
     ":server:app",
 )
 

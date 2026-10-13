@@ -113,11 +113,11 @@ create table deux_zero (
     lieu text,
     jours_habituels text[] not null default '{}',
     heure_habituelle time,
-    duree_mi_temps interval not null,
+    duree_mi_temps_minutes int not null,
     nombre_mi_temps int not null,
-    duree_pause interval,
+    duree_pause_minutes int,
     nombre_max_joueurs_par_camp int not null,
-    delai_validation_automatique interval not null,
+    delai_validation_automatique_heures int not null,
     transferts_autorises_par_saison int,
     visibilite varchar(20) not null default 'PRIVE' check (visibilite in ('PUBLIC', 'PRIVE')),
     est_interne boolean not null default false,
@@ -131,7 +131,7 @@ create table deux_zero (
 create table camp (
     id uuid primary key default gen_random_uuid(),
     deux_zero_id uuid not null references deux_zero(id) on delete cascade,
-    club_id uuid not null references club(id),
+    club_id uuid references club(id), -- nul jusqu'à l'engagement du club (CU9)
     libelle text not null,
     code_engagement text not null unique,
     capitaine_id uuid references users(id),
@@ -155,7 +155,8 @@ create table saison (
     libelle text not null,
     date_debut date not null,
     date_fin date,
-    statut varchar(20) not null default 'A_VENIR' check (statut in ('A_VENIR', 'EN_COURS', 'CLOTUREE'))
+    statut varchar(20) not null default 'A_VENIR' check (statut in ('A_VENIR', 'EN_COURS', 'CLOTUREE')),
+    camp_champion_id uuid references camp(id)
 );
 
 -- Match (RG-11 à RG-15, voir note de la classe).
@@ -174,7 +175,7 @@ create table match (
         check (statut in ('PROGRAMME', 'EN_COURS', 'EN_ATTENTE_DE_VALIDATION', 'OFFICIEL', 'EN_LITIGE', 'REPORTE', 'ANNULE')),
     score_camp_a int,
     score_camp_b int,
-    duree_mi_temps_appliquee interval,
+    duree_mi_temps_appliquee_minutes int,
     nom_equipe_invitee text,
     marqueur_id uuid references users(id),
     check (

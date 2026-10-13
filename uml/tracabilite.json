@@ -7,8 +7,9 @@
       "modules": { "serveur": "server:user", "kmp": "feature:auth" },
       "elements": { "domain": ["Utilisateur"] },
       "regles": ["RG-01"],
-      "ecrans": [],
-      "statut": "a_completer"
+      "ecrans": ["E01", "E02", "E03", "E04"],
+      "statut": "fait",
+      "note": "Photo/poste préféré/pied fort (étape 5 facultative) différés à CU4/E19 (Jalon 5), pas dupliqués à l'inscription pour éviter une dépendance croisée feature:auth -> feature:profile."
     },
     "CU2": {
       "nom": "Se connecter",
@@ -16,8 +17,8 @@
       "modules": { "serveur": "server:user", "kmp": "feature:auth" },
       "elements": { "domain": ["Utilisateur"] },
       "regles": [],
-      "ecrans": [],
-      "statut": "a_completer"
+      "ecrans": ["E03"],
+      "statut": "fait"
     },
     "CU3": {
       "nom": "Réinitialiser son mot de passe",
@@ -25,8 +26,8 @@
       "modules": { "serveur": "server:user", "kmp": "feature:auth" },
       "elements": { "domain": ["Utilisateur"] },
       "regles": [],
-      "ecrans": [],
-      "statut": "a_completer"
+      "ecrans": ["E03"],
+      "statut": "fait"
     },
     "CU4": {
       "nom": "Modifier son profil (et supprimer son compte)",
@@ -34,8 +35,9 @@
       "modules": { "serveur": "server:user", "kmp": "feature:profile" },
       "elements": { "domain": ["Utilisateur"] },
       "regles": ["RG-20"],
-      "ecrans": [],
-      "statut": "a_completer"
+      "ecrans": ["E19"],
+      "statut": "serveur_fait_mobile_a_faire",
+      "note": "Serveur : ProfileService/ProfileController sur UserRepository (ancien ProfileEntity supprimé, champs fusionnés dans Utilisateur). Mobile (feature:profile, écran E19) prévu au Jalon 5."
     },
     "CU5": {
       "nom": "Créer un club",

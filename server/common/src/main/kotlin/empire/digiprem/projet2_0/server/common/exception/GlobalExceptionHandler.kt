@@ -37,10 +37,6 @@ class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     fun handleInvalidToken(e: InvalidTokenException) = errorBody("INVALID_TOKEN", e.message)
 
-    @ExceptionHandler(EmailNotVerifiedException::class)
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    fun handleEmailNotVerified(e: EmailNotVerifiedException) = errorBody("ACCOUNT_NOT_VERIFIED", e.message)
-
     @ExceptionHandler(InvalidOtpException::class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     fun handleInvalidOtp(e: InvalidOtpException) = errorBody("INVALID_OTP", e.message)
@@ -48,6 +44,18 @@ class GlobalExceptionHandler {
     @ExceptionHandler(OtpLockedException::class)
     @ResponseStatus(HttpStatus.TOO_MANY_REQUESTS)
     fun handleOtpLocked(e: OtpLockedException) = errorBody("OTP_LOCKED", e.message)
+
+    @ExceptionHandler(ResourceNotFoundException::class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    fun handleResourceNotFound(e: ResourceNotFoundException) = errorBody("NOT_FOUND", e.message)
+
+    @ExceptionHandler(ForbiddenActionException::class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    fun handleForbiddenAction(e: ForbiddenActionException) = errorBody("FORBIDDEN", e.message)
+
+    @ExceptionHandler(ConflictException::class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    fun handleConflict(e: ConflictException) = errorBody("CONFLICT", e.message)
 
     @ExceptionHandler(ValidationException::class)
     fun handleKonformValidation(e: ValidationException): ResponseEntity<Map<String, Any>> =

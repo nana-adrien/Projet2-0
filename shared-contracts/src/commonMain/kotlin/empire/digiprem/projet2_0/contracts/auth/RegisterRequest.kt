@@ -7,6 +7,6 @@ data class RegisterRequest(
     val contact: String,
     val pseudo: String,
     val verificationToken: String,
-    val password: String? = null,
-    val clubCode: String? = null,
+    val password: String?,
+    val clubCode: String?,
 )

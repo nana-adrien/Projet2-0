@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config xmlns:tools="http://schemas.android.com/tools">
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">192.168.2.3</domain>
+        <domain includeSubdomains="false">192.168.20.56</domain>
+        <domain includeSubdomains="false">192.168.43.172</domain>
+        <domain includeSubdomains="true">https://8fx.pfs.aie.cm</domain>
+        <domain includeSubdomains="false">20.0.79.231</domain>
+        <domain includeSubdomains="false">192.168.100.3</domain>
+        <domain includeSubdomains="false">api.8pusfx.local</domain>
+    </domain-config>
+</network-security-config>

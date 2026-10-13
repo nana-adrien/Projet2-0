@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class UpdateSettingsRequest(
-    val language: String? = null,
-    val theme: String? = null,
-    val notificationsEnabled: Boolean? = null,
+    val language: String?,
+    val theme: String?,
+    val notificationsEnabled: Boolean?,
 )

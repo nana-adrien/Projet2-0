@@ -8,7 +8,9 @@ kotlin {
             implementation(project(":core:domain"))
             api(project(":core:data"))
             implementation(project(":feature:auth:domain"))
+            implementation(projects.sharedContracts)
             implementation(libs.kotlinx.serialization.json)
+
         }
     }
 }

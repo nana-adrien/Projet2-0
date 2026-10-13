@@ -7,7 +7,7 @@ import empire.digiprem.projet2_0.contracts.auth.RegisterRequest
 import empire.digiprem.projet2_0.contracts.auth.RequestOtpRequest
 import empire.digiprem.projet2_0.contracts.auth.ResetPasswordRequest
 import empire.digiprem.projet2_0.contracts.auth.VerifyOtpRequest
-import empire.digiprem.projet2_0.server.common.dto.ApiResponse
+import empire.digiprem.projet2_0.contracts.base.ApiResponse
 import empire.digiprem.projet2_0.server.common.dto.toApiResponse
 import empire.digiprem.projet2_0.server.user.service.AuthService
 import org.springframework.web.bind.annotation.PostMapping

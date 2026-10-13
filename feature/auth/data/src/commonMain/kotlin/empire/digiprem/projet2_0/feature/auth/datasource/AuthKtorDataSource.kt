@@ -1,7 +1,7 @@
 package empire.digiprem.projet2_0.feature.auth.datasource
 
-import empire.digiprem.projet2_0.core.data.dto.ApiResponse
-import empire.digiprem.projet2_0.core.data.dto.ApiResponseWithPayload
+import empire.digiprem.projet2_0.contracts.base.ApiResponse
+import empire.digiprem.projet2_0.contracts.base.ApiResponseWithPayload
 import empire.digiprem.projet2_0.core.data.networking.post
 import empire.digiprem.projet2_0.core.domain.model.AuthSession
 import empire.digiprem.projet2_0.core.domain.network.DataError

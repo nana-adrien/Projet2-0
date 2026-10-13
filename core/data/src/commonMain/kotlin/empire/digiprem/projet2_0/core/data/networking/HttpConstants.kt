@@ -3,7 +3,7 @@ package empire.digiprem.projet2_0.core.data.networking
 object HttpConstants {
     // Dev local : 10.0.2.2 = hôte vu depuis l'émulateur Android ; le simulateur iOS utilise localhost
     // directement. À remplacer par l'URL de production au déploiement.
-    const val BASE_URL = "http://10.0.2.2:8080/api/"
+    const val BASE_URL = "http://192.168.100.28:8085/api/"
 
     const val ALLOW_ANONYMOUS       = "Allow-Anonymous"
     const val ALLOW_ANONYMOUS_VALUE = "1"

@@ -15,7 +15,6 @@ import empire.digiprem.projet2_0.contracts.validation.validateRequestOtpRequest
 import empire.digiprem.projet2_0.contracts.validation.validateResetPasswordRequest
 import empire.digiprem.projet2_0.contracts.validation.validateVerifyOtpRequest
 import empire.digiprem.projet2_0.server.common.event.UserRegisteredEvent
-import empire.digiprem.projet2_0.server.common.exception.EmailNotVerifiedException
 import empire.digiprem.projet2_0.server.common.exception.InvalidCredentialsException
 import empire.digiprem.projet2_0.server.common.exception.InvalidTokenException
 import empire.digiprem.projet2_0.server.common.exception.UserAlreadyExistsException
@@ -111,7 +110,6 @@ class AuthService(
         if (!passwordEncoder.matches(request.password, hashedPassword)) {
             throw InvalidCredentialsException()
         }
-        if (!user.isVerified) throw EmailNotVerifiedException()
 
         val userId = user.id ?: throw UserNotFoundException()
         return issueTokens(userId, user.pseudo)

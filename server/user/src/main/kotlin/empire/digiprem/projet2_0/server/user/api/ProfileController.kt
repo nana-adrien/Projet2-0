@@ -1,7 +1,7 @@
 package empire.digiprem.projet2_0.server.user.api
 
 import empire.digiprem.projet2_0.contracts.profile.UpdateProfileRequest
-import empire.digiprem.projet2_0.server.common.dto.ApiResponse
+import empire.digiprem.projet2_0.contracts.base.ApiResponse
 import empire.digiprem.projet2_0.server.common.dto.toApiResponse
 import empire.digiprem.projet2_0.server.common.util.currentUserId
 import empire.digiprem.projet2_0.server.user.service.ProfileService

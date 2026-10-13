@@ -88,7 +88,9 @@ create table club (
     quartier text,
     description text,
     code_adhesion text not null unique,
-    statut varchar(20) not null default 'ACTIF' check (statut in ('ACTIF', 'ARCHIVE'))
+    statut varchar(20) not null default 'ACTIF' check (statut in ('ACTIF', 'ARCHIVE')),
+    acceptation_automatique boolean not null default false,
+    delegation_capitaines boolean not null default false
 );
 
 -- AdhesionClub

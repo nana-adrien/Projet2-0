@@ -42,29 +42,30 @@
     "CU5": {
       "nom": "Créer un club",
       "groupe": "clubs",
-      "modules": { "serveur": "", "kmp": "" },
+      "modules": { "serveur": "server:clubs", "kmp": "" },
       "elements": { "domain": ["Club", "AdhesionClub"] },
       "regles": [],
-      "ecrans": [],
-      "statut": "a_completer"
+      "ecrans": ["E22", "E23"],
+      "statut": "serveur_fait_mobile_a_faire"
     },
     "CU6": {
       "nom": "Rejoindre un club",
       "groupe": "clubs",
-      "modules": { "serveur": "", "kmp": "" },
+      "modules": { "serveur": "server:clubs", "kmp": "" },
       "elements": { "domain": ["AdhesionClub", "Club"] },
       "regles": ["RG-02", "RG-19"],
-      "ecrans": [],
-      "statut": "a_completer"
+      "ecrans": ["E22"],
+      "statut": "serveur_fait_mobile_a_faire",
+      "note": "Y compris le déclenchement via code de club saisi à l'inscription (CU1 étape 4), par UserRegisteredEvent -> ClubEventListener, sans dépendance directe comptes -> clubs."
     },
     "CU7": {
       "nom": "Gérer les membres d'un club",
       "groupe": "clubs",
-      "modules": { "serveur": "", "kmp": "" },
+      "modules": { "serveur": "server:clubs", "kmp": "" },
       "elements": { "domain": ["AdhesionClub", "Club"] },
       "regles": ["RG-19"],
-      "ecrans": [],
-      "statut": "a_completer"
+      "ecrans": ["E23"],
+      "statut": "serveur_fait_mobile_a_faire"
     },
     "CU8": {
       "nom": "Créer un 2-0",

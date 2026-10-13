@@ -15,35 +15,41 @@
 -- Partie A — baseline des entités déjà codées
 -- =========================================================================
 
+-- Utilisateur (RG-01 : un seul compte par personne, identifié par téléphone OU e-mail ;
+--              RG-20 : suppression -> anonymisation, cf. colonne "supprime").
 create table users (
     id uuid primary key default gen_random_uuid(),
-    email text not null unique,
-    username text not null unique,
-    hashed_password text not null,
-    has_verified_email boolean not null default false,
+    pseudo text not null unique,
+    telephone text unique,
+    email text unique,
+    hashed_password text,
+    nom text,
+    prenom text,
+    photo text,
+    date_naissance date,
+    poste_prefere text check (poste_prefere in ('GARDIEN', 'DEFENSEUR', 'MILIEU', 'ATTAQUANT')),
+    pied_fort text check (pied_fort in ('GAUCHE', 'DROIT', 'AMBIDEXTRE')),
+    cacher_nom_reel boolean not null default false,
+    cacher_age boolean not null default false,
+    is_verified boolean not null default false,
+    supprime boolean not null default false,
+    created_at timestamptz not null default now(),
+    constraint users_contact_present check (supprime or telephone is not null or email is not null)
+);
+
+-- OTP unique pour inscription (CU1), connexion sans mot de passe (CU2-A1) et
+-- réinitialisation de mot de passe (CU3) : même mécanisme, "purpose" distingue l'usage.
+create table otp_codes (
+    id uuid primary key default gen_random_uuid(),
+    contact text not null,
+    purpose varchar(20) not null check (purpose in ('SIGNUP', 'LOGIN', 'PASSWORD_RESET')),
+    hashed_code text not null,
+    attempts int not null default 0,
+    expires_at timestamptz not null,
+    locked_until timestamptz,
     created_at timestamptz not null default now()
 );
-
-create table profiles (
-    user_id uuid primary key references users(id) on delete cascade,
-    display_name text not null default '',
-    bio text,
-    avatar_url text
-);
-
-create table email_verification_tokens (
-    id uuid primary key default gen_random_uuid(),
-    email text not null,
-    token text not null,
-    expires_at timestamptz not null
-);
-
-create table password_reset_tokens (
-    id uuid primary key default gen_random_uuid(),
-    user_id uuid not null references users(id) on delete cascade,
-    hashed_token text not null,
-    expires_at timestamptz not null
-);
+create index idx_otp_codes_contact_purpose on otp_codes(contact, purpose);
 
 create table refresh_tokens (
     id uuid primary key default gen_random_uuid(),

@@ -1,0 +1,248 @@
+{
+  "_lisez_moi": "Table CU -> groupe, modules, éléments par modèle, règles, écrans. Maintenue par kna-concepteur.",
+  "cas_utilisation": {
+    "CU1": {
+      "nom": "Créer un compte",
+      "groupe": "comptes",
+      "modules": { "serveur": "server:user", "kmp": "feature:auth" },
+      "elements": { "domain": ["Utilisateur"] },
+      "regles": ["RG-01"],
+      "ecrans": [],
+      "statut": "a_completer"
+    },
+    "CU2": {
+      "nom": "Se connecter",
+      "groupe": "comptes",
+      "modules": { "serveur": "server:user", "kmp": "feature:auth" },
+      "elements": { "domain": ["Utilisateur"] },
+      "regles": [],
+      "ecrans": [],
+      "statut": "a_completer"
+    },
+    "CU3": {
+      "nom": "Réinitialiser son mot de passe",
+      "groupe": "comptes",
+      "modules": { "serveur": "server:user", "kmp": "feature:auth" },
+      "elements": { "domain": ["Utilisateur"] },
+      "regles": [],
+      "ecrans": [],
+      "statut": "a_completer"
+    },
+    "CU4": {
+      "nom": "Modifier son profil (et supprimer son compte)",
+      "groupe": "comptes",
+      "modules": { "serveur": "server:user", "kmp": "feature:profile" },
+      "elements": { "domain": ["Utilisateur"] },
+      "regles": ["RG-20"],
+      "ecrans": [],
+      "statut": "a_completer"
+    },
+    "CU5": {
+      "nom": "Créer un club",
+      "groupe": "clubs",
+      "modules": { "serveur": "", "kmp": "" },
+      "elements": { "domain": ["Club", "AdhesionClub"] },
+      "regles": [],
+      "ecrans": [],
+      "statut": "a_completer"
+    },
+    "CU6": {
+      "nom": "Rejoindre un club",
+      "groupe": "clubs",
+      "modules": { "serveur": "", "kmp": "" },
+      "elements": { "domain": ["AdhesionClub", "Club"] },
+      "regles": ["RG-02", "RG-19"],
+      "ecrans": [],
+      "statut": "a_completer"
+    },
+    "CU7": {
+      "nom": "Gérer les membres d'un club",
+      "groupe": "clubs",
+      "modules": { "serveur": "", "kmp": "" },
+      "elements": { "domain": ["AdhesionClub", "Club"] },
+      "regles": ["RG-19"],
+      "ecrans": [],
+      "statut": "a_completer"
+    },
+    "CU8": {
+      "nom": "Créer un 2-0",
+      "groupe": "deuxzero",
+      "modules": { "serveur": "", "kmp": "" },
+      "elements": { "domain": ["DeuxZero", "Camp", "Saison"] },
+      "regles": ["RG-04", "RG-10"],
+      "ecrans": [],
+      "statut": "a_completer"
+    },
+    "CU9": {
+      "nom": "Engager un club dans un 2-0 (y compris 2-0 interne)",
+      "groupe": "deuxzero",
+      "modules": { "serveur": "", "kmp": "" },
+      "elements": { "domain": ["Camp", "Club", "EffectifEngage", "DeuxZero"] },
+      "regles": ["RG-04", "RG-05", "RG-06", "RG-19"],
+      "ecrans": [],
+      "statut": "a_completer"
+    },
+    "CU10": {
+      "nom": "Composer un effectif engagé",
+      "groupe": "effectifs",
+      "modules": { "serveur": "", "kmp": "" },
+      "elements": { "domain": ["EffectifEngage", "Camp"] },
+      "regles": ["RG-06", "RG-08"],
+      "ecrans": [],
+      "statut": "a_completer"
+    },
+    "CU11": {
+      "nom": "Transférer un joueur de camp",
+      "groupe": "effectifs",
+      "modules": { "serveur": "", "kmp": "" },
+      "elements": { "domain": ["EffectifEngage", "Camp"] },
+      "regles": ["RG-06", "RG-09"],
+      "ecrans": [],
+      "statut": "a_completer"
+    },
+    "CU12": {
+      "nom": "Ouvrir / clôturer une saison",
+      "groupe": "saisons",
+      "modules": { "serveur": "", "kmp": "" },
+      "elements": { "domain": ["Saison", "DeuxZero", "Camp", "Match"] },
+      "regles": ["RG-17", "RG-18"],
+      "ecrans": [],
+      "statut": "a_completer"
+    },
+    "CU13": {
+      "nom": "Modifier les paramètres d'un 2-0",
+      "groupe": "deuxzero",
+      "modules": { "serveur": "", "kmp": "" },
+      "elements": { "domain": ["DeuxZero"] },
+      "regles": ["RG-10"],
+      "ecrans": [],
+      "statut": "a_completer"
+    },
+    "CU14": {
+      "nom": "Générer et gérer le calendrier",
+      "groupe": "calendrier",
+      "modules": { "serveur": "", "kmp": "" },
+      "elements": { "domain": ["Match", "Saison", "DeuxZero"] },
+      "regles": [],
+      "ecrans": [],
+      "statut": "a_completer"
+    },
+    "CU15": {
+      "nom": "Convoquer les joueurs",
+      "groupe": "calendrier",
+      "modules": { "serveur": "", "kmp": "" },
+      "elements": { "domain": ["Convocation", "Match", "EffectifEngage"] },
+      "regles": [],
+      "ecrans": [],
+      "statut": "a_completer"
+    },
+    "CU16": {
+      "nom": "Composer l'équipe avant-match",
+      "groupe": "calendrier",
+      "modules": { "serveur": "", "kmp": "" },
+      "elements": { "domain": ["Composition", "Match", "EffectifEngage"] },
+      "regles": [],
+      "ecrans": [],
+      "statut": "a_completer"
+    },
+    "CU17": {
+      "nom": "Saisir les événements en direct",
+      "groupe": "saisie_directe",
+      "modules": { "serveur": "", "kmp": "" },
+      "elements": { "domain": ["Evenement", "Match"] },
+      "regles": ["RG-10", "RG-11"],
+      "ecrans": [],
+      "statut": "a_completer"
+    },
+    "CU18": {
+      "nom": "Suivre un match en direct",
+      "groupe": "saisie_directe",
+      "modules": { "serveur": "", "kmp": "" },
+      "elements": { "domain": ["Match", "Evenement", "Notification"] },
+      "regles": [],
+      "ecrans": [],
+      "statut": "a_completer"
+    },
+    "CU19": {
+      "nom": "Valider / contester un résultat",
+      "groupe": "validation",
+      "modules": { "serveur": "", "kmp": "" },
+      "elements": { "domain": ["Validation", "Match"] },
+      "regles": ["RG-12", "RG-13", "RG-15"],
+      "ecrans": [],
+      "statut": "a_completer"
+    },
+    "CU20": {
+      "nom": "Arbitrer un litige",
+      "groupe": "validation",
+      "modules": { "serveur": "", "kmp": "" },
+      "elements": { "domain": ["Validation", "Match"] },
+      "regles": ["RG-13"],
+      "ecrans": [],
+      "statut": "a_completer"
+    },
+    "CU21": {
+      "nom": "Organiser un match amical",
+      "groupe": "amicaux",
+      "modules": { "serveur": "", "kmp": "" },
+      "elements": { "domain": ["Match", "Club"] },
+      "regles": ["RG-14", "RG-15"],
+      "ecrans": [],
+      "statut": "a_completer"
+    },
+    "CU22": {
+      "nom": "Consulter les statistiques et classements",
+      "groupe": "statistiques",
+      "modules": { "serveur": "", "kmp": "" },
+      "elements": { "domain": ["Match", "Saison", "Club", "Evenement"] },
+      "regles": [],
+      "ecrans": [],
+      "statut": "a_completer"
+    },
+    "CU23": {
+      "nom": "Consulter son profil et sa progression",
+      "groupe": "profil",
+      "modules": { "serveur": "", "kmp": "" },
+      "elements": { "domain": ["Utilisateur", "BadgeObtenu", "Match"] },
+      "regles": [],
+      "ecrans": [],
+      "statut": "a_completer"
+    },
+    "CU24": {
+      "nom": "Voter pour l'homme du match / obtenir un badge",
+      "groupe": "recompenses",
+      "modules": { "serveur": "", "kmp": "" },
+      "elements": { "domain": ["Vote", "BadgeObtenu", "Match"] },
+      "regles": ["RG-16"],
+      "ecrans": [],
+      "statut": "a_completer"
+    },
+    "CU25": {
+      "nom": "Clôturer la saison et consulter le bilan",
+      "groupe": "bilan",
+      "modules": { "serveur": "", "kmp": "" },
+      "elements": { "domain": ["Saison", "Match", "BadgeObtenu"] },
+      "regles": ["RG-17"],
+      "ecrans": [],
+      "statut": "a_completer"
+    },
+    "CU26": {
+      "nom": "Gérer ses préférences de notification",
+      "groupe": "comptes",
+      "modules": { "serveur": "server:notifications", "kmp": "feature:notifications" },
+      "elements": { "domain": ["PreferenceNotification", "Utilisateur"] },
+      "regles": [],
+      "ecrans": [],
+      "statut": "a_completer"
+    },
+    "CU27": {
+      "nom": "Signaler un contenu",
+      "groupe": "social",
+      "modules": { "serveur": "", "kmp": "" },
+      "elements": { "domain": ["Signalement", "Utilisateur"] },
+      "regles": [],
+      "ecrans": [],
+      "statut": "a_completer"
+    }
+  }
+}

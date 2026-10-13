@@ -70,56 +70,61 @@
     "CU8": {
       "nom": "Créer un 2-0",
       "groupe": "deuxzero",
-      "modules": { "serveur": "", "kmp": "" },
+      "modules": { "serveur": "server:deuxzero", "kmp": "" },
       "elements": { "domain": ["DeuxZero", "Camp", "Saison"] },
       "regles": ["RG-04", "RG-10"],
-      "ecrans": [],
-      "statut": "a_completer"
+      "ecrans": ["E24"],
+      "statut": "serveur_fait_mobile_a_faire"
     },
     "CU9": {
       "nom": "Engager un club dans un 2-0 (y compris 2-0 interne)",
       "groupe": "deuxzero",
-      "modules": { "serveur": "", "kmp": "" },
+      "modules": { "serveur": "server:deuxzero", "kmp": "" },
       "elements": { "domain": ["Camp", "Club", "EffectifEngage", "DeuxZero"] },
       "regles": ["RG-04", "RG-05", "RG-06", "RG-19"],
-      "ecrans": [],
-      "statut": "a_completer"
+      "ecrans": ["E25"],
+      "statut": "serveur_fait_mobile_a_faire",
+      "note": "2-0 passe ACTIF automatiquement quand les 2 camps sont engagés avec un capitaine chacun. Alt A1 (répartition par tirage, 2-0 interne) et A2 (engagement direct sans code si organisateur=admin du club) non implémentées côté serveur — déférées à l'écran E25 (répartition), qui pourra appeler engageClub+nommerCapitaine directement."
     },
     "CU10": {
       "nom": "Composer un effectif engagé",
       "groupe": "effectifs",
-      "modules": { "serveur": "", "kmp": "" },
+      "modules": { "serveur": "server:deuxzero", "kmp": "" },
       "elements": { "domain": ["EffectifEngage", "Camp"] },
       "regles": ["RG-06", "RG-08"],
-      "ecrans": [],
-      "statut": "a_completer"
+      "ecrans": ["E25"],
+      "statut": "serveur_fait_mobile_a_faire",
+      "note": "Alt A1 (joueur occasionnel, hors effectif permanent) différée au Jalon 3 (CU16, feuille de match)."
     },
     "CU11": {
       "nom": "Transférer un joueur de camp",
       "groupe": "effectifs",
-      "modules": { "serveur": "", "kmp": "" },
+      "modules": { "serveur": "server:deuxzero", "kmp": "" },
       "elements": { "domain": ["EffectifEngage", "Camp"] },
       "regles": ["RG-06", "RG-09"],
       "ecrans": [],
-      "statut": "a_completer"
+      "statut": "serveur_fait_mobile_a_faire",
+      "note": "Limite de transferts autorisés par saison (DeuxZero.transfertsAutorisesParSaison) non encore comptée/vérifiée — à faire avant d'exposer cet écran."
     },
     "CU12": {
       "nom": "Ouvrir / clôturer une saison",
       "groupe": "saisons",
-      "modules": { "serveur": "", "kmp": "" },
+      "modules": { "serveur": "server:deuxzero", "kmp": "" },
       "elements": { "domain": ["Saison", "DeuxZero", "Camp", "Match"] },
       "regles": ["RG-17", "RG-18"],
-      "ecrans": [],
-      "statut": "a_completer"
+      "ecrans": ["E17"],
+      "statut": "serveur_partiel_mobile_a_faire",
+      "note": "Ouverture/clôture fonctionnelles ; calcul du camp champion (RG-17) différé au module statistiques (Jalon 5), aucun match n'existe encore pour le nourrir."
     },
     "CU13": {
       "nom": "Modifier les paramètres d'un 2-0",
       "groupe": "deuxzero",
-      "modules": { "serveur": "", "kmp": "" },
+      "modules": { "serveur": "server:deuxzero", "kmp": "" },
       "elements": { "domain": ["DeuxZero"] },
       "regles": ["RG-10"],
       "ecrans": [],
-      "statut": "a_completer"
+      "statut": "serveur_partiel_mobile_a_faire",
+      "note": "Modification ponctuelle de la durée de mi-temps pour un seul match (RG-10 alt) différée au Jalon 3 (Match n'existe pas encore)."
     },
     "CU14": {
       "nom": "Générer et gérer le calendrier",

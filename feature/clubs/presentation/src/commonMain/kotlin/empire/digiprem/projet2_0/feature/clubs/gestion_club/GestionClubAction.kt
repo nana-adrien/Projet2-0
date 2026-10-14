@@ -14,4 +14,6 @@ sealed interface GestionClubAction {
     data class OnToggleDelegationCapitaines(val value: Boolean) : GestionClubAction
     data object OnLeaveClubClick : GestionClubAction
     data object OnMessageShown : GestionClubAction
+    data object OnCreateDeuxZeroClick : GestionClubAction
+    data object OnEngagerClubClick : GestionClubAction
 }

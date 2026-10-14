@@ -72,31 +72,32 @@
     "CU8": {
       "nom": "Créer un 2-0",
       "groupe": "deuxzero",
-      "modules": { "serveur": "server:deuxzero", "kmp": "" },
+      "modules": { "serveur": "server:deuxzero", "kmp": "feature:deuxzero" },
       "elements": { "domain": ["DeuxZero", "Camp", "Saison"] },
       "regles": ["RG-04", "RG-10"],
       "ecrans": ["E24"],
-      "statut": "serveur_fait_mobile_a_faire"
+      "statut": "fait",
+      "note": "Mobile : CreateDeuxZeroScreen, assistant en 5 étapes (infos/règles/calendrier/validation/camps) fidèle à la maquette. BUG CONNU (signalé par Kako, jalon calendrier) : DeuxZeroService.createDeuxZero/updateSettings ignorent silencieusement request.heureHabituelle côté serveur — l'écran l'envoie correctement, à corriger côté server:deuxzero avant toute démo réelle du calendrier (CU14)."
     },
     "CU9": {
       "nom": "Engager un club dans un 2-0 (y compris 2-0 interne)",
       "groupe": "deuxzero",
-      "modules": { "serveur": "server:deuxzero", "kmp": "" },
+      "modules": { "serveur": "server:deuxzero", "kmp": "feature:deuxzero" },
       "elements": { "domain": ["Camp", "Club", "EffectifEngage", "DeuxZero"] },
       "regles": ["RG-04", "RG-05", "RG-06", "RG-19"],
-      "ecrans": ["E25"],
-      "statut": "serveur_fait_mobile_a_faire",
-      "note": "2-0 passe ACTIF automatiquement quand les 2 camps sont engagés avec un capitaine chacun. Alt A1 (répartition par tirage, 2-0 interne) et A2 (engagement direct sans code si organisateur=admin du club) non implémentées côté serveur — déférées à l'écran E25 (répartition), qui pourra appeler engageClub+nommerCapitaine directement."
+      "ecrans": ["E24", "E25"],
+      "statut": "fait",
+      "note": "2-0 passe ACTIF automatiquement quand les 2 camps sont engagés avec un capitaine chacun. A1 (interne) et A2 (engagement direct sans code si organisateur=admin du club) implémentées côté MOBILE uniquement (CreateDeuxZeroViewModel enchaîne engageClub avec les codes tout juste générés, sans ressaisie) — le serveur reste inchangé (toujours par code), conforme à la note initiale. Mobile : EngagerClubScreen (saisie manuelle du code, cas nominal club externe)."
     },
     "CU10": {
       "nom": "Composer un effectif engagé",
       "groupe": "effectifs",
-      "modules": { "serveur": "server:deuxzero", "kmp": "" },
+      "modules": { "serveur": "server:deuxzero", "kmp": "feature:deuxzero" },
       "elements": { "domain": ["EffectifEngage", "Camp"] },
       "regles": ["RG-06", "RG-08"],
       "ecrans": ["E25"],
-      "statut": "serveur_fait_mobile_a_faire",
-      "note": "Alt A1 (joueur occasionnel, hors effectif permanent) différée au Jalon 3 (CU16, feuille de match)."
+      "statut": "fait",
+      "note": "Mobile : RepartitionScreen (E25, 2-0 interne — tirage équilibré simple moitié/moitié, aucune donnée de poste/stats n'existe encore pour un tirage affiné RG-F-DZ-06) + ComposerEffectifScreen (écran utilitaire non numéroté, ajout de membres/numéro de maillot/capitaine-vice-capitaine, réutilisé après E25 et après EngagerClubScreen). Alt A1 (joueur occasionnel, hors effectif permanent) différée au Jalon 3 (CU16, feuille de match)."
     },
     "CU11": {
       "nom": "Transférer un joueur de camp",
@@ -106,7 +107,7 @@
       "regles": ["RG-06", "RG-09"],
       "ecrans": [],
       "statut": "serveur_fait_mobile_a_faire",
-      "note": "Limite de transferts autorisés par saison (DeuxZero.transfertsAutorisesParSaison) non encore comptée/vérifiée — à faire avant d'exposer cet écran."
+      "note": "Limite de transferts autorisés par saison (DeuxZero.transfertsAutorisesParSaison) non encore comptée/vérifiée — à faire avant d'exposer cet écran. Pas d'écran dédié dans les maquettes (E01-E29) ; aucun écran mobile construit ce jalon (TransferPlayerUseCase existe côté mobile, non câblé à un écran)."
     },
     "CU12": {
       "nom": "Ouvrir / clôturer une saison",
@@ -116,7 +117,7 @@
       "regles": ["RG-17", "RG-18"],
       "ecrans": ["E17"],
       "statut": "serveur_partiel_mobile_a_faire",
-      "note": "Ouverture/clôture fonctionnelles ; calcul du camp champion (RG-17) différé au module statistiques (Jalon 5), aucun match n'existe encore pour le nourrir."
+      "note": "Ouverture/clôture fonctionnelles ; calcul du camp champion (RG-17) différé au module statistiques (Jalon 5), aucun match n'existe encore pour le nourrir. Aucun écran mobile construit ce jalon (E17 appartient au Jalon 5) ; ListSaisonsUseCase/OpenSaisonUseCase/CloseSaisonUseCase existent côté mobile, non câblés à un écran."
     },
     "CU13": {
       "nom": "Modifier les paramètres d'un 2-0",
@@ -126,7 +127,7 @@
       "regles": ["RG-10"],
       "ecrans": [],
       "statut": "serveur_partiel_mobile_a_faire",
-      "note": "Modification ponctuelle de la durée de mi-temps pour un seul match (RG-10 alt) différée au Jalon 3 (Match n'existe pas encore)."
+      "note": "Modification ponctuelle de la durée de mi-temps pour un seul match (RG-10 alt) différée au Jalon 3 (Match n'existe pas encore). Pas d'écran dédié dans les maquettes ; TransferOrganisateurUseCase existe côté mobile, non câblé à un écran."
     },
     "CU14": {
       "nom": "Générer et gérer le calendrier",

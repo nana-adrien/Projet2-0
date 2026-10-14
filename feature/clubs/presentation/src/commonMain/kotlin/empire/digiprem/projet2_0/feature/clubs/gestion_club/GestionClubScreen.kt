@@ -1,5 +1,6 @@
 package empire.digiprem.projet2_0.feature.clubs.gestion_club
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -58,6 +59,8 @@ fun GestionClubRoot(
     clubId: String,
     initialRole: MembershipRole,
     onLeftClub: () -> Unit,
+    onNavigateToCreateDeuxZero: (clubId: String) -> Unit,
+    onNavigateToEngagerClub: (clubId: String) -> Unit,
     viewModel: GestionClubViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -69,6 +72,8 @@ fun GestionClubRoot(
     ObservableEvent(flow = viewModel.events) { event ->
         when (event) {
             GestionClubEvent.OnLeftClub -> onLeftClub()
+            is GestionClubEvent.OnNavigateToCreateDeuxZero -> onNavigateToCreateDeuxZero(event.clubId)
+            is GestionClubEvent.OnNavigateToEngagerClub -> onNavigateToEngagerClub(event.clubId)
         }
     }
 
@@ -123,6 +128,27 @@ fun GestionClubScreen(
                                 onToggleAcceptation = { onAction(GestionClubAction.OnToggleAcceptationAutomatique(it)) },
                                 onToggleDelegation = { onAction(GestionClubAction.OnToggleDelegationCapitaines(it)) },
                             )
+                        }
+                    }
+
+                    if (state.isCurrentUserAdmin) {
+                        item { Spacer(Modifier.height(PDZSpacing.space4)) }
+                        item {
+                            Text(text = "2-0", style = MaterialTheme.typography.titleMedium)
+                            Spacer(Modifier.height(PDZSpacing.space2))
+                            Row(horizontalArrangement = Arrangement.spacedBy(PDZSpacing.space3)) {
+                                PDZButton(
+                                    text = "Créer un 2-0",
+                                    onClick = { onAction(GestionClubAction.OnCreateDeuxZeroClick) },
+                                    modifier = Modifier.weight(1f),
+                                )
+                                PDZButton(
+                                    text = "Engager avec un code",
+                                    type = PDZButtonType.Secondary,
+                                    onClick = { onAction(GestionClubAction.OnEngagerClubClick) },
+                                    modifier = Modifier.weight(1f),
+                                )
+                            }
                         }
                     }
 

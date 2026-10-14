@@ -62,6 +62,12 @@ class GestionClubViewModel(
                 updateSettings(acceptationAutomatique = null, delegationCapitaines = action.value)
             GestionClubAction.OnLeaveClubClick -> leaveClub()
             GestionClubAction.OnMessageShown -> _state.update { it.copy(message = null) }
+            GestionClubAction.OnCreateDeuxZeroClick -> viewModelScope.launch {
+                _events.send(GestionClubEvent.OnNavigateToCreateDeuxZero(clubId))
+            }
+            GestionClubAction.OnEngagerClubClick -> viewModelScope.launch {
+                _events.send(GestionClubEvent.OnNavigateToEngagerClub(clubId))
+            }
         }
     }
 

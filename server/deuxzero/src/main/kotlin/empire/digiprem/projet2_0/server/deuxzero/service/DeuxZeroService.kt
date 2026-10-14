@@ -24,6 +24,7 @@ import empire.digiprem.projet2_0.server.user.infra.repository.UserRepository
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import java.time.LocalDate
+import java.time.LocalTime
 import java.util.UUID
 import kotlin.random.Random
 
@@ -53,7 +54,7 @@ class DeuxZeroService(
                 nom = request.nom.trim(),
                 lieu = request.lieu,
                 joursHabituels = request.joursHabituels,
-                heureHabituelle = null,
+                heureHabituelle = request.heureHabituelle?.let { LocalTime.parse(it) },
                 dureeMiTempsMinutes = request.dureeMiTempsMinutes,
                 nombreMiTemps = request.nombreMiTemps,
                 dureePauseMinutes = request.dureePauseMinutes,
@@ -154,7 +155,7 @@ class DeuxZeroService(
                 nom = deuxZero.nom,
                 lieu = deuxZero.lieu,
                 joursHabituels = request.joursHabituels ?: deuxZero.joursHabituels,
-                heureHabituelle = deuxZero.heureHabituelle,
+                heureHabituelle = request.heureHabituelle?.let { LocalTime.parse(it) } ?: deuxZero.heureHabituelle,
                 dureeMiTempsMinutes = request.dureeMiTempsMinutes ?: deuxZero.dureeMiTempsMinutes,
                 nombreMiTemps = deuxZero.nombreMiTemps,
                 dureePauseMinutes = deuxZero.dureePauseMinutes,

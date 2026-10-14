@@ -16,6 +16,9 @@ class DeuxZeroRepository(
     override suspend fun createDeuxZero(input: CreateDeuxZeroInput): Result<DeuxZero?, DataError.Remote> =
         dataSource.createDeuxZero(input)
 
+    override suspend fun listMesDeuxZero(): Result<List<DeuxZero>?, DataError.Remote> =
+        dataSource.listMesDeuxZero()
+
     override suspend fun engageClub(codeEngagement: String): Result<Camp?, DataError.Remote> =
         dataSource.engageClub(codeEngagement)
 

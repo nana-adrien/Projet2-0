@@ -10,6 +10,7 @@ import empire.digiprem.projet2_0.feature.deuxzero.model.Saison
 
 interface IDeuxZeroRepository {
     suspend fun createDeuxZero(input: CreateDeuxZeroInput): Result<DeuxZero?, DataError.Remote>
+    suspend fun listMesDeuxZero(): Result<List<DeuxZero>?, DataError.Remote>
     suspend fun engageClub(codeEngagement: String): Result<Camp?, DataError.Remote>
     suspend fun listCamps(deuxZeroId: String): Result<List<Camp>?, DataError.Remote>
     suspend fun nommerCapitaine(campId: String, utilisateurId: String, viceCapitaine: Boolean): Result<Camp?, DataError.Remote>

@@ -49,6 +49,10 @@ class DeuxZeroKtorDataSource(private val client: HttpClient) : IDeuxZeroDataSour
             ),
         ).map { it.payload?.toDomain() }
 
+    override suspend fun listMesDeuxZero(): Result<List<DeuxZero>?, DataError.Remote> =
+        client.get<ApiResponseWithPayload<List<DeuxZeroDto>>>(route = "v1/deuxzero/mine")
+            .map { it.payload?.map { dto -> dto.toDomain() } }
+
     override suspend fun engageClub(codeEngagement: String): Result<Camp?, DataError.Remote> =
         client.post<EngageClubRequest, ApiResponseWithPayload<CampDto>>(
             route = "v1/deuxzero/engage",

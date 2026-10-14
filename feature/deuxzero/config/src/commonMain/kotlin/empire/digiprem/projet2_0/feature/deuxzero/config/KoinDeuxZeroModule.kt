@@ -14,6 +14,7 @@ import empire.digiprem.projet2_0.feature.deuxzero.usecase.CreateDeuxZeroUseCase
 import empire.digiprem.projet2_0.feature.deuxzero.usecase.EngageClubUseCase
 import empire.digiprem.projet2_0.feature.deuxzero.usecase.ListCampsUseCase
 import empire.digiprem.projet2_0.feature.deuxzero.usecase.ListEffectifUseCase
+import empire.digiprem.projet2_0.feature.deuxzero.usecase.ListMesDeuxZeroUseCase
 import empire.digiprem.projet2_0.feature.deuxzero.usecase.ListSaisonsUseCase
 import empire.digiprem.projet2_0.feature.deuxzero.usecase.NommerCapitaineUseCase
 import empire.digiprem.projet2_0.feature.deuxzero.usecase.OpenSaisonUseCase
@@ -31,6 +32,7 @@ val koinDeuxZeroModule = module {
 
     // Domain — use cases
     singleOf(::CreateDeuxZeroUseCase)
+    singleOf(::ListMesDeuxZeroUseCase)
     singleOf(::EngageClubUseCase)
     singleOf(::ListCampsUseCase)
     singleOf(::NommerCapitaineUseCase)

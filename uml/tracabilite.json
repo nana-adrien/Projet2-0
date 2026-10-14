@@ -131,20 +131,22 @@
     "CU14": {
       "nom": "Générer et gérer le calendrier",
       "groupe": "calendrier",
-      "modules": { "serveur": "", "kmp": "" },
+      "modules": { "serveur": "server:calendrier", "kmp": "" },
       "elements": { "domain": ["Match", "Saison", "DeuxZero"] },
-      "regles": [],
-      "ecrans": [],
-      "statut": "a_completer"
+      "regles": ["RG-10"],
+      "ecrans": ["E07"],
+      "statut": "serveur_fait_mobile_a_faire",
+      "note": "Serveur : CalendrierService/CalendrierController (server:calendrier, /api/v1/calendrier) couvrent F-CAL-01 (genererCalendrier : jusqu'à 8 occurrences depuis joursHabituels/heureHabituelle du 2-0, idempotent sur (saisonId, date, heure), borné par dateFin), F-CAL-02 (ajouterMatchExceptionnel) et F-CAL-03 (modifierMatch : report/annulation avec motif obligatoire, notification « Changement de programme » aux effectifs actifs des deux camps). Décisions suivies : motif JAMAIS persisté sur Match (aucune colonne prévue — lacune UML désormais documentée en tête de V1__schema_initial.sql — il ne sert qu'au corps de la notification) ; droit « gestionnaire du calendrier » = organisateur OU capitaine/vice-capitaine d'un seul des deux camps (CalendrierDroitsService, réutilisé par CU15) ; F-CAL-01 déclenché manuellement (POST .../generer), aucun ordonnanceur (@Scheduled) au Jalon 2 — limitation documentée, pas une génération automatique en tâche de fond. RG-10 (alt A1 de CU13, jusqu'ici différée car Match n'existait pas) désormais couvert via modifierMatch.dureeMiTempsAppliqueeMinutes, modifiable indépendamment du statut. Limitation BLOQUANTE en amont, hors périmètre Jalon 2 : DeuxZeroService.createDeuxZero force heureHabituelle=null et DeuxZeroService.updateSettings n'exploite jamais request.heureHabituelle (champ ignoré silencieusement) — aucun 2-0 ne peut donc recevoir une heure habituelle via l'API actuelle, ce qui fait échouer genererCalendrier (ValidationException) en usage réel tant que ce bug du module server:deuxzero (déjà livré au Jalon 1) n'est pas corrigé ; contourné en test par un patch SQL direct sur deuxzero.heure_habituelle. Mobile (écran E07, calendrier des matchs) différé à une session suivante."
     },
     "CU15": {
       "nom": "Convoquer les joueurs",
       "groupe": "calendrier",
-      "modules": { "serveur": "", "kmp": "" },
+      "modules": { "serveur": "server:calendrier", "kmp": "" },
       "elements": { "domain": ["Convocation", "Match", "EffectifEngage"] },
       "regles": [],
-      "ecrans": [],
-      "statut": "a_completer"
+      "ecrans": ["E08"],
+      "statut": "serveur_fait_mobile_a_faire",
+      "note": "Serveur : ConvocationService/ConvocationController (server:calendrier, /api/v1/convocations) couvrent F-CAL-04 (genererConvocations : une Convocation SANS_REPONSE par membre actif des deux camps n'en ayant pas déjà pour ce match, idempotent, notification « Convocation » aux nouveaux convoqués ; rejette les matchs AMICAL, hors scope CU15/CU21-Jalon 6), la réponse du joueur (repondreConvocation, réservée au convoqué — 403 sinon — reponse limitée à PRESENT/ABSENT/INCERTAIN, jamais SANS_REPONSE en saisie), F-CAL-05 (relancerConvocations : notification « Rappel » aux seules convocations encore SANS_REPONSE) et F-CAL-06 (getPresences : comptage PRESENT/ABSENT/INCERTAIN/SANS_REPONSE par camp, réservé au gestionnaire du calendrier via CalendrierDroitsService, même règle de droits que CU14). F-CAL-05 est déclenché manuellement (bouton « relancer »), aucun ordonnanceur au Jalon 2 — limitation documentée, ce n'est pas la relance automatique « quelques heures avant le match » du scénario nominal. Dépend des matchs créés par CU14 ; fonctionne aussi pour un match ajouté via ajouterMatchExceptionnel, donc non bloqué en soi par le bug heureHabituelle de DeuxZeroService — mais la génération automatique du calendrier (F-CAL-01) qui alimenterait normalement CU15 en matchs reste affectée, voir note CU14. Mobile (écran E08, fiche du match et présences, partagé avec CU16) différé à une session suivante."
     },
     "CU16": {
       "nom": "Composer l'équipe avant-match",

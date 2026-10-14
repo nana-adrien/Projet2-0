@@ -45,6 +45,7 @@ include(
     ":server:clubs",
     ":server:deuxzero",
     ":server:calendrier",
+    ":server:statistiques",
     ":server:app",
 )
 
@@ -94,4 +95,9 @@ include(
     ":feature:calendrier:data",
     ":feature:calendrier:presentation",
     ":feature:calendrier:config",
+
+    ":feature:matchendirect:domain",
+    ":feature:matchendirect:data",
+    ":feature:matchendirect:presentation",
+    ":feature:matchendirect:config",
 )

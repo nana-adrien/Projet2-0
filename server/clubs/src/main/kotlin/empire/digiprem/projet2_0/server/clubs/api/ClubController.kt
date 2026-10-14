@@ -35,6 +35,9 @@ class ClubController(
     @GetMapping("/mine")
     fun listMyClubs() = clubService.listMyClubs(userId()).toApiResponse()
 
+    @GetMapping("/{clubId}")
+    fun getClub(@PathVariable clubId: UUID) = clubService.getClub(clubId, userId()).toApiResponse()
+
 
     @PostMapping("/join")
     fun joinClub(@RequestBody body: JoinClubRequest) =

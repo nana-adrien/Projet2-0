@@ -44,6 +44,7 @@ include(
     ":server:notifications",
     ":server:clubs",
     ":server:deuxzero",
+    ":server:calendrier",
     ":server:app",
 )
 
@@ -78,4 +79,14 @@ include(
 
     ":feature:dashboard:presentation",
     ":feature:dashboard:config",
+
+    ":feature:clubs:domain",
+    ":feature:clubs:data",
+    ":feature:clubs:presentation",
+    ":feature:clubs:config",
+
+    ":feature:deuxzero:domain",
+    ":feature:deuxzero:data",
+    ":feature:deuxzero:presentation",
+    ":feature:deuxzero:config",
 )

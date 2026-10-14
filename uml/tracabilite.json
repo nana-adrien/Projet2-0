@@ -42,30 +42,32 @@
     "CU5": {
       "nom": "Créer un club",
       "groupe": "clubs",
-      "modules": { "serveur": "server:clubs", "kmp": "" },
+      "modules": { "serveur": "server:clubs", "kmp": "feature:clubs" },
       "elements": { "domain": ["Club", "AdhesionClub"] },
       "regles": [],
       "ecrans": ["E22", "E23"],
-      "statut": "serveur_fait_mobile_a_faire"
+      "statut": "fait",
+      "note": "Mobile : CreateClubScreen (nom/quartier/description). Logo/couleurs non saisis à la création (pas de sélecteur d'image en place) — différé, non inventé."
     },
     "CU6": {
       "nom": "Rejoindre un club",
       "groupe": "clubs",
-      "modules": { "serveur": "server:clubs", "kmp": "" },
+      "modules": { "serveur": "server:clubs", "kmp": "feature:clubs" },
       "elements": { "domain": ["AdhesionClub", "Club"] },
       "regles": ["RG-02", "RG-19"],
       "ecrans": ["E22"],
-      "statut": "serveur_fait_mobile_a_faire",
-      "note": "Y compris le déclenchement via code de club saisi à l'inscription (CU1 étape 4), par UserRegisteredEvent -> ClubEventListener, sans dépendance directe comptes -> clubs."
+      "statut": "fait",
+      "note": "Y compris le déclenchement via code de club saisi à l'inscription (CU1 étape 4), par UserRegisteredEvent -> ClubEventListener, sans dépendance directe comptes -> clubs. Mobile : JoinClubScreen (saisie du code)."
     },
     "CU7": {
       "nom": "Gérer les membres d'un club",
       "groupe": "clubs",
-      "modules": { "serveur": "server:clubs", "kmp": "" },
+      "modules": { "serveur": "server:clubs", "kmp": "feature:clubs" },
       "elements": { "domain": ["AdhesionClub", "Club"] },
       "regles": ["RG-19"],
       "ecrans": ["E23"],
-      "statut": "serveur_fait_mobile_a_faire"
+      "statut": "fait",
+      "note": "Mobile : MesClubsScreen (E22, liste + état vide E28) -> GestionClubScreen (E23 : code + régénération, demandes en attente, réglages, membres avec retirer/co-admin/transfert d'admin, quitter le club)."
     },
     "CU8": {
       "nom": "Créer un 2-0",

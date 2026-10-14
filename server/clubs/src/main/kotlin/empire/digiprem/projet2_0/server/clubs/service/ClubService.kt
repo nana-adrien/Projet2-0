@@ -105,6 +105,15 @@ class ClubService(
         return adhesion.toDto(club)
     }
 
+    /** N'importe quel membre accepté (quel que soit son rôle) peut consulter la fiche du club. */
+    fun getClub(clubId: UUID, requesterId: UUID): ClubDto {
+        val adhesion = adhesionClubRepository.findByUtilisateurIdAndClubId(requesterId, clubId)
+        if (adhesion?.statut != STATUT_ACCEPTEE) {
+            throw ForbiddenActionException("Il faut être membre accepté de ce club")
+        }
+        return findClub(clubId).toDto()
+    }
+
     fun listMyClubs(userId: UUID): List<MembershipDto> =
         adhesionClubRepository.findAllByUtilisateurId(userId).map { adhesion ->
             val club = clubRepository.findById(adhesion.clubId).orElseThrow {

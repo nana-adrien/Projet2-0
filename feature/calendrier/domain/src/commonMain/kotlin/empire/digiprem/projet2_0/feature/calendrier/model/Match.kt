@@ -17,4 +17,5 @@ data class Match(
     val dureeMiTempsAppliqueeMinutes: Int?,
     val nomEquipeInvitee: String?,
     val marqueurId: String?,
+    val marqueurSuppleantId: String?,
 )

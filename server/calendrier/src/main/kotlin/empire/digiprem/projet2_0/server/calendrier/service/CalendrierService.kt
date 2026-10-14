@@ -214,5 +214,6 @@ class CalendrierService(
         dureeMiTempsAppliqueeMinutes = dureeMiTempsAppliqueeMinutes,
         nomEquipeInvitee = nomEquipeInvitee,
         marqueurId = marqueurId?.toString(),
+        marqueurSuppleantId = marqueurSuppleantId?.toString(),
     )
 }

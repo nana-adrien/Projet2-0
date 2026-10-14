@@ -23,6 +23,7 @@ fun MatchDto.toDomain() = Match(
     dureeMiTempsAppliqueeMinutes = dureeMiTempsAppliqueeMinutes,
     nomEquipeInvitee = nomEquipeInvitee,
     marqueurId = marqueurId,
+    marqueurSuppleantId = marqueurSuppleantId,
 )
 
 fun ConvocationDto.toDomain() = Convocation(

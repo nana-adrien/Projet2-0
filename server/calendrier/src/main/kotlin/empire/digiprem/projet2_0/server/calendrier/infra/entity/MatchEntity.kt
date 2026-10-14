@@ -48,4 +48,7 @@ class MatchEntity(
     val nomEquipeInvitee: String? = null,
 
     val marqueurId: UUID? = null,
+
+    /** CU16 — suppléant du marqueur (F-LIV-08 : reprend la saisie en cas de perte du téléphone). */
+    val marqueurSuppleantId: UUID? = null,
 )

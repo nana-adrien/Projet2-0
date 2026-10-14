@@ -12,5 +12,6 @@ dependencies {
     implementation(project(":server:notifications"))
     implementation(project(":shared-contracts"))
     implementation(libs.spring.boot.starter.data.jpa)
+    implementation(libs.spring.boot.starter.websocket)
     runtimeOnly(libs.postgresql)
 }

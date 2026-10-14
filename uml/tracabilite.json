@@ -152,11 +152,12 @@
     "CU16": {
       "nom": "Composer l'équipe avant-match",
       "groupe": "calendrier",
-      "modules": { "serveur": "", "kmp": "" },
+      "modules": { "serveur": "server:calendrier", "kmp": "" },
       "elements": { "domain": ["Composition", "Match", "EffectifEngage"] },
-      "regles": [],
-      "ecrans": [],
-      "statut": "a_completer"
+      "regles": ["F-CAL-07", "F-LIV-01"],
+      "ecrans": ["E09"],
+      "statut": "serveur_fait_mobile_a_faire",
+      "note": "Serveur : CompositionService/CompositionController (/api/v1/matchs/{id}/composition, /marqueur). Résout la lacune UML 'match: marqueur suppléant non modélisé' (migration V2) — ajout de MatchEntity.marqueurSuppleantId. Droit : capitaine OU vice-capitaine du camp DU JOUEUR concerné (pas du gestionnaire calendrier au sens large) — vérifié par curl : composition de son propre camp OK, 403 sur l'autre camp, désignation marqueur + suppléant OK. F-EFF-06 (joueur occasionnel en dépannage, hors effectif permanent) et A2 (ajustement pendant le match par le marqueur) non implémentés — différés avec CU17 (même écran de match en direct). Mobile (E09, composition d'équipe) pas encore construit."
     },
     "CU17": {
       "nom": "Saisir les événements en direct",

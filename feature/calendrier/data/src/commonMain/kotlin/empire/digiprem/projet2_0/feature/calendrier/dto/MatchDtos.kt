@@ -17,6 +17,7 @@ data class MatchDto(
     val dureeMiTempsAppliqueeMinutes: Int?,
     val nomEquipeInvitee: String?,
     val marqueurId: String?,
+    val marqueurSuppleantId: String?,
 )
 
 @Serializable

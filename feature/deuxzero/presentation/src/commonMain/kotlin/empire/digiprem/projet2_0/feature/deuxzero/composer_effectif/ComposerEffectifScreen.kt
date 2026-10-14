@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import empire.digiprem.projet2_0.core.design_system.components.avatar.AppAvatar
 import empire.digiprem.projet2_0.core.design_system.components.buttons.PDZButton
+import empire.digiprem.projet2_0.core.design_system.components.buttons.PDZButtonType
 import empire.digiprem.projet2_0.core.design_system.components.feedback.PDZToast
 import empire.digiprem.projet2_0.core.design_system.components.list.AppListRow
 import empire.digiprem.projet2_0.core.design_system.components.states.PDZLoadingSpinner
@@ -46,6 +47,7 @@ fun ComposerEffectifRoot(
     camp: Camp,
     clubId: String,
     onDone: () -> Unit,
+    onViewCalendrier: (deuxZeroId: String) -> Unit,
     viewModel: ComposerEffectifViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -55,6 +57,7 @@ fun ComposerEffectifRoot(
     ObservableEvent(flow = viewModel.events) { event ->
         when (event) {
             ComposerEffectifEvent.OnDone -> onDone()
+            is ComposerEffectifEvent.OnViewCalendrier -> onViewCalendrier(event.deuxZeroId)
         }
     }
 
@@ -106,7 +109,15 @@ fun ComposerEffectifScreen(
                     }
 
                     item { Spacer(Modifier.height(PDZSpacing.space6)) }
-                    item { PDZButton(text = "Terminer", onClick = { onAction(ComposerEffectifAction.OnDoneClick) }) }
+                    item {
+                        PDZButton(
+                            text = "Voir le calendrier",
+                            type = PDZButtonType.Secondary,
+                            onClick = { onAction(ComposerEffectifAction.OnViewCalendrierClick) },
+                        )
+                        Spacer(Modifier.height(PDZSpacing.space3))
+                        PDZButton(text = "Terminer", onClick = { onAction(ComposerEffectifAction.OnDoneClick) })
+                    }
                 }
             }
         }

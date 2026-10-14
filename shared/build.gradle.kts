@@ -41,6 +41,7 @@ kotlin {
             implementation(project(":feature:settings:config"))
             implementation(project(":feature:clubs:config"))
             implementation(project(":feature:deuxzero:config"))
+            implementation(project(":feature:calendrier:config"))
             implementation(project(":feature:dashboard:config"))
         }
         commonTest.dependencies {

@@ -9,4 +9,5 @@ sealed interface ComposerEffectifAction {
     data class OnNameCaptain(val utilisateurId: String, val viceCapitaine: Boolean) : ComposerEffectifAction
     data object OnMessageShown : ComposerEffectifAction
     data object OnDoneClick : ComposerEffectifAction
+    data object OnViewCalendrierClick : ComposerEffectifAction
 }

@@ -89,4 +89,9 @@ include(
     ":feature:deuxzero:data",
     ":feature:deuxzero:presentation",
     ":feature:deuxzero:config",
+
+    ":feature:calendrier:domain",
+    ":feature:calendrier:data",
+    ":feature:calendrier:presentation",
+    ":feature:calendrier:config",
 )

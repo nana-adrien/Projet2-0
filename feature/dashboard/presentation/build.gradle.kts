@@ -16,6 +16,8 @@ kotlin {
             implementation(project(":feature:clubs:presentation"))
             implementation(project(":feature:deuxzero:domain"))
             implementation(project(":feature:deuxzero:presentation"))
+            implementation(project(":feature:calendrier:domain"))
+            implementation(project(":feature:calendrier:presentation"))
         }
     }
 }

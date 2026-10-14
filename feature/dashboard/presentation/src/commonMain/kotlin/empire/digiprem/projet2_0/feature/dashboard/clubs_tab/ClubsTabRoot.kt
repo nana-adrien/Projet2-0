@@ -3,6 +3,8 @@ package empire.digiprem.projet2_0.feature.dashboard.clubs_tab
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
+import empire.digiprem.projet2_0.feature.calendrier.calendrier.CalendrierRoot
+import empire.digiprem.projet2_0.feature.calendrier.fiche_match.FicheMatchRoot
 import empire.digiprem.projet2_0.feature.clubs.create_club.CreateClubRoot
 import empire.digiprem.projet2_0.feature.clubs.gestion_club.GestionClubRoot
 import empire.digiprem.projet2_0.feature.clubs.join_club.JoinClubRoot
@@ -75,6 +77,14 @@ fun ClubsTabRoot() {
             camp = current.camp,
             clubId = current.clubId,
             onDone = { popToGestionClub() },
+            onViewCalendrier = { deuxZeroId -> push(ClubsTabScreen.Calendrier(deuxZeroId)) },
         )
+
+        is ClubsTabScreen.Calendrier -> CalendrierRoot(
+            deuxZeroId = current.deuxZeroId,
+            onMatchClick = { match -> push(ClubsTabScreen.FicheMatch(match)) },
+        )
+
+        is ClubsTabScreen.FicheMatch -> FicheMatchRoot(match = current.match)
     }
 }

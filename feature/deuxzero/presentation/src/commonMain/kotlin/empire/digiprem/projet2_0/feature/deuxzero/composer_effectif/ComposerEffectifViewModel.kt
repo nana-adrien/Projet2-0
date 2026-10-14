@@ -43,6 +43,9 @@ class ComposerEffectifViewModel(
             is ComposerEffectifAction.OnNameCaptain -> nameCaptain(action.utilisateurId, action.viceCapitaine)
             ComposerEffectifAction.OnMessageShown -> _state.update { it.copy(message = null) }
             ComposerEffectifAction.OnDoneClick -> viewModelScope.launch { _events.send(ComposerEffectifEvent.OnDone) }
+            ComposerEffectifAction.OnViewCalendrierClick -> viewModelScope.launch {
+                _state.value.camp?.deuxZeroId?.let { _events.send(ComposerEffectifEvent.OnViewCalendrier(it)) }
+            }
         }
     }
 

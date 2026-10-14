@@ -1,5 +1,6 @@
 package empire.digiprem.projet2_0.feature.dashboard.clubs_tab
 
+import empire.digiprem.projet2_0.feature.calendrier.model.Match
 import empire.digiprem.projet2_0.feature.clubs.model.MembershipRole
 import empire.digiprem.projet2_0.feature.deuxzero.model.Camp
 
@@ -17,4 +18,6 @@ sealed interface ClubsTabScreen {
     data class EngagerClub(val clubId: String) : ClubsTabScreen
     data class Repartition(val campA: Camp, val campB: Camp, val clubId: String) : ClubsTabScreen
     data class ComposerEffectif(val camp: Camp, val clubId: String) : ClubsTabScreen
+    data class Calendrier(val deuxZeroId: String) : ClubsTabScreen
+    data class FicheMatch(val match: Match) : ClubsTabScreen
 }

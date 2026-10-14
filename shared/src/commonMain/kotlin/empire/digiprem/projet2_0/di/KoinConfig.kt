@@ -2,6 +2,7 @@ package empire.digiprem.projet2_0.di
 
 import empire.digiprem.projet2_0.core.config.coreModuleData
 import empire.digiprem.projet2_0.feature.auth.config.koinAuthModule
+import empire.digiprem.projet2_0.feature.calendrier.config.koinCalendrierModule
 import empire.digiprem.projet2_0.feature.clubs.config.koinClubsModule
 import empire.digiprem.projet2_0.feature.dashboard.config.koinDashboardModule
 import empire.digiprem.projet2_0.feature.deuxzero.config.koinDeuxZeroModule
@@ -22,6 +23,7 @@ fun initKoin(config: KoinAppDeclaration? = null) {
             koinSettingsModule,
             koinClubsModule,
             koinDeuxZeroModule,
+            koinCalendrierModule,
             koinDashboardModule,
         )
     }

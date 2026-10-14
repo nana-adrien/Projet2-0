@@ -42,6 +42,7 @@ kotlin {
             implementation(project(":feature:clubs:config"))
             implementation(project(":feature:deuxzero:config"))
             implementation(project(":feature:calendrier:config"))
+            implementation(project(":feature:matchendirect:config"))
             implementation(project(":feature:dashboard:config"))
         }
         commonTest.dependencies {

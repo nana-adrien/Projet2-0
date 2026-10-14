@@ -19,5 +19,8 @@ sealed interface ClubsTabScreen {
     data class Repartition(val campA: Camp, val campB: Camp, val clubId: String) : ClubsTabScreen
     data class ComposerEffectif(val camp: Camp, val clubId: String) : ClubsTabScreen
     data class Calendrier(val deuxZeroId: String) : ClubsTabScreen
-    data class FicheMatch(val match: Match) : ClubsTabScreen
+    data class FicheMatch(val match: Match, val deuxZeroId: String) : ClubsTabScreen
+    data class Composition(val camp: Camp, val matchId: String, val deuxZeroId: String) : ClubsTabScreen
+    data class Marqueur(val matchId: String, val deuxZeroId: String) : ClubsTabScreen
+    data class SuivreEnDirect(val matchId: String, val deuxZeroId: String) : ClubsTabScreen
 }

@@ -40,7 +40,7 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun AccueilRoot(
-    onMatchClick: (match: Match) -> Unit,
+    onMatchClick: (match: Match, deuxZeroId: String) -> Unit,
     viewModel: AccueilViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -49,7 +49,7 @@ fun AccueilRoot(
 
     ObservableEvent(flow = viewModel.events) { event ->
         when (event) {
-            is AccueilEvent.OnNavigateToFicheMatch -> onMatchClick(event.match)
+            is AccueilEvent.OnNavigateToFicheMatch -> onMatchClick(event.match, event.deuxZeroId)
         }
     }
 

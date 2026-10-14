@@ -48,7 +48,11 @@ class AccueilViewModel(
             AccueilAction.OnDismissChangerDeuxZero -> _state.update { it.copy(showChangerDeuxZero = false) }
             is AccueilAction.OnSelectDeuxZero -> selectDeuxZero(action.deuxZero)
             is AccueilAction.OnRepondre -> repondre(action.reponse)
-            is AccueilAction.OnMatchClick -> viewModelScope.launch { _events.send(AccueilEvent.OnNavigateToFicheMatch(action.match)) }
+            is AccueilAction.OnMatchClick -> viewModelScope.launch {
+                _state.value.deuxZeroActuel?.id?.let { deuxZeroId ->
+                    _events.send(AccueilEvent.OnNavigateToFicheMatch(action.match, deuxZeroId))
+                }
+            }
             AccueilAction.OnMessageShown -> _state.update { it.copy(message = null) }
         }
     }

@@ -9,6 +9,7 @@ kotlin {
             api(project(":core:presentation"))
             implementation(project(":core:design_system"))
             implementation(project(":feature:calendrier:domain"))
+            implementation(project(":feature:deuxzero:domain"))
         }
     }
 }

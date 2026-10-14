@@ -13,6 +13,9 @@ import empire.digiprem.projet2_0.feature.deuxzero.composer_effectif.ComposerEffe
 import empire.digiprem.projet2_0.feature.deuxzero.create_deuxzero.CreateDeuxZeroRoot
 import empire.digiprem.projet2_0.feature.deuxzero.engager_club.EngagerClubRoot
 import empire.digiprem.projet2_0.feature.deuxzero.repartition.RepartitionRoot
+import empire.digiprem.projet2_0.feature.matchendirect.composition.CompositionRoot
+import empire.digiprem.projet2_0.feature.matchendirect.marqueur.MarqueurRoot
+import empire.digiprem.projet2_0.feature.matchendirect.suivre.SuivreEnDirectRoot
 
 @Composable
 fun ClubsTabRoot() {
@@ -82,9 +85,32 @@ fun ClubsTabRoot() {
 
         is ClubsTabScreen.Calendrier -> CalendrierRoot(
             deuxZeroId = current.deuxZeroId,
-            onMatchClick = { match -> push(ClubsTabScreen.FicheMatch(match)) },
+            onMatchClick = { match -> push(ClubsTabScreen.FicheMatch(match, current.deuxZeroId)) },
         )
 
-        is ClubsTabScreen.FicheMatch -> FicheMatchRoot(match = current.match)
+        is ClubsTabScreen.FicheMatch -> FicheMatchRoot(
+            match = current.match,
+            deuxZeroId = current.deuxZeroId,
+            onComposerEquipe = { camp, matchId, deuxZeroId -> push(ClubsTabScreen.Composition(camp, matchId, deuxZeroId)) },
+            onMarqueur = { matchId, deuxZeroId -> push(ClubsTabScreen.Marqueur(matchId, deuxZeroId)) },
+            onSuivreEnDirect = { matchId, deuxZeroId -> push(ClubsTabScreen.SuivreEnDirect(matchId, deuxZeroId)) },
+        )
+
+        is ClubsTabScreen.Composition -> CompositionRoot(
+            camp = current.camp,
+            matchId = current.matchId,
+            onDone = { pop() },
+        )
+
+        is ClubsTabScreen.Marqueur -> MarqueurRoot(
+            matchId = current.matchId,
+            deuxZeroId = current.deuxZeroId,
+            onMatchTermine = { pop() },
+        )
+
+        is ClubsTabScreen.SuivreEnDirect -> SuivreEnDirectRoot(
+            matchId = current.matchId,
+            deuxZeroId = current.deuxZeroId,
+        )
     }
 }

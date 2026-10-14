@@ -15,6 +15,7 @@ import empire.digiprem.projet2_0.feature.calendrier.usecase.ListConvocationsUseC
 import empire.digiprem.projet2_0.feature.calendrier.usecase.ModifierMatchUseCase
 import empire.digiprem.projet2_0.feature.calendrier.usecase.RelancerConvocationsUseCase
 import empire.digiprem.projet2_0.feature.calendrier.usecase.RepondreConvocationUseCase
+import empire.digiprem.projet2_0.feature.deuxzero.usecase.ListCampsUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -27,6 +28,7 @@ class FicheMatchViewModel(
     private val relancerConvocationsUseCase: RelancerConvocationsUseCase,
     private val repondreConvocationUseCase: RepondreConvocationUseCase,
     private val modifierMatchUseCase: ModifierMatchUseCase,
+    private val listCampsUseCase: ListCampsUseCase,
     private val authSessionStorage: AuthSessionStorage,
 ) : AbstractViewModel() {
 
@@ -37,7 +39,7 @@ class FicheMatchViewModel(
 
     fun onAction(action: FicheMatchAction) {
         when (action) {
-            is FicheMatchAction.OnInit -> init(action.match)
+            is FicheMatchAction.OnInit -> init(action.match, action.deuxZeroId)
             FicheMatchAction.OnRetry -> load()
             FicheMatchAction.OnGenererConvocationsClick -> genererConvocations()
             FicheMatchAction.OnRelancerClick -> relancer()
@@ -50,8 +52,8 @@ class FicheMatchViewModel(
         }
     }
 
-    private fun init(match: Match) {
-        _state.update { it.copy(match = match) }
+    private fun init(match: Match, deuxZeroId: String) {
+        _state.update { it.copy(match = match, deuxZeroId = deuxZeroId) }
         if (hasInitialized) return
         hasInitialized = true
         viewModelScope.launch { _state.update { it.copy(currentUserId = authSessionStorage.getData()?.userId) } }
@@ -60,11 +62,16 @@ class FicheMatchViewModel(
 
     private fun load() {
         val matchId = _state.value.match?.id ?: return
+        val deuxZeroId = _state.value.deuxZeroId
         _state.update { it.copy(isLoading = true, errorMessage = null) }
         viewModelScope.launch {
             listConvocationsUseCase(matchId)
                 .onSuccess { convocations -> _state.update { it.copy(isLoading = false, convocations = convocations.orEmpty()) } }
                 .onFailure { error -> _state.update { it.copy(isLoading = false, errorMessage = error.toUiText()) } }
+
+            listCampsUseCase(deuxZeroId)
+                .onSuccess { camps -> _state.update { it.copy(camps = camps.orEmpty()) } }
+                .onFailure { /* non bloquant : les boutons composition/marqueur restent simplement masqués */ }
         }
     }
 

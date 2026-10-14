@@ -5,6 +5,9 @@ object HttpConstants {
     // directement. À remplacer par l'URL de production au déploiement.
     const val BASE_URL = "http://192.168.100.28:8085/api/"
 
+    // Même hôte que BASE_URL, schéma ws:// et chemin /ws/ (CU18 — WebSocket brut, pas sous /api/).
+    const val WS_BASE_URL = "ws://192.168.100.28:8085/ws/"
+
     const val ALLOW_ANONYMOUS       = "Allow-Anonymous"
     const val ALLOW_ANONYMOUS_VALUE = "1"
     const val SUBSCRIPTION_KEY      = "Subscription-Key"

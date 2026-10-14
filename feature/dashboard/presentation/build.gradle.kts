@@ -18,6 +18,8 @@ kotlin {
             implementation(project(":feature:deuxzero:presentation"))
             implementation(project(":feature:calendrier:domain"))
             implementation(project(":feature:calendrier:presentation"))
+            implementation(project(":feature:matchendirect:domain"))
+            implementation(project(":feature:matchendirect:presentation"))
         }
     }
 }

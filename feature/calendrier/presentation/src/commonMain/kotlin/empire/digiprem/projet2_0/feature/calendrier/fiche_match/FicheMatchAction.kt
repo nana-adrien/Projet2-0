@@ -5,7 +5,7 @@ import empire.digiprem.projet2_0.feature.calendrier.model.ReponseConvocation
 import empire.digiprem.projet2_0.feature.calendrier.model.StatutMatchModifiable
 
 sealed interface FicheMatchAction {
-    data class OnInit(val match: Match) : FicheMatchAction
+    data class OnInit(val match: Match, val deuxZeroId: String) : FicheMatchAction
     data object OnRetry : FicheMatchAction
     data object OnGenererConvocationsClick : FicheMatchAction
     data object OnRelancerClick : FicheMatchAction

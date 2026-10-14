@@ -1,0 +1,18 @@
+plugins {
+    alias(libs.plugins.conventionFeature)
+}
+
+kotlin {
+    sourceSets {
+        commonMain.dependencies {
+            implementation(project(":core:domain"))
+            api(project(":core:presentation"))
+            implementation(project(":core:design_system"))
+            implementation(project(":feature:matchendirect:domain"))
+            implementation(project(":feature:calendrier:domain"))
+            implementation(project(":feature:deuxzero:domain"))
+            implementation(project(":feature:calendrier:presentation"))
+            implementation(project(":feature:deuxzero:presentation"))
+        }
+    }
+}

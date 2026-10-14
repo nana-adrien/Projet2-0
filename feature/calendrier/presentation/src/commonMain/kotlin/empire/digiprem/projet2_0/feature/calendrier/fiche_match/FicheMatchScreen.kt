@@ -43,19 +43,30 @@ import empire.digiprem.projet2_0.feature.calendrier.model.Convocation
 import empire.digiprem.projet2_0.feature.calendrier.model.Match
 import empire.digiprem.projet2_0.feature.calendrier.model.ReponseConvocation
 import empire.digiprem.projet2_0.feature.calendrier.model.StatutMatchModifiable
+import empire.digiprem.projet2_0.feature.deuxzero.model.Camp
 import kotlinx.coroutines.delay
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun FicheMatchRoot(
     match: Match,
+    deuxZeroId: String,
+    onComposerEquipe: (camp: Camp, matchId: String, deuxZeroId: String) -> Unit = { _, _, _ -> },
+    onMarqueur: (matchId: String, deuxZeroId: String) -> Unit = { _, _ -> },
+    onSuivreEnDirect: (matchId: String, deuxZeroId: String) -> Unit = { _, _ -> },
     viewModel: FicheMatchViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    LaunchedEffect(match.id) { viewModel.onAction(FicheMatchAction.OnInit(match)) }
+    LaunchedEffect(match.id, deuxZeroId) { viewModel.onAction(FicheMatchAction.OnInit(match, deuxZeroId)) }
 
-    FicheMatchScreen(state = state, onAction = viewModel::onAction)
+    FicheMatchScreen(
+        state = state,
+        onAction = viewModel::onAction,
+        onComposerEquipe = onComposerEquipe,
+        onMarqueur = onMarqueur,
+        onSuivreEnDirect = onSuivreEnDirect,
+    )
 }
 
 @Composable
@@ -63,6 +74,9 @@ fun FicheMatchScreen(
     state: FicheMatchState,
     onAction: (FicheMatchAction) -> Unit,
     modifier: Modifier = Modifier,
+    onComposerEquipe: (camp: Camp, matchId: String, deuxZeroId: String) -> Unit = { _, _, _ -> },
+    onMarqueur: (matchId: String, deuxZeroId: String) -> Unit = { _, _ -> },
+    onSuivreEnDirect: (matchId: String, deuxZeroId: String) -> Unit = { _, _ -> },
 ) {
     Box(modifier = modifier.fillMaxSize()) {
         Scaffold { padding ->
@@ -99,6 +113,37 @@ fun FicheMatchScreen(
                             onClick = { onAction(FicheMatchAction.OnShowModifierDialog) },
                         )
                         Spacer(Modifier.height(PDZSpacing.space4))
+                    }
+
+                    if (state.monCamp != null || state.estMarqueurOuSuppleant || state.peutSuivreEnDirect) {
+                        item {
+                            Text(text = "Match en direct", style = MaterialTheme.typography.titleMedium)
+                            Spacer(Modifier.height(PDZSpacing.space2))
+                            state.monCamp?.let { camp ->
+                                PDZButton(
+                                    text = "Composer l'équipe des ${camp.libelle}",
+                                    type = PDZButtonType.Secondary,
+                                    onClick = { state.match?.let { onComposerEquipe(camp, it.id, state.deuxZeroId) } },
+                                )
+                                Spacer(Modifier.height(PDZSpacing.space2))
+                            }
+                            if (state.estMarqueurOuSuppleant) {
+                                PDZButton(
+                                    text = "Marqueur du match",
+                                    type = PDZButtonType.Secondary,
+                                    onClick = { state.match?.let { onMarqueur(it.id, state.deuxZeroId) } },
+                                )
+                                Spacer(Modifier.height(PDZSpacing.space2))
+                            }
+                            if (state.peutSuivreEnDirect) {
+                                PDZButton(
+                                    text = "Suivre en direct",
+                                    type = PDZButtonType.Secondary,
+                                    onClick = { state.match?.let { onSuivreEnDirect(it.id, state.deuxZeroId) } },
+                                )
+                            }
+                            Spacer(Modifier.height(PDZSpacing.space4))
+                        }
                     }
 
                     state.maConvocation?.let { maConvocation ->

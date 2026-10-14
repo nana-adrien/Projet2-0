@@ -1,10 +1,8 @@
 package empire.digiprem.projet2_0.feature.calendrier.calendrier
 
+import empire.digiprem.projet2_0.core.domain.util.todayIso
 import empire.digiprem.projet2_0.core.presentation.extension.UiText
 import empire.digiprem.projet2_0.feature.calendrier.model.Match
-import kotlinx.datetime.Clock
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.todayIn
 
 enum class CalendrierFiltre { A_VENIR, PASSES }
 
@@ -24,7 +22,7 @@ data class CalendrierState(
 ) {
     val matchsFiltres: List<Match>
         get() {
-            val aujourdHui = Clock.System.todayIn(TimeZone.currentSystemDefault()).toString()
+            val aujourdHui = todayIso()
             return matchs.filter { match ->
                 val estPasse = match.date < aujourdHui || match.statut == STATUT_ANNULE
                 if (filtre == CalendrierFiltre.A_VENIR) !estPasse else estPasse

@@ -15,6 +15,7 @@ dependencies {
     implementation(project(":server:notifications"))
     implementation(project(":server:clubs"))
     implementation(project(":server:deuxzero"))
+    implementation(project(":server:calendrier"))
     implementation(libs.spring.boot.starter.data.jpa)
     //implementation(libs.spring.springdoc.openapi)
 

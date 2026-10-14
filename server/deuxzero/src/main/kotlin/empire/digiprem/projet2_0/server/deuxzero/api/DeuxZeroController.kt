@@ -26,6 +26,9 @@ class DeuxZeroController(
     fun create(@RequestBody body: CreateDeuxZeroRequest) =
         deuxZeroService.createDeuxZero(userId(), body).toApiResponse()
 
+    @GetMapping("/mine")
+    fun listMesDeuxZero() = deuxZeroService.listMesDeuxZero(userId()).toApiResponse()
+
     @PostMapping("/engage")
     fun engageClub(@RequestBody body: EngageClubRequest) =
         deuxZeroService.engageClub(userId(), body).toApiResponse()

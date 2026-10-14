@@ -19,6 +19,7 @@ import empire.digiprem.projet2_0.server.deuxzero.infra.entity.DeuxZeroEntity
 import empire.digiprem.projet2_0.server.deuxzero.infra.entity.SaisonEntity
 import empire.digiprem.projet2_0.server.deuxzero.infra.repository.CampRepository
 import empire.digiprem.projet2_0.server.deuxzero.infra.repository.DeuxZeroRepository
+import empire.digiprem.projet2_0.server.deuxzero.infra.repository.EffectifEngageRepository
 import empire.digiprem.projet2_0.server.deuxzero.infra.repository.SaisonRepository
 import empire.digiprem.projet2_0.server.user.infra.repository.UserRepository
 import jakarta.transaction.Transactional
@@ -43,6 +44,7 @@ class DeuxZeroService(
     private val clubRepository: ClubRepository,
     private val adhesionClubRepository: AdhesionClubRepository,
     private val userRepository: UserRepository,
+    private val effectifEngageRepository: EffectifEngageRepository,
 ) {
 
     @Transactional
@@ -144,6 +146,19 @@ class DeuxZeroService(
             val clubNom = camp.clubId?.let { clubRepository.findById(it).map { c -> c.nom }.orElse(null) }
             camp.toDto(clubNom)
         }
+
+    /** Pas un CU numéroté — nécessaire pour atteindre un 2-0 sans le faire transiter par la
+     * navigation mobile (E05/E06). Un 2-0 est "mien" si j'en suis l'organisateur, le capitaine ou
+     * le vice-capitaine d'un camp, ou un membre actif de l'effectif engagé d'un camp. */
+    fun listMesDeuxZero(userId: UUID): List<DeuxZeroDto> {
+        val organises = deuxZeroRepository.findAllByOrganisateurId(userId).mapNotNull { it.id }
+        val capitaine = campRepository.findAllByCapitaineIdOrViceCapitaineId(userId, userId).map { it.deuxZeroId }
+        val joueur = effectifEngageRepository.findAllByUtilisateurIdAndDateSortieIsNull(userId)
+            .mapNotNull { campRepository.findById(it.campId).map { camp -> camp.deuxZeroId }.orElse(null) }
+
+        val deuxZeroIds = (organises + capitaine + joueur).distinct()
+        return deuxZeroRepository.findAllById(deuxZeroIds).map { it.toDto() }
+    }
 
     /** CU13 — ne s'applique qu'aux matchs à venir (contrôlé au moment de la saisie des matchs, Jalon 2/3). */
     @Transactional

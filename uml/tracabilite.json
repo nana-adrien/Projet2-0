@@ -162,20 +162,22 @@
     "CU17": {
       "nom": "Saisir les événements en direct",
       "groupe": "saisie_directe",
-      "modules": { "serveur": "", "kmp": "" },
+      "modules": { "serveur": "server:calendrier", "kmp": "" },
       "elements": { "domain": ["Evenement", "Match"] },
       "regles": ["RG-10", "RG-11"],
-      "ecrans": [],
-      "statut": "a_completer"
+      "ecrans": ["E10", "E11"],
+      "statut": "serveur_fait_mobile_a_faire",
+      "note": "Serveur : EvenementService/MatchEnDirectController (/api/v1/matchs/{id}/demarrer, /evenements, /evenements/annuler-dernier, /mi-temps, /terminer). Résout la lacune UML 'evenement : aucune référence au joueur ni au camp' (migration V2, même commit que CU16) — EvenementEntity.campId/joueurId/joueurSecondaireId. F-LIV-03 (but, 3 touches max) et score auto-calculé (BUT/PENALTY_MARQUE crédite le camp désigné, BUT_CONTRE_SON_CAMP crédite l'adversaire). F-LIV-04 (annuler le dernier événement, avec correction du score et notification rectificative) vérifié par curl. F-LIV-06 (dédoublonnage par clientEventId pour la resynchronisation hors connexion) vérifié par curl : renvoi du même clientEventId -> aucun doublon, score inchangé. RG-11 (seul le marqueur désigné ou son suppléant) vérifié : 403 pour un capitaine non désigné marqueur. Diffusion temps réel via CU18 (MatchEnDirectBroadcaster/WebSocket) à chaque changement d'état. Non implémenté (différé) : mode hors connexion CÔTÉ MOBILE (file locale, F-LIV-06 section 9.1 — seul le dédoublonnage serveur est prêt), passage de relais marqueur->suppléant (F-LIV-08, le suppléant PEUT déjà saisir via RG-11 mais aucune UX de 'reprise' dédiée), saisie a posteriori (F-LIV-10, A3), joueur occasionnel en dépannage (F-EFF-06). Mobile (E10 marqueur, E11 qui a marqué, E29 hors connexion) pas encore construit."
     },
     "CU18": {
       "nom": "Suivre un match en direct",
       "groupe": "saisie_directe",
-      "modules": { "serveur": "", "kmp": "" },
+      "modules": { "serveur": "server:calendrier", "kmp": "" },
       "elements": { "domain": ["Match", "Evenement", "Notification"] },
       "regles": [],
-      "ecrans": [],
-      "statut": "a_completer"
+      "ecrans": ["E12"],
+      "statut": "serveur_fait_mobile_a_faire",
+      "note": "Serveur : WebSocket brut (pas STOMP, compatible client Ktor) sur /ws/matchs/{matchId} — MatchEnDirectWebSocketHandler/MatchEnDirectBroadcaster, diffusion en mémoire uniquement (une seule instance serveur, pas de Redis/pub-sub, limite assumée). Authentification par le même filtre JWT que le reste de l'API (en-tête Authorization pendant le handshake). Vérifié par un script de test WebSocket réel : état initial reçu à la connexion, puis diffusion reçue en direct suite à un événement ajouté via REST pendant que le socket restait ouvert. F-NOT-01 à 05 (granularité des notifications, regroupement, lien profond) non implémentées : seules les notifications déjà existantes (NotificationEntity, in-app) sont envoyées à chaque événement/correction/coup d'envoi/fin de match, sans préférences par type ni regroupement — vrai push OS (FCM/APNs) hors scope, aucune infra de push réelle dans le projet à ce jour. Mobile (E12, écran de suivi en direct) pas encore construit."
     },
     "CU19": {
       "nom": "Valider / contester un résultat",

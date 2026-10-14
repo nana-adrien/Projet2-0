@@ -16,6 +16,7 @@ import empire.digiprem.projet2_0.feature.calendrier.usecase.ModifierMatchUseCase
 import empire.digiprem.projet2_0.feature.calendrier.usecase.RelancerConvocationsUseCase
 import empire.digiprem.projet2_0.feature.calendrier.usecase.RepondreConvocationUseCase
 import empire.digiprem.projet2_0.feature.deuxzero.usecase.ListCampsUseCase
+import empire.digiprem.projet2_0.feature.deuxzero.usecase.ListMesDeuxZeroUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -29,6 +30,7 @@ class FicheMatchViewModel(
     private val repondreConvocationUseCase: RepondreConvocationUseCase,
     private val modifierMatchUseCase: ModifierMatchUseCase,
     private val listCampsUseCase: ListCampsUseCase,
+    private val listMesDeuxZeroUseCase: ListMesDeuxZeroUseCase,
     private val authSessionStorage: AuthSessionStorage,
 ) : AbstractViewModel() {
 
@@ -72,6 +74,14 @@ class FicheMatchViewModel(
             listCampsUseCase(deuxZeroId)
                 .onSuccess { camps -> _state.update { it.copy(camps = camps.orEmpty()) } }
                 .onFailure { /* non bloquant : les boutons composition/marqueur restent simplement masqués */ }
+
+            val currentUserId = _state.value.currentUserId
+            listMesDeuxZeroUseCase()
+                .onSuccess { deuxZeros ->
+                    val estOrganisateur = deuxZeros.orEmpty().any { it.id == deuxZeroId && it.organisateurId == currentUserId }
+                    _state.update { it.copy(suisOrganisateur = estOrganisateur) }
+                }
+                .onFailure { /* non bloquant : le bouton d'arbitrage reste simplement masqué */ }
         }
     }
 

@@ -16,6 +16,9 @@ import empire.digiprem.projet2_0.feature.deuxzero.repartition.RepartitionRoot
 import empire.digiprem.projet2_0.feature.matchendirect.composition.CompositionRoot
 import empire.digiprem.projet2_0.feature.matchendirect.marqueur.MarqueurRoot
 import empire.digiprem.projet2_0.feature.matchendirect.suivre.SuivreEnDirectRoot
+import empire.digiprem.projet2_0.feature.validation.contester.ContesterRoot
+import empire.digiprem.projet2_0.feature.validation.litige.LitigeRoot
+import empire.digiprem.projet2_0.feature.validation.resultat.ResultatRoot
 
 @Composable
 fun ClubsTabRoot() {
@@ -94,6 +97,8 @@ fun ClubsTabRoot() {
             onComposerEquipe = { camp, matchId, deuxZeroId -> push(ClubsTabScreen.Composition(camp, matchId, deuxZeroId)) },
             onMarqueur = { matchId, deuxZeroId -> push(ClubsTabScreen.Marqueur(matchId, deuxZeroId)) },
             onSuivreEnDirect = { matchId, deuxZeroId -> push(ClubsTabScreen.SuivreEnDirect(matchId, deuxZeroId)) },
+            onValiderResultat = { camp, matchId, deuxZeroId -> push(ClubsTabScreen.Resultat(camp, matchId, deuxZeroId)) },
+            onArbitrerLitige = { matchId, deuxZeroId -> push(ClubsTabScreen.Litige(matchId, deuxZeroId)) },
         )
 
         is ClubsTabScreen.Composition -> CompositionRoot(
@@ -111,6 +116,24 @@ fun ClubsTabRoot() {
         is ClubsTabScreen.SuivreEnDirect -> SuivreEnDirectRoot(
             matchId = current.matchId,
             deuxZeroId = current.deuxZeroId,
+        )
+
+        is ClubsTabScreen.Resultat -> ResultatRoot(
+            camp = current.camp,
+            matchId = current.matchId,
+            deuxZeroId = current.deuxZeroId,
+            onContester = { push(ClubsTabScreen.Contester(current.matchId, current.deuxZeroId)) },
+        )
+
+        is ClubsTabScreen.Contester -> ContesterRoot(
+            matchId = current.matchId,
+            onEnvoye = { pop() },
+        )
+
+        is ClubsTabScreen.Litige -> LitigeRoot(
+            matchId = current.matchId,
+            deuxZeroId = current.deuxZeroId,
+            onTranche = { pop() },
         )
     }
 }

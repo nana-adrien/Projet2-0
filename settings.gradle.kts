@@ -100,4 +100,9 @@ include(
     ":feature:matchendirect:data",
     ":feature:matchendirect:presentation",
     ":feature:matchendirect:config",
+
+    ":feature:validation:domain",
+    ":feature:validation:data",
+    ":feature:validation:presentation",
+    ":feature:validation:config",
 )

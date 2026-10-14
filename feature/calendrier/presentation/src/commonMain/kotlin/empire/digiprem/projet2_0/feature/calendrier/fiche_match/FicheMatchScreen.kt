@@ -54,6 +54,8 @@ fun FicheMatchRoot(
     onComposerEquipe: (camp: Camp, matchId: String, deuxZeroId: String) -> Unit = { _, _, _ -> },
     onMarqueur: (matchId: String, deuxZeroId: String) -> Unit = { _, _ -> },
     onSuivreEnDirect: (matchId: String, deuxZeroId: String) -> Unit = { _, _ -> },
+    onValiderResultat: (camp: Camp, matchId: String, deuxZeroId: String) -> Unit = { _, _, _ -> },
+    onArbitrerLitige: (matchId: String, deuxZeroId: String) -> Unit = { _, _ -> },
     viewModel: FicheMatchViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -66,6 +68,8 @@ fun FicheMatchRoot(
         onComposerEquipe = onComposerEquipe,
         onMarqueur = onMarqueur,
         onSuivreEnDirect = onSuivreEnDirect,
+        onValiderResultat = onValiderResultat,
+        onArbitrerLitige = onArbitrerLitige,
     )
 }
 
@@ -77,6 +81,8 @@ fun FicheMatchScreen(
     onComposerEquipe: (camp: Camp, matchId: String, deuxZeroId: String) -> Unit = { _, _, _ -> },
     onMarqueur: (matchId: String, deuxZeroId: String) -> Unit = { _, _ -> },
     onSuivreEnDirect: (matchId: String, deuxZeroId: String) -> Unit = { _, _ -> },
+    onValiderResultat: (camp: Camp, matchId: String, deuxZeroId: String) -> Unit = { _, _, _ -> },
+    onArbitrerLitige: (matchId: String, deuxZeroId: String) -> Unit = { _, _ -> },
 ) {
     Box(modifier = modifier.fillMaxSize()) {
         Scaffold { padding ->
@@ -115,7 +121,7 @@ fun FicheMatchScreen(
                         Spacer(Modifier.height(PDZSpacing.space4))
                     }
 
-                    if (state.monCamp != null || state.estMarqueurOuSuppleant || state.peutSuivreEnDirect) {
+                    if (state.monCamp != null || state.estMarqueurOuSuppleant || state.peutSuivreEnDirect || state.peutValiderResultat || state.peutArbitrerLitige) {
                         item {
                             Text(text = "Match en direct", style = MaterialTheme.typography.titleMedium)
                             Spacer(Modifier.height(PDZSpacing.space2))
@@ -140,6 +146,21 @@ fun FicheMatchScreen(
                                     text = "Suivre en direct",
                                     type = PDZButtonType.Secondary,
                                     onClick = { state.match?.let { onSuivreEnDirect(it.id, state.deuxZeroId) } },
+                                )
+                                Spacer(Modifier.height(PDZSpacing.space2))
+                            }
+                            if (state.peutValiderResultat) {
+                                PDZButton(
+                                    text = "Valider le résultat",
+                                    onClick = { val camp = state.monCamp; val match = state.match; if (camp != null && match != null) onValiderResultat(camp, match.id, state.deuxZeroId) },
+                                )
+                                Spacer(Modifier.height(PDZSpacing.space2))
+                            }
+                            if (state.peutArbitrerLitige) {
+                                PDZButton(
+                                    text = "Arbitrer le litige",
+                                    type = PDZButtonType.Secondary,
+                                    onClick = { state.match?.let { onArbitrerLitige(it.id, state.deuxZeroId) } },
                                 )
                             }
                             Spacer(Modifier.height(PDZSpacing.space4))

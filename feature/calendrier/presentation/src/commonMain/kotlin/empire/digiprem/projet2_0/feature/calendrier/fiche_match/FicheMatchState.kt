@@ -12,6 +12,7 @@ data class FicheMatchState(
     val deuxZeroId: String = "",
     val convocations: List<Convocation> = emptyList(),
     val camps: List<Camp> = emptyList(),
+    val suisOrganisateur: Boolean = false,
     val currentUserId: String? = null,
     val isLoading: Boolean = true,
     val isActionLoading: Boolean = false,
@@ -30,6 +31,12 @@ data class FicheMatchState(
 
     val peutSuivreEnDirect: Boolean
         get() = match?.statut in setOf("EN_COURS", "EN_ATTENTE_DE_VALIDATION", "OFFICIEL", "EN_LITIGE")
+
+    val peutValiderResultat: Boolean
+        get() = match?.statut == "EN_ATTENTE_DE_VALIDATION" && monCamp != null
+
+    val peutArbitrerLitige: Boolean
+        get() = match?.statut == "EN_LITIGE" && suisOrganisateur
 
     val convocationsTriees: List<Convocation>
         get() = convocations.sortedBy {

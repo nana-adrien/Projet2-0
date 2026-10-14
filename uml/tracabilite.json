@@ -182,20 +182,22 @@
     "CU19": {
       "nom": "Valider / contester un résultat",
       "groupe": "validation",
-      "modules": { "serveur": "", "kmp": "" },
+      "modules": { "serveur": "", "kmp": "feature:validation" },
       "elements": { "domain": ["Validation", "Match"] },
       "regles": ["RG-12", "RG-13", "RG-15"],
-      "ecrans": [],
-      "statut": "a_completer"
+      "ecrans": ["E14", "E15"],
+      "statut": "kmp_fait_serveur_en_cours",
+      "note": "Mobile (E14 résultat à valider + E15 contester, feature:validation) construit en parallèle du serveur (Jalon 4 en cours sur un autre chantier) : domain/presentation stables (Validation.campId/signataireId, DecisionValidation, mode 'réponse à une contestation' sur E14 quand le camp adverse a proposé une correction non traitée), mais la couche data (routes v1/matchs/{id}/resultat-a-valider, /valider, /contester, /repondre-contestation et leurs payloads JSON) est un contrat mobile-side best-guess à ajuster dès que le serveur CU19 est disponible — c'est précisément ce que l'architecture en couches isole à ValidationKtorDataSource/ValidationDtos. E15 simplifie la correction structurée (type d'erreur + événement + 'bon joueur' en texte libre) en une seule String côté transport, conforme au type UML de Validation.correctionProposee. Scope volontairement limité aux matchs DEUX_ZERO (le cas AMICAL/RG-15 dépend de CU21, pas encore modélisé pour le camp — cf. analyse KNA)."
     },
     "CU20": {
       "nom": "Arbitrer un litige",
       "groupe": "validation",
-      "modules": { "serveur": "", "kmp": "" },
+      "modules": { "serveur": "", "kmp": "feature:validation" },
       "elements": { "domain": ["Validation", "Match"] },
       "regles": ["RG-13"],
-      "ecrans": [],
-      "statut": "a_completer"
+      "ecrans": ["E16"],
+      "statut": "kmp_fait_serveur_en_cours",
+      "note": "Mobile (E16 arbitrer un litige, feature:validation) : accès réservé à l'organisateur du 2-0 (résolu via ListMesDeuxZeroUseCase, DeuxZero.organisateurId — pas de usecase dédié 'get par id'), bannière définitive, chronologie des événements saisis + les deux Validation (CONTESTE) affichées comme 'correction proposée' / 'réponse de refus', trois décisions (garder/corriger/annuler) avec motif obligatoire. Même réserve que CU19 : route v1/matchs/{id}/trancher-litige et payload sont un contrat mobile-side provisoire en attente du serveur Jalon 4."
     },
     "CU21": {
       "nom": "Organiser un match amical",

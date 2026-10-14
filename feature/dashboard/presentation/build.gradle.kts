@@ -20,6 +20,8 @@ kotlin {
             implementation(project(":feature:calendrier:presentation"))
             implementation(project(":feature:matchendirect:domain"))
             implementation(project(":feature:matchendirect:presentation"))
+            implementation(project(":feature:validation:domain"))
+            implementation(project(":feature:validation:presentation"))
         }
     }
 }

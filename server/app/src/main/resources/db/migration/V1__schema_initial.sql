@@ -8,7 +8,9 @@
 --   - vote : aucune référence au votant ni au candidat -> Jalon 5 (CU24).
 --   - match : marqueur suppléant non modélisé (seul le marqueur principal a une relation) -> Jalon 3 (CU16).
 --   - signalement : aucune référence polymorphe vers le contenu signalé (club/match/utilisateur) -> Jalon 6 (CU27).
--- Ces 5 lacunes seront proposées à l'utilisateur puis répercutées dans le diagramme de classes avant d'être
+--   - match : motif de report/annulation (F-CAL-03) jamais persisté, seulement notifié -> aucun historique
+--     consultable de la raison d'un report/annulation ; à ajouter si ce besoin produit se confirme (Jalon 3+).
+-- Ces 6 lacunes seront proposées à l'utilisateur puis répercutées dans le diagramme de classes avant d'être
 -- traduites en colonnes/migrations complémentaires (V2+).
 
 -- =========================================================================

@@ -204,7 +204,7 @@ private fun StepCalendrier(state: CreateDeuxZeroState, onAction: (CreateDeuxZero
             FilterChip(
                 selected = jour in state.joursHabituels,
                 onClick = { onAction(CreateDeuxZeroAction.OnToggleJour(jour)) },
-                label = { Text(jour.take(3)) },
+                label = { Text(JOUR_LABEL[jour] ?: jour) },
             )
         }
     }
@@ -214,7 +214,7 @@ private fun StepCalendrier(state: CreateDeuxZeroState, onAction: (CreateDeuxZero
             FilterChip(
                 selected = jour in state.joursHabituels,
                 onClick = { onAction(CreateDeuxZeroAction.OnToggleJour(jour)) },
-                label = { Text(jour.take(3)) },
+                label = { Text(JOUR_LABEL[jour] ?: jour) },
             )
         }
     }

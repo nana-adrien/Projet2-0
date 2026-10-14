@@ -4,7 +4,19 @@ import empire.digiprem.projet2_0.core.presentation.extension.UiText
 import empire.digiprem.projet2_0.feature.deuxzero.model.Camp
 import empire.digiprem.projet2_0.feature.deuxzero.model.DeuxZeroVisibilite
 
-val JOURS_SEMAINE = listOf("LUNDI", "MARDI", "MERCREDI", "JEUDI", "VENDREDI", "SAMEDI", "DIMANCHE")
+/** Valeurs envoyées au serveur = noms exacts de java.time.DayOfWeek (CalendrierService.genererCalendrier
+ * fait DayOfWeek.valueOf(jour)) — jamais de libellé français ici, affiché séparément via [JOUR_LABEL]. */
+val JOURS_SEMAINE = listOf("MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY")
+
+val JOUR_LABEL = mapOf(
+    "MONDAY" to "Lun",
+    "TUESDAY" to "Mar",
+    "WEDNESDAY" to "Mer",
+    "THURSDAY" to "Jeu",
+    "FRIDAY" to "Ven",
+    "SATURDAY" to "Sam",
+    "SUNDAY" to "Dim",
+)
 
 /** E24 — Créer un 2-0, assistant en 5 étapes (CU8). */
 data class CreateDeuxZeroState(

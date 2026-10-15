@@ -3,6 +3,7 @@ package empire.digiprem.projet2_0.feature.deuxzero.datasource
 import empire.digiprem.projet2_0.contracts.base.ApiResponseWithPayload
 import empire.digiprem.projet2_0.core.data.networking.get
 import empire.digiprem.projet2_0.core.data.networking.post
+import empire.digiprem.projet2_0.core.data.networking.put
 import empire.digiprem.projet2_0.core.domain.network.DataError
 import empire.digiprem.projet2_0.core.domain.util.Result
 import empire.digiprem.projet2_0.core.domain.util.map
@@ -16,12 +17,14 @@ import empire.digiprem.projet2_0.feature.deuxzero.dto.NommerCapitaineRequest
 import empire.digiprem.projet2_0.feature.deuxzero.dto.OpenSaisonRequest
 import empire.digiprem.projet2_0.feature.deuxzero.dto.SaisonDto
 import empire.digiprem.projet2_0.feature.deuxzero.dto.TransferPlayerRequest
+import empire.digiprem.projet2_0.feature.deuxzero.dto.UpdateDeuxZeroSettingsRequest
 import empire.digiprem.projet2_0.feature.deuxzero.mapper.toDomain
 import empire.digiprem.projet2_0.feature.deuxzero.model.Camp
 import empire.digiprem.projet2_0.feature.deuxzero.model.CreateDeuxZeroInput
 import empire.digiprem.projet2_0.feature.deuxzero.model.DeuxZero
 import empire.digiprem.projet2_0.feature.deuxzero.model.Effectif
 import empire.digiprem.projet2_0.feature.deuxzero.model.Saison
+import empire.digiprem.projet2_0.feature.deuxzero.model.UpdateDeuxZeroSettingsInput
 import io.ktor.client.HttpClient
 
 class DeuxZeroKtorDataSource(private val client: HttpClient) : IDeuxZeroDataSource {
@@ -67,6 +70,20 @@ class DeuxZeroKtorDataSource(private val client: HttpClient) : IDeuxZeroDataSour
         client.post<NommerCapitaineRequest, ApiResponseWithPayload<CampDto>>(
             route = "v1/deuxzero/camps/$campId/capitaine",
             body = NommerCapitaineRequest(utilisateurId, viceCapitaine),
+        ).map { it.payload?.toDomain() }
+
+    override suspend fun updateSettings(deuxZeroId: String, input: UpdateDeuxZeroSettingsInput): Result<DeuxZero?, DataError.Remote> =
+        client.put<UpdateDeuxZeroSettingsRequest, ApiResponseWithPayload<DeuxZeroDto>>(
+            route = "v1/deuxzero/$deuxZeroId/settings",
+            body = UpdateDeuxZeroSettingsRequest(
+                dureeMiTempsMinutes = input.dureeMiTempsMinutes,
+                joursHabituels = input.joursHabituels,
+                heureHabituelle = input.heureHabituelle,
+                delaiValidationAutomatiqueHeures = input.delaiValidationAutomatiqueHeures,
+                transfertsAutorisesParSaison = input.transfertsAutorisesParSaison,
+                visibilite = input.visibilite?.name,
+                statut = input.statut,
+            ),
         ).map { it.payload?.toDomain() }
 
     override suspend fun transferOrganisateur(deuxZeroId: String, targetUserId: String): Result<DeuxZero?, DataError.Remote> =

@@ -31,6 +31,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import empire.digiprem.projet2_0.core.design_system.components.avatar.AppAvatar
 import empire.digiprem.projet2_0.core.design_system.components.buttons.PDZButton
 import empire.digiprem.projet2_0.core.design_system.components.buttons.PDZButtonType
+import empire.digiprem.projet2_0.core.design_system.components.dialog.PDZConfirmDialog
 import empire.digiprem.projet2_0.core.design_system.components.feedback.PDZToast
 import empire.digiprem.projet2_0.core.design_system.components.list.AppListRow
 import empire.digiprem.projet2_0.core.design_system.components.states.PDZLoadingSpinner
@@ -89,8 +90,10 @@ fun ComposerEffectifScreen(
                         EffectifRow(
                             effectif = effectif,
                             camp = state.camp,
+                            autreCampLibelle = state.autreCamp?.libelle,
                             onNameCaptain = { onAction(ComposerEffectifAction.OnNameCaptain(effectif.utilisateurId, false)) },
                             onNameViceCaptain = { onAction(ComposerEffectifAction.OnNameCaptain(effectif.utilisateurId, true)) },
+                            onTransferClick = { onAction(ComposerEffectifAction.OnTransferClick(effectif)) },
                         )
                     }
 
@@ -133,14 +136,28 @@ fun ComposerEffectifScreen(
             )
         }
     }
+
+    if (state.showTransferDialog && state.transferTarget != null && state.autreCamp != null) {
+        PDZConfirmDialog(
+            title = "Transférer ce joueur ?",
+            message = "${state.transferTarget.pseudo} rejoindra ${state.autreCamp.libelle}. Ses statistiques passées restent attribuées à ${state.camp?.libelle.orEmpty()}.",
+            onConfirm = { onAction(ComposerEffectifAction.OnConfirmTransfer) },
+            onCancel = { onAction(ComposerEffectifAction.OnDismissTransferDialog) },
+            onDismiss = { onAction(ComposerEffectifAction.OnDismissTransferDialog) },
+            confirmText = "Transférer",
+            cancelText = "Annuler",
+        )
+    }
 }
 
 @Composable
 private fun EffectifRow(
     effectif: Effectif,
     camp: Camp?,
+    autreCampLibelle: String?,
     onNameCaptain: () -> Unit,
     onNameViceCaptain: () -> Unit,
+    onTransferClick: () -> Unit,
 ) {
     var menuExpanded by remember { mutableStateOf(false) }
     val estCapitaine = camp?.capitaineId == effectif.utilisateurId
@@ -164,6 +181,12 @@ private fun EffectifRow(
                 DropdownMenu(expanded = menuExpanded, onDismissRequest = { menuExpanded = false }) {
                     DropdownMenuItem(text = { Text("Nommer capitaine") }, onClick = { menuExpanded = false; onNameCaptain() })
                     DropdownMenuItem(text = { Text("Nommer vice-capitaine") }, onClick = { menuExpanded = false; onNameViceCaptain() })
+                    if (autreCampLibelle != null) {
+                        DropdownMenuItem(
+                            text = { Text("Transférer vers $autreCampLibelle") },
+                            onClick = { menuExpanded = false; onTransferClick() },
+                        )
+                    }
                 }
             }
         },

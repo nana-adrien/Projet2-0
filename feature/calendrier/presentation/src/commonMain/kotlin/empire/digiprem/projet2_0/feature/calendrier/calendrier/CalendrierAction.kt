@@ -11,4 +11,5 @@ sealed interface CalendrierAction {
     data object OnDismissAjouterMatchDialog : CalendrierAction
     data class OnAjouterMatchConfirm(val date: String, val heure: String, val lieu: String?) : CalendrierAction
     data class OnMatchClick(val match: Match) : CalendrierAction
+    data object OnParametresClick : CalendrierAction
 }

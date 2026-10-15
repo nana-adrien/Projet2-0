@@ -1,6 +1,7 @@
 package empire.digiprem.projet2_0.feature.calendrier.calendrier
 
 import androidx.lifecycle.viewModelScope
+import empire.digiprem.projet2_0.core.domain.service.AuthSessionStorage
 import empire.digiprem.projet2_0.core.domain.util.onFailure
 import empire.digiprem.projet2_0.core.domain.util.onSuccess
 import empire.digiprem.projet2_0.core.presentation.util.AbstractViewModel
@@ -8,6 +9,7 @@ import empire.digiprem.projet2_0.feature.calendrier.extension.toUiText
 import empire.digiprem.projet2_0.feature.calendrier.usecase.AjouterMatchExceptionnelUseCase
 import empire.digiprem.projet2_0.feature.calendrier.usecase.GenererCalendrierUseCase
 import empire.digiprem.projet2_0.feature.calendrier.usecase.ListMatchsUseCase
+import empire.digiprem.projet2_0.feature.deuxzero.usecase.ListMesDeuxZeroUseCase
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -20,6 +22,8 @@ class CalendrierViewModel(
     private val listMatchsUseCase: ListMatchsUseCase,
     private val genererCalendrierUseCase: GenererCalendrierUseCase,
     private val ajouterMatchExceptionnelUseCase: AjouterMatchExceptionnelUseCase,
+    private val listMesDeuxZeroUseCase: ListMesDeuxZeroUseCase,
+    private val authSessionStorage: AuthSessionStorage,
 ) : AbstractViewModel() {
 
     private val _state = MutableStateFlow(CalendrierState())
@@ -42,6 +46,9 @@ class CalendrierViewModel(
             is CalendrierAction.OnMatchClick -> viewModelScope.launch {
                 _events.send(CalendrierEvent.OnNavigateToFicheMatch(action.match))
             }
+            CalendrierAction.OnParametresClick -> viewModelScope.launch {
+                _events.send(CalendrierEvent.OnNavigateToParametres(_state.value.deuxZeroId))
+            }
         }
     }
 
@@ -49,6 +56,7 @@ class CalendrierViewModel(
         _state.update { it.copy(deuxZeroId = deuxZeroId) }
         if (hasInitialized) return
         hasInitialized = true
+        viewModelScope.launch { _state.update { it.copy(currentUserId = authSessionStorage.getData()?.userId) } }
         load()
     }
 
@@ -59,6 +67,14 @@ class CalendrierViewModel(
             listMatchsUseCase(deuxZeroId)
                 .onSuccess { matchs -> _state.update { it.copy(isLoading = false, matchs = matchs.orEmpty()) } }
                 .onFailure { error -> _state.update { it.copy(isLoading = false, errorMessage = error.toUiText()) } }
+
+            val currentUserId = _state.value.currentUserId
+            listMesDeuxZeroUseCase()
+                .onSuccess { deuxZeros ->
+                    val estOrganisateur = deuxZeros.orEmpty().any { it.id == deuxZeroId && it.organisateurId == currentUserId }
+                    _state.update { it.copy(peutModifierParametres = estOrganisateur) }
+                }
+                .onFailure { /* non bloquant : le bouton "Paramètres" reste simplement masqué */ }
         }
     }
 

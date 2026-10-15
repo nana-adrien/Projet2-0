@@ -8,6 +8,7 @@ import empire.digiprem.projet2_0.feature.deuxzero.model.CreateDeuxZeroInput
 import empire.digiprem.projet2_0.feature.deuxzero.model.DeuxZero
 import empire.digiprem.projet2_0.feature.deuxzero.model.Effectif
 import empire.digiprem.projet2_0.feature.deuxzero.model.Saison
+import empire.digiprem.projet2_0.feature.deuxzero.model.UpdateDeuxZeroSettingsInput
 
 class DeuxZeroRepository(
     private val dataSource: IDeuxZeroDataSource,
@@ -27,6 +28,9 @@ class DeuxZeroRepository(
 
     override suspend fun nommerCapitaine(campId: String, utilisateurId: String, viceCapitaine: Boolean): Result<Camp?, DataError.Remote> =
         dataSource.nommerCapitaine(campId, utilisateurId, viceCapitaine)
+
+    override suspend fun updateSettings(deuxZeroId: String, input: UpdateDeuxZeroSettingsInput): Result<DeuxZero?, DataError.Remote> =
+        dataSource.updateSettings(deuxZeroId, input)
 
     override suspend fun transferOrganisateur(deuxZeroId: String, targetUserId: String): Result<DeuxZero?, DataError.Remote> =
         dataSource.transferOrganisateur(deuxZeroId, targetUserId)

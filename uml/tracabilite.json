@@ -226,7 +226,7 @@
       "groupe": "effectifs",
       "modules": {
         "serveur": "server:deuxzero",
-        "kmp": ""
+        "kmp": "feature:deuxzero"
       },
       "elements": {
         "domain": [
@@ -239,8 +239,8 @@
         "RG-09"
       ],
       "ecrans": [],
-      "statut": "serveur_fait_mobile_a_faire",
-      "note": "Limite de transferts autorisés par saison (DeuxZero.transfertsAutorisesParSaison) non encore comptée/vérifiée — à faire avant d'exposer cet écran. Pas d'écran dédié dans les maquettes (E01-E29) ; aucun écran mobile construit ce jalon (TransferPlayerUseCase existe côté mobile, non câblé à un écran)."
+      "statut": "fait",
+      "note": "Mobile câblé dans feature:deuxzero:presentation/composer_effectif (ComposerEffectifScreen) : menu \"Transférer vers <autre camp>\" sur chaque joueur, confirmation, TransferPlayerUseCase (déjà existant, non câblé avant ce jalon). Scope : transfert au sein du même 2-0 uniquement (les deux camps) ; le transfert vers un club différent (alt de la fiche CU11) est hors scope, aucun écran dédié dans les maquettes. Limite de transferts autorisés par saison (DeuxZero.transfertsAutorisesParSaison) toujours NON vérifiée côté serveur (cf. note CU13) : le mobile ne bloque donc pas ce cas, qui remonterait comme une erreur serveur générique."
     },
     "CU12": {
       "nom": "Ouvrir / clôturer une saison",
@@ -272,7 +272,7 @@
       "groupe": "deuxzero",
       "modules": {
         "serveur": "server:deuxzero",
-        "kmp": ""
+        "kmp": "feature:deuxzero"
       },
       "elements": {
         "domain": [
@@ -283,8 +283,8 @@
         "RG-10"
       ],
       "ecrans": [],
-      "statut": "serveur_partiel_mobile_a_faire",
-      "note": "Modification ponctuelle de la durée de mi-temps pour un seul match (RG-10 alt) différée au Jalon 3 (Match n'existe pas encore). Pas d'écran dédié dans les maquettes ; TransferOrganisateurUseCase existe côté mobile, non câblé à un écran."
+      "statut": "fait",
+      "note": "Mobile : nouvel écran feature:deuxzero:presentation/parametres (ParametresDeuxZeroScreen), atteint depuis un bouton \"Paramètres\" sur le calendrier (E07), visible seulement si l'utilisateur est organisateur du 2-0 (CalendrierViewModel.peutModifierParametres, même contournement que FicheMatchViewModel.suisOrganisateur : pas de GetDeuxZeroUseCase dédié, recherche dans ListMesDeuxZeroUseCase). Couvre F-DZ-08 (jours/heure habituels, durée mi-temps, délai de validation, transferts autorisés, visibilité), F-DZ-09 (transférer le rôle d'organisateur à un membre choisi dans la liste des effectifs engagés), F-DZ-10/F-DZ-11 (archiver/réactiver via DeuxZero.statut=ARCHIVE — bouton-bascule simple ; aucune autre partie du mobile ne filtre encore sur ce statut, donc archiver un 2-0 n'a pour l'instant aucun effet visible ailleurs dans l'app, à corriger si ce comportement doit changer). A1 (modification ponctuelle de la mi-temps pour un seul match) reste différé au niveau du match (Jalon 3), pas dans cet écran. Pas d'écran dédié dans les 29 maquettes."
     },
     "CU14": {
       "nom": "Générer et gérer le calendrier",

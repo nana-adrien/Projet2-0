@@ -43,6 +43,17 @@ data class DeuxZeroDto(
 )
 
 @Serializable
+data class UpdateDeuxZeroSettingsRequest(
+    val dureeMiTempsMinutes: Int?,
+    val joursHabituels: List<String>?,
+    val heureHabituelle: String?,
+    val delaiValidationAutomatiqueHeures: Int?,
+    val transfertsAutorisesParSaison: Int?,
+    val visibilite: String?,
+    val statut: String?,
+)
+
+@Serializable
 data class EngageClubRequest(val codeEngagement: String)
 
 @Serializable

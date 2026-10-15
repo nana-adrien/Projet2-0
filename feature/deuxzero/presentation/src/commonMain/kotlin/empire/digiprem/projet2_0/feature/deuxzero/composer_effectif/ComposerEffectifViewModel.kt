@@ -8,10 +8,13 @@ import empire.digiprem.projet2_0.core.presentation.util.AbstractViewModel
 import empire.digiprem.projet2_0.feature.clubs.extension.toUiText as toClubUiText
 import empire.digiprem.projet2_0.feature.clubs.usecase.ListMembersUseCase
 import empire.digiprem.projet2_0.feature.deuxzero.extension.toUiText
+import empire.digiprem.projet2_0.core.domain.util.getOrNull
 import empire.digiprem.projet2_0.feature.deuxzero.model.Camp
 import empire.digiprem.projet2_0.feature.deuxzero.usecase.AddEffectifUseCase
+import empire.digiprem.projet2_0.feature.deuxzero.usecase.ListCampsUseCase
 import empire.digiprem.projet2_0.feature.deuxzero.usecase.ListEffectifUseCase
 import empire.digiprem.projet2_0.feature.deuxzero.usecase.NommerCapitaineUseCase
+import empire.digiprem.projet2_0.feature.deuxzero.usecase.TransferPlayerUseCase
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -25,6 +28,8 @@ class ComposerEffectifViewModel(
     private val listEffectifUseCase: ListEffectifUseCase,
     private val addEffectifUseCase: AddEffectifUseCase,
     private val nommerCapitaineUseCase: NommerCapitaineUseCase,
+    private val listCampsUseCase: ListCampsUseCase,
+    private val transferPlayerUseCase: TransferPlayerUseCase,
 ) : AbstractViewModel() {
 
     private val _state = MutableStateFlow(ComposerEffectifState())
@@ -46,6 +51,9 @@ class ComposerEffectifViewModel(
             ComposerEffectifAction.OnViewCalendrierClick -> viewModelScope.launch {
                 _state.value.camp?.deuxZeroId?.let { _events.send(ComposerEffectifEvent.OnViewCalendrier(it)) }
             }
+            is ComposerEffectifAction.OnTransferClick -> _state.update { it.copy(showTransferDialog = true, transferTarget = action.membre) }
+            ComposerEffectifAction.OnDismissTransferDialog -> _state.update { it.copy(showTransferDialog = false, transferTarget = null) }
+            ComposerEffectifAction.OnConfirmTransfer -> transfer()
         }
     }
 
@@ -68,6 +76,26 @@ class ComposerEffectifViewModel(
             listEffectifUseCase(campId)
                 .onSuccess { effectif -> _state.update { it.copy(isLoading = false, effectif = effectif.orEmpty()) } }
                 .onFailure { error -> _state.update { it.copy(isLoading = false, errorMessage = error.toUiText()) } }
+
+            val deuxZeroId = _state.value.camp?.deuxZeroId
+            if (deuxZeroId != null) {
+                val autreCamp = listCampsUseCase(deuxZeroId).getOrNull().orEmpty().firstOrNull { it.id != campId }
+                _state.update { it.copy(autreCamp = autreCamp) }
+            }
+        }
+    }
+
+    private fun transfer() {
+        val autreCamp = _state.value.autreCamp ?: return
+        val target = _state.value.transferTarget ?: return
+        _state.update { it.copy(isTransferring = true, showTransferDialog = false) }
+        viewModelScope.launch {
+            transferPlayerUseCase(target.utilisateurId, autreCamp.id)
+                .onSuccess {
+                    _state.update { it.copy(isTransferring = false, transferTarget = null, message = UiText.DynamicString("${target.pseudo} transféré vers ${autreCamp.libelle}.")) }
+                    load()
+                }
+                .onFailure { error -> _state.update { it.copy(isTransferring = false, message = error.toUiText()) } }
         }
     }
 

@@ -19,6 +19,9 @@ data class CalendrierState(
     val isGenerating: Boolean = false,
     val errorMessage: UiText? = null,
     val showAjouterMatchDialog: Boolean = false,
+    val currentUserId: String? = null,
+    /** CU13 — gère l'affichage du bouton "Paramètres" (organisateur du 2-0 uniquement). */
+    val peutModifierParametres: Boolean = false,
 ) {
     val matchsFiltres: List<Match>
         get() {

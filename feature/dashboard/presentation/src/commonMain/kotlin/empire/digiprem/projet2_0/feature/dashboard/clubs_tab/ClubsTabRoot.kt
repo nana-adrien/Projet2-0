@@ -13,6 +13,7 @@ import empire.digiprem.projet2_0.feature.clubs.mes_clubs.MesClubsRoot
 import empire.digiprem.projet2_0.feature.deuxzero.composer_effectif.ComposerEffectifRoot
 import empire.digiprem.projet2_0.feature.deuxzero.create_deuxzero.CreateDeuxZeroRoot
 import empire.digiprem.projet2_0.feature.deuxzero.engager_club.EngagerClubRoot
+import empire.digiprem.projet2_0.feature.deuxzero.parametres.ParametresDeuxZeroRoot
 import empire.digiprem.projet2_0.feature.deuxzero.repartition.RepartitionRoot
 import empire.digiprem.projet2_0.feature.matchendirect.composition.CompositionRoot
 import empire.digiprem.projet2_0.feature.matchendirect.marqueur.MarqueurRoot
@@ -92,6 +93,13 @@ fun ClubsTabRoot() {
         is ClubsTabScreen.Calendrier -> CalendrierRoot(
             deuxZeroId = current.deuxZeroId,
             onMatchClick = { match -> push(ClubsTabScreen.FicheMatch(match, current.deuxZeroId)) },
+            onParametresClick = { deuxZeroId -> push(ClubsTabScreen.Parametres(deuxZeroId)) },
+        )
+
+        is ClubsTabScreen.Parametres -> ParametresDeuxZeroRoot(
+            deuxZeroId = current.deuxZeroId,
+            onOrganisateurTransfere = { pop() },
+            onNavigateBack = { pop() },
         )
 
         is ClubsTabScreen.FicheMatch -> FicheMatchRoot(

@@ -7,6 +7,7 @@ import empire.digiprem.projet2_0.feature.deuxzero.model.CreateDeuxZeroInput
 import empire.digiprem.projet2_0.feature.deuxzero.model.DeuxZero
 import empire.digiprem.projet2_0.feature.deuxzero.model.Effectif
 import empire.digiprem.projet2_0.feature.deuxzero.model.Saison
+import empire.digiprem.projet2_0.feature.deuxzero.model.UpdateDeuxZeroSettingsInput
 
 interface IDeuxZeroDataSource {
     suspend fun createDeuxZero(input: CreateDeuxZeroInput): Result<DeuxZero?, DataError.Remote>
@@ -14,6 +15,7 @@ interface IDeuxZeroDataSource {
     suspend fun engageClub(codeEngagement: String): Result<Camp?, DataError.Remote>
     suspend fun listCamps(deuxZeroId: String): Result<List<Camp>?, DataError.Remote>
     suspend fun nommerCapitaine(campId: String, utilisateurId: String, viceCapitaine: Boolean): Result<Camp?, DataError.Remote>
+    suspend fun updateSettings(deuxZeroId: String, input: UpdateDeuxZeroSettingsInput): Result<DeuxZero?, DataError.Remote>
     suspend fun transferOrganisateur(deuxZeroId: String, targetUserId: String): Result<DeuxZero?, DataError.Remote>
 
     suspend fun addEffectif(campId: String, utilisateurId: String, numeroMaillot: Int?): Result<Effectif?, DataError.Remote>

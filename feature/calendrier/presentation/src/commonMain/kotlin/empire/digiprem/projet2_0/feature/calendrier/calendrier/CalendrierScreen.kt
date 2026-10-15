@@ -49,6 +49,7 @@ private val STATUT_LABEL = mapOf(
 fun CalendrierRoot(
     deuxZeroId: String,
     onMatchClick: (match: Match) -> Unit,
+    onParametresClick: (deuxZeroId: String) -> Unit = {},
     viewModel: CalendrierViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -58,6 +59,7 @@ fun CalendrierRoot(
     ObservableEvent(flow = viewModel.events) { event ->
         when (event) {
             is CalendrierEvent.OnNavigateToFicheMatch -> onMatchClick(event.match)
+            is CalendrierEvent.OnNavigateToParametres -> onParametresClick(event.deuxZeroId)
         }
     }
 
@@ -80,6 +82,14 @@ fun CalendrierScreen(
                     horizontalArrangement = Arrangement.spacedBy(PDZSpacing.space2),
                 ) {
                     Text(text = "Matchs", style = MaterialTheme.typography.headlineSmall, modifier = Modifier.weight(1f))
+                    if (state.peutModifierParametres) {
+                        PDZButton(
+                            text = "Paramètres",
+                            type = PDZButtonType.Text,
+                            fullWidth = false,
+                            onClick = { onAction(CalendrierAction.OnParametresClick) },
+                        )
+                    }
                     PDZButton(
                         text = "+",
                         type = PDZButtonType.Secondary,

@@ -39,3 +39,14 @@ data class CreateDeuxZeroInput(
     val libelleSaison: String,
     val dateDebutSaison: String,
 )
+
+/** CU13 — Modifier les paramètres d'un 2-0. Champs nuls = inchangés (mise à jour partielle). */
+data class UpdateDeuxZeroSettingsInput(
+    val dureeMiTempsMinutes: Int? = null,
+    val joursHabituels: List<String>? = null,
+    val heureHabituelle: String? = null,
+    val delaiValidationAutomatiqueHeures: Int? = null,
+    val transfertsAutorisesParSaison: Int? = null,
+    val visibilite: DeuxZeroVisibilite? = null,
+    val statut: String? = null,
+)

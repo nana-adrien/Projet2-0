@@ -5,6 +5,7 @@ import empire.digiprem.projet2_0.feature.deuxzero.create_deuxzero.CreateDeuxZero
 import empire.digiprem.projet2_0.feature.deuxzero.datasource.DeuxZeroKtorDataSource
 import empire.digiprem.projet2_0.feature.deuxzero.datasource.IDeuxZeroDataSource
 import empire.digiprem.projet2_0.feature.deuxzero.engager_club.EngagerClubViewModel
+import empire.digiprem.projet2_0.feature.deuxzero.parametres.ParametresDeuxZeroViewModel
 import empire.digiprem.projet2_0.feature.deuxzero.repartition.RepartitionViewModel
 import empire.digiprem.projet2_0.feature.deuxzero.repository.DeuxZeroRepository
 import empire.digiprem.projet2_0.feature.deuxzero.repository.IDeuxZeroRepository
@@ -20,6 +21,7 @@ import empire.digiprem.projet2_0.feature.deuxzero.usecase.NommerCapitaineUseCase
 import empire.digiprem.projet2_0.feature.deuxzero.usecase.OpenSaisonUseCase
 import empire.digiprem.projet2_0.feature.deuxzero.usecase.TransferOrganisateurUseCase
 import empire.digiprem.projet2_0.feature.deuxzero.usecase.TransferPlayerUseCase
+import empire.digiprem.projet2_0.feature.deuxzero.usecase.UpdateDeuxZeroSettingsUseCase
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.bind
@@ -36,6 +38,7 @@ val koinDeuxZeroModule = module {
     singleOf(::EngageClubUseCase)
     singleOf(::ListCampsUseCase)
     singleOf(::NommerCapitaineUseCase)
+    singleOf(::UpdateDeuxZeroSettingsUseCase)
     singleOf(::TransferOrganisateurUseCase)
     singleOf(::AddEffectifUseCase)
     singleOf(::ListEffectifUseCase)
@@ -49,4 +52,5 @@ val koinDeuxZeroModule = module {
     viewModelOf(::EngagerClubViewModel)
     viewModelOf(::RepartitionViewModel)
     viewModelOf(::ComposerEffectifViewModel)
+    viewModelOf(::ParametresDeuxZeroViewModel)
 }

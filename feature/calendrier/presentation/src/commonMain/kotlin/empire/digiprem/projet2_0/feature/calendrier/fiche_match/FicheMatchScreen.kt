@@ -56,6 +56,7 @@ fun FicheMatchRoot(
     onSuivreEnDirect: (matchId: String, deuxZeroId: String) -> Unit = { _, _ -> },
     onValiderResultat: (camp: Camp, matchId: String, deuxZeroId: String) -> Unit = { _, _, _ -> },
     onArbitrerLitige: (matchId: String, deuxZeroId: String) -> Unit = { _, _ -> },
+    onVoterHommeDuMatch: (matchId: String, deuxZeroId: String) -> Unit = { _, _ -> },
     viewModel: FicheMatchViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -70,6 +71,7 @@ fun FicheMatchRoot(
         onSuivreEnDirect = onSuivreEnDirect,
         onValiderResultat = onValiderResultat,
         onArbitrerLitige = onArbitrerLitige,
+        onVoterHommeDuMatch = onVoterHommeDuMatch,
     )
 }
 
@@ -83,6 +85,7 @@ fun FicheMatchScreen(
     onSuivreEnDirect: (matchId: String, deuxZeroId: String) -> Unit = { _, _ -> },
     onValiderResultat: (camp: Camp, matchId: String, deuxZeroId: String) -> Unit = { _, _, _ -> },
     onArbitrerLitige: (matchId: String, deuxZeroId: String) -> Unit = { _, _ -> },
+    onVoterHommeDuMatch: (matchId: String, deuxZeroId: String) -> Unit = { _, _ -> },
 ) {
     Box(modifier = modifier.fillMaxSize()) {
         Scaffold { padding ->
@@ -121,7 +124,7 @@ fun FicheMatchScreen(
                         Spacer(Modifier.height(PDZSpacing.space4))
                     }
 
-                    if (state.monCamp != null || state.estMarqueurOuSuppleant || state.peutSuivreEnDirect || state.peutValiderResultat || state.peutArbitrerLitige) {
+                    if (state.monCamp != null || state.estMarqueurOuSuppleant || state.peutSuivreEnDirect || state.peutValiderResultat || state.peutArbitrerLitige || state.peutVoterHommeDuMatch) {
                         item {
                             Text(text = "Match en direct", style = MaterialTheme.typography.titleMedium)
                             Spacer(Modifier.height(PDZSpacing.space2))
@@ -161,6 +164,14 @@ fun FicheMatchScreen(
                                     text = "Arbitrer le litige",
                                     type = PDZButtonType.Secondary,
                                     onClick = { state.match?.let { onArbitrerLitige(it.id, state.deuxZeroId) } },
+                                )
+                                Spacer(Modifier.height(PDZSpacing.space2))
+                            }
+                            if (state.peutVoterHommeDuMatch) {
+                                PDZButton(
+                                    text = "Voter homme du match",
+                                    type = PDZButtonType.Secondary,
+                                    onClick = { state.match?.let { onVoterHommeDuMatch(it.id, state.deuxZeroId) } },
                                 )
                             }
                             Spacer(Modifier.height(PDZSpacing.space4))

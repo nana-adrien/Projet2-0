@@ -211,38 +211,42 @@
     "CU22": {
       "nom": "Consulter les statistiques et classements",
       "groupe": "statistiques",
-      "modules": { "serveur": "", "kmp": "" },
+      "modules": { "serveur": "", "kmp": "feature:statistiques" },
       "elements": { "domain": ["Match", "Saison", "Club", "Evenement"] },
       "regles": [],
-      "ecrans": [],
-      "statut": "a_completer"
+      "ecrans": ["E17", "E18"],
+      "statut": "kmp_fait_serveur_en_cours",
+      "note": "Mobile (E17 tableau de saison + E18 classements, feature:statistiques) construit en parallèle du serveur (Jalon 5 en cours sur un autre chantier, squelette server:statistiques committé, agrégations pas encore implémentées) : écran de saison avec bande mensuelle, séries/records, et classements buteurs/passeurs/votes avec ligne de l'utilisateur surlignée. Hors scope documenté (F-STA-05/06, P2+) : statistiques consolidées de club tous 2-0/amicaux confondus, historique des confrontations entre deux clubs ; assiduité/moyenne par match (mentionnées 'en version 2' dans la maquette). La couche data (routes v1/saisons/{id}/tableau-saison, /classement) est un contrat mobile-side provisoire à ajuster une fois le serveur disponible."
     },
     "CU23": {
       "nom": "Consulter son profil et sa progression",
       "groupe": "profil",
-      "modules": { "serveur": "", "kmp": "" },
+      "modules": { "serveur": "", "kmp": "feature:statistiques" },
       "elements": { "domain": ["Utilisateur", "BadgeObtenu", "Match"] },
       "regles": [],
-      "ecrans": [],
-      "statut": "a_completer"
+      "ecrans": ["E19"],
+      "statut": "kmp_fait_serveur_en_cours",
+      "note": "Mobile (E19, feature:statistiques) : carte joueur, sélecteur de contexte (2-0/amicaux/total), 6 tuiles de stats, progression mensuelle avec variation vs année précédente, badges obtenus (or) et verrouillés (gris, complément calculé côté client sur l'enum TypeBadge). Reachable depuis l'onglet Classements (tap sur une ligne du classement) — PAS encore intégré à l'onglet Profil existant (feature:profile), scope cut documenté par manque de temps, pas de raison technique. Hors scope : comparateur deux joueurs (F-PRO-05, P3), masquage d'informations (F-PRO-06, déjà couvert par CU4). Contrat REST provisoire comme les autres écrans de ce jalon."
     },
     "CU24": {
       "nom": "Voter pour l'homme du match / obtenir un badge",
       "groupe": "recompenses",
-      "modules": { "serveur": "", "kmp": "" },
+      "modules": { "serveur": "", "kmp": "feature:statistiques" },
       "elements": { "domain": ["Vote", "BadgeObtenu", "Match"] },
       "regles": ["RG-16"],
-      "ecrans": [],
-      "statut": "a_completer"
+      "ecrans": ["E20"],
+      "statut": "kmp_fait_serveur_en_cours",
+      "note": "Mobile (E20, feature:statistiques) : candidats des deux camps, ligne de stats calculée côté client depuis la chronologie (buts/passes comptés sur les Evenement reçus, pas de détection du poste gardien — non modélisé, simplification documentée), votant grisé et non sélectionnable, bouton reprenant le nom choisi. RG-16 (fenêtre 24h, un seul vote, pas pour soi) vérifiée côté serveur, pas dupliquée côté client. Accessible depuis la fiche de match (E08) quand statut = OFFICIEL. Attribution automatique des badges (F-REC-02) et badges personnalisés (F-REC-04, P3) : logique 100% serveur, pas d'écran mobile dédié (affichage via E19)."
     },
     "CU25": {
       "nom": "Clôturer la saison et consulter le bilan",
       "groupe": "bilan",
-      "modules": { "serveur": "", "kmp": "" },
+      "modules": { "serveur": "", "kmp": "feature:statistiques" },
       "elements": { "domain": ["Saison", "Match", "BadgeObtenu"] },
       "regles": ["RG-17"],
-      "ecrans": [],
-      "statut": "a_completer"
+      "ecrans": ["E21"],
+      "statut": "kmp_fait_serveur_en_cours",
+      "note": "Mobile (E21, feature:statistiques) : champions (RG-17), récompenses individuelles (joueur de l'année, meilleur buteur/passeur, plus assidu, meilleur gardien), nombre de matchs. Accessible depuis l'onglet Classements quand la saison sélectionnée est clôturée (Saison.statut == CLOTUREE). Hors scope documenté : visuel partageable pour réseaux sociaux (F-BIL-05, rendu + partage spécifiques par plateforme), palmarès historique multi-saisons (F-BIL-06), mise en avant du plus beau match/plus longue série, vote du joueur de l'année en alternative au calcul automatique (F-BIL-04, P3)."
     },
     "CU26": {
       "nom": "Gérer ses préférences de notification",

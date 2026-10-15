@@ -11,6 +11,7 @@ import empire.digiprem.projet2_0.feature.deuxzero.model.Camp
 import empire.digiprem.projet2_0.feature.matchendirect.composition.CompositionRoot
 import empire.digiprem.projet2_0.feature.matchendirect.marqueur.MarqueurRoot
 import empire.digiprem.projet2_0.feature.matchendirect.suivre.SuivreEnDirectRoot
+import empire.digiprem.projet2_0.feature.statistiques.vote.VoteRoot
 import empire.digiprem.projet2_0.feature.validation.contester.ContesterRoot
 import empire.digiprem.projet2_0.feature.validation.litige.LitigeRoot
 import empire.digiprem.projet2_0.feature.validation.resultat.ResultatRoot
@@ -24,6 +25,7 @@ private sealed interface AccueilTabScreen {
     data class Resultat(val camp: Camp, val matchId: String, val deuxZeroId: String) : AccueilTabScreen
     data class Contester(val matchId: String, val deuxZeroId: String) : AccueilTabScreen
     data class Litige(val matchId: String, val deuxZeroId: String) : AccueilTabScreen
+    data class VoteHommeDuMatch(val matchId: String, val deuxZeroId: String) : AccueilTabScreen
 }
 
 @Composable
@@ -43,6 +45,7 @@ fun AccueilTabRoot() {
             onSuivreEnDirect = { matchId, deuxZeroId -> screen = AccueilTabScreen.SuivreEnDirect(matchId, deuxZeroId) },
             onValiderResultat = { camp, matchId, deuxZeroId -> screen = AccueilTabScreen.Resultat(camp, matchId, deuxZeroId) },
             onArbitrerLitige = { matchId, deuxZeroId -> screen = AccueilTabScreen.Litige(matchId, deuxZeroId) },
+            onVoterHommeDuMatch = { matchId, deuxZeroId -> screen = AccueilTabScreen.VoteHommeDuMatch(matchId, deuxZeroId) },
         )
 
         is AccueilTabScreen.Composition -> CompositionRoot(
@@ -78,6 +81,11 @@ fun AccueilTabRoot() {
             matchId = current.matchId,
             deuxZeroId = current.deuxZeroId,
             onTranche = { screen = AccueilTabScreen.Accueil },
+        )
+
+        is AccueilTabScreen.VoteHommeDuMatch -> VoteRoot(
+            matchId = current.matchId,
+            deuxZeroId = current.deuxZeroId,
         )
     }
 }

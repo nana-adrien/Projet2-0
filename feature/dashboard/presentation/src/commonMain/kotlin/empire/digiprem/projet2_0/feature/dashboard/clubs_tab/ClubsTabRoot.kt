@@ -16,6 +16,7 @@ import empire.digiprem.projet2_0.feature.deuxzero.repartition.RepartitionRoot
 import empire.digiprem.projet2_0.feature.matchendirect.composition.CompositionRoot
 import empire.digiprem.projet2_0.feature.matchendirect.marqueur.MarqueurRoot
 import empire.digiprem.projet2_0.feature.matchendirect.suivre.SuivreEnDirectRoot
+import empire.digiprem.projet2_0.feature.statistiques.vote.VoteRoot
 import empire.digiprem.projet2_0.feature.validation.contester.ContesterRoot
 import empire.digiprem.projet2_0.feature.validation.litige.LitigeRoot
 import empire.digiprem.projet2_0.feature.validation.resultat.ResultatRoot
@@ -99,6 +100,7 @@ fun ClubsTabRoot() {
             onSuivreEnDirect = { matchId, deuxZeroId -> push(ClubsTabScreen.SuivreEnDirect(matchId, deuxZeroId)) },
             onValiderResultat = { camp, matchId, deuxZeroId -> push(ClubsTabScreen.Resultat(camp, matchId, deuxZeroId)) },
             onArbitrerLitige = { matchId, deuxZeroId -> push(ClubsTabScreen.Litige(matchId, deuxZeroId)) },
+            onVoterHommeDuMatch = { matchId, deuxZeroId -> push(ClubsTabScreen.VoteHommeDuMatch(matchId, deuxZeroId)) },
         )
 
         is ClubsTabScreen.Composition -> CompositionRoot(
@@ -134,6 +136,11 @@ fun ClubsTabRoot() {
             matchId = current.matchId,
             deuxZeroId = current.deuxZeroId,
             onTranche = { pop() },
+        )
+
+        is ClubsTabScreen.VoteHommeDuMatch -> VoteRoot(
+            matchId = current.matchId,
+            deuxZeroId = current.deuxZeroId,
         )
     }
 }

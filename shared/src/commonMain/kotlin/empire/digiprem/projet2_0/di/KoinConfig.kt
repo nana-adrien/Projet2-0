@@ -8,6 +8,7 @@ import empire.digiprem.projet2_0.feature.dashboard.config.koinDashboardModule
 import empire.digiprem.projet2_0.feature.deuxzero.config.koinDeuxZeroModule
 import empire.digiprem.projet2_0.feature.matchendirect.config.koinMatchEnDirectModule
 import empire.digiprem.projet2_0.feature.notifications.config.koinNotificationsModule
+import empire.digiprem.projet2_0.feature.statistiques.config.koinStatistiquesModule
 import empire.digiprem.projet2_0.feature.validation.config.koinValidationModule
 import empire.digiprem.projet2_0.feature.profile.config.koinProfileModule
 import empire.digiprem.projet2_0.feature.settings.config.koinSettingsModule
@@ -28,6 +29,7 @@ fun initKoin(config: KoinAppDeclaration? = null) {
             koinCalendrierModule,
             koinMatchEnDirectModule,
             koinValidationModule,
+            koinStatistiquesModule,
             koinDashboardModule,
         )
     }

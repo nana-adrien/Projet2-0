@@ -105,4 +105,9 @@ include(
     ":feature:validation:data",
     ":feature:validation:presentation",
     ":feature:validation:config",
+
+    ":feature:statistiques:domain",
+    ":feature:statistiques:data",
+    ":feature:statistiques:presentation",
+    ":feature:statistiques:config",
 )

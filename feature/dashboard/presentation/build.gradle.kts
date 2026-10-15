@@ -22,6 +22,8 @@ kotlin {
             implementation(project(":feature:matchendirect:presentation"))
             implementation(project(":feature:validation:domain"))
             implementation(project(":feature:validation:presentation"))
+            implementation(project(":feature:statistiques:domain"))
+            implementation(project(":feature:statistiques:presentation"))
         }
     }
 }

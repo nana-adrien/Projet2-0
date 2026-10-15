@@ -18,6 +18,7 @@ import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import empire.digiprem.projet2_0.core.presentation.util.ObservableEvent
 import empire.digiprem.projet2_0.feature.dashboard.accueil.AccueilTabRoot
+import empire.digiprem.projet2_0.feature.dashboard.classements.ClassementsTabRoot
 import empire.digiprem.projet2_0.feature.dashboard.clubs_tab.ClubsTabRoot
 import empire.digiprem.projet2_0.feature.notifications.notifications.NotificationsRoot
 import empire.digiprem.projet2_0.feature.profile.profile.ProfileRoot
@@ -106,6 +107,7 @@ private fun DashboardContent(
 ) {
     when (destination) {
         DashboardDestination.Accueil        -> AccueilTabRoot()
+        DashboardDestination.Classements    -> ClassementsTabRoot()
         DashboardDestination.Clubs         -> ClubsTabRoot()
         DashboardDestination.Profile        -> ProfileRoot()
         DashboardDestination.Notifications  -> NotificationsRoot()

@@ -6,6 +6,7 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.ui.graphics.vector.ImageVector
 
 enum class DashboardDestination(
@@ -15,6 +16,10 @@ enum class DashboardDestination(
     Accueil(
         label = "Accueil",
         icon  = Icons.Default.Home,
+    ),
+    Classements(
+        label = "Classements",
+        icon  = Icons.Default.Star,
     ),
     Clubs(
         label = "Clubs",

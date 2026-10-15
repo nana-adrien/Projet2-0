@@ -26,4 +26,5 @@ sealed interface ClubsTabScreen {
     data class Resultat(val camp: Camp, val matchId: String, val deuxZeroId: String) : ClubsTabScreen
     data class Contester(val matchId: String, val deuxZeroId: String) : ClubsTabScreen
     data class Litige(val matchId: String, val deuxZeroId: String) : ClubsTabScreen
+    data class VoteHommeDuMatch(val matchId: String, val deuxZeroId: String) : ClubsTabScreen
 }

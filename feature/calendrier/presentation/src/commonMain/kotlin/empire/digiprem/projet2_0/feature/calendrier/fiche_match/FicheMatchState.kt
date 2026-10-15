@@ -38,6 +38,10 @@ data class FicheMatchState(
     val peutArbitrerLitige: Boolean
         get() = match?.statut == "EN_LITIGE" && suisOrganisateur
 
+    /** Fenêtre de 24h (RG-16) et éligibilité (présence sur la feuille) vérifiées côté serveur. */
+    val peutVoterHommeDuMatch: Boolean
+        get() = match?.statut == "OFFICIEL"
+
     val convocationsTriees: List<Convocation>
         get() = convocations.sortedBy {
             when (it.reponse) {

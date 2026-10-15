@@ -1,3 +1,13 @@
 #Ignore le fichier docker compose
 
 docker-compose.yml
+# Ignorer les modules mobiles pour le compilateur Railway
+androidApp/
+shared/
+iosApp/
+
+# Ignorer aussi les fichiers locaux inutiles
+.idea/
+.gradle/
+build/
+local.properties

@@ -1,0 +1,12 @@
+@startuml cas-utilisation-statistiques
+left to right direction
+actor Joueur
+actor "Supporter / Abonné" as Supporter
+
+rectangle "Statistiques et classements" {
+  usecase "CU22 - Consulter les statistiques\net classements" as CU22
+}
+
+Joueur --> CU22
+Supporter --> CU22
+@enduml

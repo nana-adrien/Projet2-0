@@ -1,0 +1,14 @@
+@startuml cu8-creer-un-2-0
+actor "Organisateur de 2-0" as O
+participant "App mobile" as APP
+participant "API" as API
+O -> APP : saisit infos générales (nom, lieu, visibilité)
+O -> APP : définit règles de jeu (mi-temps, nb joueurs)
+O -> APP : définit calendrier (jours, heure)
+O -> APP : définit délai de validation + transferts autorisés
+O -> APP : nomme les 2 camps
+APP -> API : creerDeuxZero(parametres)
+API -> API : génère un code d'engagement par camp
+API -> API : prépare la première saison (statut A_VENIR)
+API --> APP : 2-0 créé (statut EN_ATTENTE_ENGAGEMENT)
+@enduml

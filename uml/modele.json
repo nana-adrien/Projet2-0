@@ -1,0 +1,1752 @@
+{
+  "sources": [
+    "uml/domain/README.md",
+    "uml/domain/_modele-fiche.md",
+    "uml/domain/amicaux/fiches/CU21-organiser-un-match-amical.md",
+    "uml/domain/bilan/fiches/CU25-cloturer-la-saison-et-consulter-le-bilan.md",
+    "uml/domain/calendrier/fiches/CU14-generer-et-gerer-le-calendrier.md",
+    "uml/domain/calendrier/fiches/CU15-convoquer-les-joueurs.md",
+    "uml/domain/calendrier/fiches/CU16-composer-l-equipe-avant-match.md",
+    "uml/domain/clubs/fiches/CU5-creer-un-club.md",
+    "uml/domain/clubs/fiches/CU6-rejoindre-un-club.md",
+    "uml/domain/clubs/fiches/CU7-gerer-les-membres-d-un-club.md",
+    "uml/domain/commun/acteurs.md",
+    "uml/domain/commun/activites/README.md",
+    "uml/domain/comptes/fiches/CU1-creer-un-compte.md",
+    "uml/domain/comptes/fiches/CU2-se-connecter.md",
+    "uml/domain/comptes/fiches/CU26-gerer-ses-preferences-de-notification.md",
+    "uml/domain/comptes/fiches/CU3-reinitialiser-mot-de-passe.md",
+    "uml/domain/comptes/fiches/CU4-modifier-son-profil.md",
+    "uml/domain/deuxzero/fiches/CU13-modifier-les-parametres-d-un-2-0.md",
+    "uml/domain/deuxzero/fiches/CU8-creer-un-2-0.md",
+    "uml/domain/deuxzero/fiches/CU9-engager-un-club-dans-un-2-0.md",
+    "uml/domain/effectifs/fiches/CU10-composer-un-effectif-engage.md",
+    "uml/domain/effectifs/fiches/CU11-transferer-un-joueur-de-camp.md",
+    "uml/domain/profil/fiches/CU23-consulter-son-profil-et-sa-progression.md",
+    "uml/domain/recompenses/fiches/CU24-voter-homme-du-match-obtenir-un-badge.md",
+    "uml/domain/saisie_directe/fiches/CU17-saisir-les-evenements-en-direct.md",
+    "uml/domain/saisie_directe/fiches/CU18-suivre-un-match-en-direct.md",
+    "uml/domain/saisons/fiches/CU12-ouvrir-cloturer-une-saison.md",
+    "uml/domain/social/fiches/CU27-signaler-un-contenu.md",
+    "uml/domain/statistiques/fiches/CU22-consulter-les-statistiques-et-classements.md",
+    "uml/domain/validation/fiches/CU19-valider-contester-un-resultat.md",
+    "uml/domain/validation/fiches/CU20-arbitrer-un-litige.md",
+    "uml/domain/amicaux/sequences/CU21-organiser-un-match-amical.puml",
+    "uml/domain/amicaux/usecase/cas-utilisation.puml",
+    "uml/domain/bilan/sequences/CU25-cloturer-la-saison-et-consulter-le-bilan.puml",
+    "uml/domain/bilan/usecase/cas-utilisation.puml",
+    "uml/domain/calendrier/sequences/CU14-generer-et-gerer-le-calendrier.puml",
+    "uml/domain/calendrier/sequences/CU15-convoquer-les-joueurs.puml",
+    "uml/domain/calendrier/sequences/CU16-composer-l-equipe-avant-match.puml",
+    "uml/domain/calendrier/usecase/cas-utilisation.puml",
+    "uml/domain/clubs/sequences/CU5-creer-un-club.puml",
+    "uml/domain/clubs/sequences/CU6-rejoindre-un-club.puml",
+    "uml/domain/clubs/sequences/CU7-gerer-les-membres-d-un-club.puml",
+    "uml/domain/clubs/usecase/cas-utilisation.puml",
+    "uml/domain/commun/activites/A1-deroulement-match.puml",
+    "uml/domain/commun/activites/A2-creation-deuxzero.puml",
+    "uml/domain/commun/activites/A3-contestation.puml",
+    "uml/domain/commun/activites/A4-cloture-saison.puml",
+    "uml/domain/commun/activites/A5-hors-connexion.puml",
+    "uml/domain/commun/activites/A6-rejoindre-club-effectif.puml",
+    "uml/domain/commun/classe/modele-domaine.puml",
+    "uml/domain/commun/etats/etats-adhesion.puml",
+    "uml/domain/commun/etats/etats-deuxzero.puml",
+    "uml/domain/commun/etats/etats-match.puml",
+    "uml/domain/commun/etats/etats-saison.puml",
+    "uml/domain/commun/usecase/acteurs.puml",
+    "uml/domain/comptes/sequences/CU1-creer-un-compte.puml",
+    "uml/domain/comptes/sequences/CU2-se-connecter.puml",
+    "uml/domain/comptes/sequences/CU26-gerer-ses-preferences-de-notification.puml",
+    "uml/domain/comptes/sequences/CU3-reinitialiser-mot-de-passe.puml",
+    "uml/domain/comptes/sequences/CU4-modifier-son-profil.puml",
+    "uml/domain/comptes/usecase/cas-utilisation.puml",
+    "uml/domain/deuxzero/sequences/CU13-modifier-les-parametres-d-un-2-0.puml",
+    "uml/domain/deuxzero/sequences/CU8-creer-un-2-0.puml",
+    "uml/domain/deuxzero/sequences/CU9-engager-un-club-dans-un-2-0.puml",
+    "uml/domain/deuxzero/usecase/cas-utilisation.puml",
+    "uml/domain/effectifs/sequences/CU10-composer-un-effectif-engage.puml",
+    "uml/domain/effectifs/sequences/CU11-transferer-un-joueur-de-camp.puml",
+    "uml/domain/effectifs/usecase/cas-utilisation.puml",
+    "uml/domain/profil/sequences/CU23-consulter-son-profil-et-sa-progression.puml",
+    "uml/domain/profil/usecase/cas-utilisation.puml",
+    "uml/domain/recompenses/sequences/CU24-voter-homme-du-match-obtenir-un-badge.puml",
+    "uml/domain/recompenses/usecase/cas-utilisation.puml",
+    "uml/domain/saisie_directe/sequences/CU17-saisir-les-evenements-en-direct.puml",
+    "uml/domain/saisie_directe/sequences/CU18-suivre-un-match-en-direct.puml",
+    "uml/domain/saisie_directe/usecase/cas-utilisation.puml",
+    "uml/domain/saisons/sequences/CU12-ouvrir-cloturer-une-saison.puml",
+    "uml/domain/saisons/usecase/cas-utilisation.puml",
+    "uml/domain/social/sequences/CU27-signaler-un-contenu.puml",
+    "uml/domain/social/usecase/cas-utilisation.puml",
+    "uml/domain/statistiques/sequences/CU22-consulter-les-statistiques-et-classements.puml",
+    "uml/domain/statistiques/usecase/cas-utilisation.puml",
+    "uml/domain/validation/sequences/CU19-valider-contester-un-resultat.puml",
+    "uml/domain/validation/sequences/CU20-arbitrer-un-litige.puml",
+    "uml/domain/validation/usecase/cas-utilisation.puml"
+  ],
+  "modeles": {
+    "domain": {
+      "classes": {
+        "Utilisateur": {
+          "abstraite": false,
+          "interface": false,
+          "stereotype": "",
+          "attributs": [
+            {
+              "nom": "id",
+              "type": "UUID",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "pseudo",
+              "type": "String",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "nom",
+              "type": "String",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": "facultatif"
+            },
+            {
+              "nom": "prenom",
+              "type": "String",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": "facultatif"
+            },
+            {
+              "nom": "telephone",
+              "type": "String",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "email",
+              "type": "String",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "motDePasseHache",
+              "type": "String",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "photo",
+              "type": "String",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "dateNaissance",
+              "type": "LocalDate",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": "facultatif"
+            },
+            {
+              "nom": "postePrefere",
+              "type": "Poste",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "piedFort",
+              "type": "PiedFort",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "dateCreation",
+              "type": "Instant",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "supprime",
+              "type": "Boolean",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            }
+          ],
+          "operations": []
+        },
+        "Club": {
+          "abstraite": false,
+          "interface": false,
+          "stereotype": "",
+          "attributs": [
+            {
+              "nom": "id",
+              "type": "UUID",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "nom",
+              "type": "String",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "logo",
+              "type": "String",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "couleurs",
+              "type": "String",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "quartier",
+              "type": "String",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "description",
+              "type": "String",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "codeAdhesion",
+              "type": "String",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "statut",
+              "type": "StatutClub",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            }
+          ],
+          "operations": []
+        },
+        "AdhesionClub": {
+          "abstraite": false,
+          "interface": false,
+          "stereotype": "",
+          "attributs": [
+            {
+              "nom": "id",
+              "type": "UUID",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "role",
+              "type": "RoleClub",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "statut",
+              "type": "StatutAdhesion",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "dateDemande",
+              "type": "Instant",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "dateReponse",
+              "type": "Instant",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            }
+          ],
+          "operations": []
+        },
+        "DeuxZero": {
+          "abstraite": false,
+          "interface": false,
+          "stereotype": "",
+          "attributs": [
+            {
+              "nom": "id",
+              "type": "UUID",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "nom",
+              "type": "String",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "lieu",
+              "type": "String",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "joursHabituels",
+              "type": "List<DayOfWeek>",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "heureHabituelle",
+              "type": "LocalTime",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "dureeMiTemps",
+              "type": "Duree",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "nombreMiTemps",
+              "type": "Int",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "dureePause",
+              "type": "Duree",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "nombreMaxJoueursParCamp",
+              "type": "Int",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "delaiValidationAutomatique",
+              "type": "Duree",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "transfertsAutorisesParSaison",
+              "type": "Int",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": "facultatif"
+            },
+            {
+              "nom": "visibilite",
+              "type": "Visibilite",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "estInterne",
+              "type": "Boolean",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "statut",
+              "type": "StatutDeuxZero",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            }
+          ],
+          "operations": []
+        },
+        "Camp": {
+          "abstraite": false,
+          "interface": false,
+          "stereotype": "",
+          "attributs": [
+            {
+              "nom": "id",
+              "type": "UUID",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "libelle",
+              "type": "String",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "codeEngagement",
+              "type": "String",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            }
+          ],
+          "operations": []
+        },
+        "EffectifEngage": {
+          "abstraite": false,
+          "interface": false,
+          "stereotype": "",
+          "attributs": [
+            {
+              "nom": "id",
+              "type": "UUID",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "numeroMaillot",
+              "type": "Int",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": "facultatif"
+            },
+            {
+              "nom": "dateEntree",
+              "type": "LocalDate",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "dateSortie",
+              "type": "LocalDate",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": "facultatif"
+            }
+          ],
+          "operations": []
+        },
+        "Saison": {
+          "abstraite": false,
+          "interface": false,
+          "stereotype": "",
+          "attributs": [
+            {
+              "nom": "id",
+              "type": "UUID",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "libelle",
+              "type": "String",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "dateDebut",
+              "type": "LocalDate",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "dateFin",
+              "type": "LocalDate",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "statut",
+              "type": "StatutSaison",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            }
+          ],
+          "operations": []
+        },
+        "Match": {
+          "abstraite": false,
+          "interface": false,
+          "stereotype": "",
+          "attributs": [
+            {
+              "nom": "id",
+              "type": "UUID",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "type",
+              "type": "TypeMatch",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "date",
+              "type": "LocalDate",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "heure",
+              "type": "LocalTime",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "lieu",
+              "type": "String",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "statut",
+              "type": "StatutMatch",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "scoreCampA",
+              "type": "Int",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "scoreCampB",
+              "type": "Int",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "dureeMiTempsAppliquee",
+              "type": "Duree",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "nomEquipeInvitee",
+              "type": "String",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": "facultatif"
+            }
+          ],
+          "operations": []
+        },
+        "Convocation": {
+          "abstraite": false,
+          "interface": false,
+          "stereotype": "",
+          "attributs": [
+            {
+              "nom": "id",
+              "type": "UUID",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "reponse",
+              "type": "ReponseConvocation",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "dateReponse",
+              "type": "Instant",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": "facultatif"
+            }
+          ],
+          "operations": []
+        },
+        "Composition": {
+          "abstraite": false,
+          "interface": false,
+          "stereotype": "",
+          "attributs": [
+            {
+              "nom": "id",
+              "type": "UUID",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "titulaire",
+              "type": "Boolean",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "present",
+              "type": "Boolean",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            }
+          ],
+          "operations": []
+        },
+        "Evenement": {
+          "abstraite": false,
+          "interface": false,
+          "stereotype": "",
+          "attributs": [
+            {
+              "nom": "id",
+              "type": "UUID",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "type",
+              "type": "TypeEvenement",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "minute",
+              "type": "Int",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "periode",
+              "type": "Int",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "auteurSaisie",
+              "type": "Utilisateur",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "horodatage",
+              "type": "Instant",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "annule",
+              "type": "Boolean",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            }
+          ],
+          "operations": []
+        },
+        "Validation": {
+          "abstraite": false,
+          "interface": false,
+          "stereotype": "",
+          "attributs": [
+            {
+              "nom": "id",
+              "type": "UUID",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "decision",
+              "type": "DecisionValidation",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "commentaire",
+              "type": "String",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": "facultatif"
+            },
+            {
+              "nom": "correctionProposee",
+              "type": "String",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": "facultatif"
+            },
+            {
+              "nom": "horodatage",
+              "type": "Instant",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            }
+          ],
+          "operations": []
+        },
+        "Vote": {
+          "abstraite": false,
+          "interface": false,
+          "stereotype": "",
+          "attributs": [
+            {
+              "nom": "id",
+              "type": "UUID",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "horodatage",
+              "type": "Instant",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            }
+          ],
+          "operations": []
+        },
+        "BadgeObtenu": {
+          "abstraite": false,
+          "interface": false,
+          "stereotype": "",
+          "attributs": [
+            {
+              "nom": "id",
+              "type": "UUID",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "type",
+              "type": "TypeBadge",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "contexte",
+              "type": "String",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "date",
+              "type": "Instant",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            }
+          ],
+          "operations": []
+        },
+        "Notification": {
+          "abstraite": false,
+          "interface": false,
+          "stereotype": "",
+          "attributs": [
+            {
+              "nom": "id",
+              "type": "UUID",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "type",
+              "type": "TypeNotification",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "contenu",
+              "type": "String",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "lienProfond",
+              "type": "String",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "dateEnvoi",
+              "type": "Instant",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "lue",
+              "type": "Boolean",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            }
+          ],
+          "operations": []
+        },
+        "PreferenceNotification": {
+          "abstraite": false,
+          "interface": false,
+          "stereotype": "",
+          "attributs": [
+            {
+              "nom": "id",
+              "type": "UUID",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "niveau",
+              "type": "NiveauNotification",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "neRienDerangerNocturne",
+              "type": "Boolean",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            }
+          ],
+          "operations": []
+        },
+        "Signalement": {
+          "abstraite": false,
+          "interface": false,
+          "stereotype": "",
+          "attributs": [
+            {
+              "nom": "id",
+              "type": "UUID",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "motif",
+              "type": "String",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "statut",
+              "type": "StatutSignalement",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "dateCreation",
+              "type": "Instant",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": ""
+            },
+            {
+              "nom": "dateTraitement",
+              "type": "Instant",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": "facultatif"
+            },
+            {
+              "nom": "decision",
+              "type": "String",
+              "derive": false,
+              "multiplicite": "",
+              "contrainte": "facultatif"
+            }
+          ],
+          "operations": []
+        }
+      },
+      "enumerations": {
+        "Poste": [
+          "GARDIEN",
+          "DEFENSEUR",
+          "MILIEU",
+          "ATTAQUANT"
+        ],
+        "PiedFort": [
+          "GAUCHE",
+          "DROIT",
+          "AMBIDEXTRE"
+        ],
+        "StatutClub": [
+          "ACTIF",
+          "ARCHIVE"
+        ],
+        "RoleClub": [
+          "MEMBRE",
+          "ADMINISTRATEUR"
+        ],
+        "StatutAdhesion": [
+          "EN_ATTENTE",
+          "ACCEPTEE",
+          "REFUSEE",
+          "QUITTEE"
+        ],
+        "Visibilite": [
+          "PUBLIC",
+          "PRIVE"
+        ],
+        "StatutDeuxZero": [
+          "CREATION",
+          "EN_ATTENTE_ENGAGEMENT",
+          "ACTIF",
+          "ARCHIVE"
+        ],
+        "StatutSaison": [
+          "A_VENIR",
+          "EN_COURS",
+          "CLOTUREE"
+        ],
+        "TypeMatch": [
+          "DEUX_ZERO",
+          "AMICAL"
+        ],
+        "StatutMatch": [
+          "PROGRAMME",
+          "EN_COURS",
+          "EN_ATTENTE_DE_VALIDATION",
+          "OFFICIEL",
+          "EN_LITIGE",
+          "REPORTE",
+          "ANNULE"
+        ],
+        "ReponseConvocation": [
+          "PRESENT",
+          "ABSENT",
+          "INCERTAIN",
+          "SANS_REPONSE"
+        ],
+        "TypeEvenement": [
+          "BUT",
+          "BUT_CONTRE_SON_CAMP",
+          "PENALTY_MARQUE",
+          "PENALTY_MANQUE",
+          "ARRET_DECISIF",
+          "CARTON",
+          "REMPLACEMENT",
+          "DEBUT_PERIODE",
+          "FIN_PERIODE"
+        ],
+        "DecisionValidation": [
+          "VALIDE",
+          "CONTESTE"
+        ],
+        "TypeBadge": [
+          "PREMIER_BUT",
+          "DOUBLE",
+          "TRIPLE",
+          "QUADRUPLE",
+          "PASSEUR_DE_GENIE",
+          "FIDELE",
+          "MUR",
+          "INVAINCU",
+          "HOMME_FORT",
+          "TOUJOURS_LA",
+          "PERSONNALISE"
+        ],
+        "TypeNotification": [
+          "BUT",
+          "CORRECTION",
+          "COUP_D_ENVOI",
+          "MI_TEMPS_FIN",
+          "CONVOCATION",
+          "RAPPEL",
+          "CHANGEMENT_DE_PROGRAMME",
+          "VALIDATION",
+          "CONTESTATION_LITIGE",
+          "VOTE",
+          "BADGE",
+          "ADHESION"
+        ],
+        "NiveauNotification": [
+          "TOUT",
+          "BUTS_ET_SCORE_FINAL",
+          "ME_CONCERNANT",
+          "AUCUNE"
+        ],
+        "StatutSignalement": [
+          "EN_ATTENTE",
+          "TRAITE",
+          "CLASSE_SANS_SUITE"
+        ]
+      },
+      "associations": [
+        {
+          "de": "Utilisateur",
+          "vers": "AdhesionClub",
+          "type": "--",
+          "mult_de": "1",
+          "mult_vers": "0..*",
+          "role": ""
+        },
+        {
+          "de": "AdhesionClub",
+          "vers": "Club",
+          "type": "--",
+          "mult_de": "0..*",
+          "mult_vers": "1",
+          "role": ""
+        },
+        {
+          "de": "Club",
+          "vers": "Camp",
+          "type": "--",
+          "mult_de": "1",
+          "mult_vers": "0..*",
+          "role": ""
+        },
+        {
+          "de": "Camp",
+          "vers": "DeuxZero",
+          "type": "--",
+          "mult_de": "0..*",
+          "mult_vers": "1",
+          "role": ""
+        },
+        {
+          "de": "DeuxZero",
+          "vers": "Camp",
+          "type": "--",
+          "mult_de": "1",
+          "mult_vers": "2",
+          "role": "contient exactement 2"
+        },
+        {
+          "de": "Camp",
+          "vers": "EffectifEngage",
+          "type": "--",
+          "mult_de": "1",
+          "mult_vers": "0..*",
+          "role": ""
+        },
+        {
+          "de": "EffectifEngage",
+          "vers": "Utilisateur",
+          "type": "--",
+          "mult_de": "0..*",
+          "mult_vers": "1",
+          "role": ""
+        },
+        {
+          "de": "DeuxZero",
+          "vers": "Saison",
+          "type": "--",
+          "mult_de": "1",
+          "mult_vers": "0..*",
+          "role": ""
+        },
+        {
+          "de": "Saison",
+          "vers": "Match",
+          "type": "--",
+          "mult_de": "1",
+          "mult_vers": "0..*",
+          "role": "matchs de 2-0"
+        },
+        {
+          "de": "Club",
+          "vers": "Match",
+          "type": "--",
+          "mult_de": "1",
+          "mult_vers": "0..*",
+          "role": "matchs amicaux"
+        },
+        {
+          "de": "Match",
+          "vers": "Evenement",
+          "type": "--",
+          "mult_de": "1",
+          "mult_vers": "0..*",
+          "role": ""
+        },
+        {
+          "de": "Match",
+          "vers": "Validation",
+          "type": "--",
+          "mult_de": "1",
+          "mult_vers": "0..2",
+          "role": ""
+        },
+        {
+          "de": "Match",
+          "vers": "Vote",
+          "type": "--",
+          "mult_de": "1",
+          "mult_vers": "0..*",
+          "role": ""
+        },
+        {
+          "de": "Match",
+          "vers": "Convocation",
+          "type": "--",
+          "mult_de": "1",
+          "mult_vers": "0..*",
+          "role": ""
+        },
+        {
+          "de": "Convocation",
+          "vers": "Utilisateur",
+          "type": "--",
+          "mult_de": "0..*",
+          "mult_vers": "1",
+          "role": ""
+        },
+        {
+          "de": "Match",
+          "vers": "Composition",
+          "type": "--",
+          "mult_de": "1",
+          "mult_vers": "0..*",
+          "role": ""
+        },
+        {
+          "de": "Composition",
+          "vers": "Utilisateur",
+          "type": "--",
+          "mult_de": "0..*",
+          "mult_vers": "1",
+          "role": ""
+        },
+        {
+          "de": "Utilisateur",
+          "vers": "BadgeObtenu",
+          "type": "--",
+          "mult_de": "1",
+          "mult_vers": "0..*",
+          "role": ""
+        },
+        {
+          "de": "Utilisateur",
+          "vers": "Notification",
+          "type": "--",
+          "mult_de": "1",
+          "mult_vers": "0..*",
+          "role": ""
+        },
+        {
+          "de": "Utilisateur",
+          "vers": "PreferenceNotification",
+          "type": "--",
+          "mult_de": "1",
+          "mult_vers": "0..*",
+          "role": "par 2-0"
+        },
+        {
+          "de": "Utilisateur",
+          "vers": "Signalement",
+          "type": "--",
+          "mult_de": "1",
+          "mult_vers": "0..*",
+          "role": "auteur"
+        },
+        {
+          "de": "Camp",
+          "vers": "Utilisateur",
+          "type": "--",
+          "mult_de": "1",
+          "mult_vers": "0..1",
+          "role": "capitaine"
+        },
+        {
+          "de": "Camp",
+          "vers": "Utilisateur",
+          "type": "--",
+          "mult_de": "1",
+          "mult_vers": "0..1",
+          "role": "vice-capitaine"
+        },
+        {
+          "de": "DeuxZero",
+          "vers": "Utilisateur",
+          "type": "--",
+          "mult_de": "1",
+          "mult_vers": "1",
+          "role": "organisateur"
+        },
+        {
+          "de": "Match",
+          "vers": "Utilisateur",
+          "type": "--",
+          "mult_de": "0..1",
+          "mult_vers": "1",
+          "role": "marqueur"
+        },
+        {
+          "de": "Utilisateur",
+          "vers": "Poste",
+          "type": "..>",
+          "mult_de": "",
+          "mult_vers": "",
+          "role": ""
+        },
+        {
+          "de": "Utilisateur",
+          "vers": "PiedFort",
+          "type": "..>",
+          "mult_de": "",
+          "mult_vers": "",
+          "role": ""
+        },
+        {
+          "de": "Club",
+          "vers": "StatutClub",
+          "type": "..>",
+          "mult_de": "",
+          "mult_vers": "",
+          "role": ""
+        },
+        {
+          "de": "AdhesionClub",
+          "vers": "RoleClub",
+          "type": "..>",
+          "mult_de": "",
+          "mult_vers": "",
+          "role": ""
+        },
+        {
+          "de": "AdhesionClub",
+          "vers": "StatutAdhesion",
+          "type": "..>",
+          "mult_de": "",
+          "mult_vers": "",
+          "role": ""
+        },
+        {
+          "de": "DeuxZero",
+          "vers": "Visibilite",
+          "type": "..>",
+          "mult_de": "",
+          "mult_vers": "",
+          "role": ""
+        },
+        {
+          "de": "DeuxZero",
+          "vers": "StatutDeuxZero",
+          "type": "..>",
+          "mult_de": "",
+          "mult_vers": "",
+          "role": ""
+        },
+        {
+          "de": "Saison",
+          "vers": "StatutSaison",
+          "type": "..>",
+          "mult_de": "",
+          "mult_vers": "",
+          "role": ""
+        },
+        {
+          "de": "Match",
+          "vers": "TypeMatch",
+          "type": "..>",
+          "mult_de": "",
+          "mult_vers": "",
+          "role": ""
+        },
+        {
+          "de": "Match",
+          "vers": "StatutMatch",
+          "type": "..>",
+          "mult_de": "",
+          "mult_vers": "",
+          "role": ""
+        },
+        {
+          "de": "Convocation",
+          "vers": "ReponseConvocation",
+          "type": "..>",
+          "mult_de": "",
+          "mult_vers": "",
+          "role": ""
+        },
+        {
+          "de": "Evenement",
+          "vers": "TypeEvenement",
+          "type": "..>",
+          "mult_de": "",
+          "mult_vers": "",
+          "role": ""
+        },
+        {
+          "de": "Validation",
+          "vers": "DecisionValidation",
+          "type": "..>",
+          "mult_de": "",
+          "mult_vers": "",
+          "role": ""
+        },
+        {
+          "de": "BadgeObtenu",
+          "vers": "TypeBadge",
+          "type": "..>",
+          "mult_de": "",
+          "mult_vers": "",
+          "role": ""
+        },
+        {
+          "de": "Notification",
+          "vers": "TypeNotification",
+          "type": "..>",
+          "mult_de": "",
+          "mult_vers": "",
+          "role": ""
+        },
+        {
+          "de": "PreferenceNotification",
+          "vers": "NiveauNotification",
+          "type": "..>",
+          "mult_de": "",
+          "mult_vers": "",
+          "role": ""
+        },
+        {
+          "de": "Signalement",
+          "vers": "StatutSignalement",
+          "type": "..>",
+          "mult_de": "",
+          "mult_vers": "",
+          "role": ""
+        }
+      ],
+      "sources": [
+        "uml/domain/README.md",
+        "uml/domain/_modele-fiche.md",
+        "uml/domain/amicaux/fiches/CU21-organiser-un-match-amical.md",
+        "uml/domain/bilan/fiches/CU25-cloturer-la-saison-et-consulter-le-bilan.md",
+        "uml/domain/calendrier/fiches/CU14-generer-et-gerer-le-calendrier.md",
+        "uml/domain/calendrier/fiches/CU15-convoquer-les-joueurs.md",
+        "uml/domain/calendrier/fiches/CU16-composer-l-equipe-avant-match.md",
+        "uml/domain/clubs/fiches/CU5-creer-un-club.md",
+        "uml/domain/clubs/fiches/CU6-rejoindre-un-club.md",
+        "uml/domain/clubs/fiches/CU7-gerer-les-membres-d-un-club.md",
+        "uml/domain/commun/acteurs.md",
+        "uml/domain/commun/activites/README.md",
+        "uml/domain/comptes/fiches/CU1-creer-un-compte.md",
+        "uml/domain/comptes/fiches/CU2-se-connecter.md",
+        "uml/domain/comptes/fiches/CU26-gerer-ses-preferences-de-notification.md",
+        "uml/domain/comptes/fiches/CU3-reinitialiser-mot-de-passe.md",
+        "uml/domain/comptes/fiches/CU4-modifier-son-profil.md",
+        "uml/domain/deuxzero/fiches/CU13-modifier-les-parametres-d-un-2-0.md",
+        "uml/domain/deuxzero/fiches/CU8-creer-un-2-0.md",
+        "uml/domain/deuxzero/fiches/CU9-engager-un-club-dans-un-2-0.md",
+        "uml/domain/effectifs/fiches/CU10-composer-un-effectif-engage.md",
+        "uml/domain/effectifs/fiches/CU11-transferer-un-joueur-de-camp.md",
+        "uml/domain/profil/fiches/CU23-consulter-son-profil-et-sa-progression.md",
+        "uml/domain/recompenses/fiches/CU24-voter-homme-du-match-obtenir-un-badge.md",
+        "uml/domain/saisie_directe/fiches/CU17-saisir-les-evenements-en-direct.md",
+        "uml/domain/saisie_directe/fiches/CU18-suivre-un-match-en-direct.md",
+        "uml/domain/saisons/fiches/CU12-ouvrir-cloturer-une-saison.md",
+        "uml/domain/social/fiches/CU27-signaler-un-contenu.md",
+        "uml/domain/statistiques/fiches/CU22-consulter-les-statistiques-et-classements.md",
+        "uml/domain/validation/fiches/CU19-valider-contester-un-resultat.md",
+        "uml/domain/validation/fiches/CU20-arbitrer-un-litige.md",
+        "uml/domain/amicaux/sequences/CU21-organiser-un-match-amical.puml",
+        "uml/domain/amicaux/usecase/cas-utilisation.puml",
+        "uml/domain/bilan/sequences/CU25-cloturer-la-saison-et-consulter-le-bilan.puml",
+        "uml/domain/bilan/usecase/cas-utilisation.puml",
+        "uml/domain/calendrier/sequences/CU14-generer-et-gerer-le-calendrier.puml",
+        "uml/domain/calendrier/sequences/CU15-convoquer-les-joueurs.puml",
+        "uml/domain/calendrier/sequences/CU16-composer-l-equipe-avant-match.puml",
+        "uml/domain/calendrier/usecase/cas-utilisation.puml",
+        "uml/domain/clubs/sequences/CU5-creer-un-club.puml",
+        "uml/domain/clubs/sequences/CU6-rejoindre-un-club.puml",
+        "uml/domain/clubs/sequences/CU7-gerer-les-membres-d-un-club.puml",
+        "uml/domain/clubs/usecase/cas-utilisation.puml",
+        "uml/domain/commun/activites/A1-deroulement-match.puml",
+        "uml/domain/commun/activites/A2-creation-deuxzero.puml",
+        "uml/domain/commun/activites/A3-contestation.puml",
+        "uml/domain/commun/activites/A4-cloture-saison.puml",
+        "uml/domain/commun/activites/A5-hors-connexion.puml",
+        "uml/domain/commun/activites/A6-rejoindre-club-effectif.puml",
+        "uml/domain/commun/classe/modele-domaine.puml",
+        "uml/domain/commun/etats/etats-adhesion.puml",
+        "uml/domain/commun/etats/etats-deuxzero.puml",
+        "uml/domain/commun/etats/etats-match.puml",
+        "uml/domain/commun/etats/etats-saison.puml",
+        "uml/domain/commun/usecase/acteurs.puml",
+        "uml/domain/comptes/sequences/CU1-creer-un-compte.puml",
+        "uml/domain/comptes/sequences/CU2-se-connecter.puml",
+        "uml/domain/comptes/sequences/CU26-gerer-ses-preferences-de-notification.puml",
+        "uml/domain/comptes/sequences/CU3-reinitialiser-mot-de-passe.puml",
+        "uml/domain/comptes/sequences/CU4-modifier-son-profil.puml",
+        "uml/domain/comptes/usecase/cas-utilisation.puml",
+        "uml/domain/deuxzero/sequences/CU13-modifier-les-parametres-d-un-2-0.puml",
+        "uml/domain/deuxzero/sequences/CU8-creer-un-2-0.puml",
+        "uml/domain/deuxzero/sequences/CU9-engager-un-club-dans-un-2-0.puml",
+        "uml/domain/deuxzero/usecase/cas-utilisation.puml",
+        "uml/domain/effectifs/sequences/CU10-composer-un-effectif-engage.puml",
+        "uml/domain/effectifs/sequences/CU11-transferer-un-joueur-de-camp.puml",
+        "uml/domain/effectifs/usecase/cas-utilisation.puml",
+        "uml/domain/profil/sequences/CU23-consulter-son-profil-et-sa-progression.puml",
+        "uml/domain/profil/usecase/cas-utilisation.puml",
+        "uml/domain/recompenses/sequences/CU24-voter-homme-du-match-obtenir-un-badge.puml",
+        "uml/domain/recompenses/usecase/cas-utilisation.puml",
+        "uml/domain/saisie_directe/sequences/CU17-saisir-les-evenements-en-direct.puml",
+        "uml/domain/saisie_directe/sequences/CU18-suivre-un-match-en-direct.puml",
+        "uml/domain/saisie_directe/usecase/cas-utilisation.puml",
+        "uml/domain/saisons/sequences/CU12-ouvrir-cloturer-une-saison.puml",
+        "uml/domain/saisons/usecase/cas-utilisation.puml",
+        "uml/domain/social/sequences/CU27-signaler-un-contenu.puml",
+        "uml/domain/social/usecase/cas-utilisation.puml",
+        "uml/domain/statistiques/sequences/CU22-consulter-les-statistiques-et-classements.puml",
+        "uml/domain/statistiques/usecase/cas-utilisation.puml",
+        "uml/domain/validation/sequences/CU19-valider-contester-un-resultat.puml",
+        "uml/domain/validation/sequences/CU20-arbitrer-un-litige.puml",
+        "uml/domain/validation/usecase/cas-utilisation.puml"
+      ]
+    }
+  },
+  "operations_par_cu": {
+    "CU21": [
+      "inviterClub",
+      "creerMatchAmical",
+      "validerAmical"
+    ],
+    "CU25": [
+      "genererBilanSaison",
+      "getBilanSaison"
+    ],
+    "CU14": [
+      "ajouterMatchExceptionnel",
+      "modifierMatch"
+    ],
+    "CU15": [
+      "repondreConvocation",
+      "getPresences"
+    ],
+    "CU16": [
+      "composerEquipe",
+      "ajouterJoueurOccasionnel",
+      "designerMarqueur"
+    ],
+    "CU5": [
+      "creerClub"
+    ],
+    "CU6": [
+      "demanderAdhesion",
+      "traiterDemandeAdhesion"
+    ],
+    "CU7": [
+      "regenererCodeAdhesion",
+      "gererMembre",
+      "definirDelegations"
+    ],
+    "CU1": [
+      "demanderCodeVerification",
+      "verifierCode",
+      "creerCompte"
+    ],
+    "CU2": [
+      "authentifier"
+    ],
+    "CU26": [
+      "enregistrerPreference"
+    ],
+    "CU3": [
+      "envoyerCodeReinitialisation",
+      "reinitialiserMotDePasse"
+    ],
+    "CU4": [
+      "modifierProfil",
+      "supprimerCompte"
+    ],
+    "CU13": [
+      "modifierParametres",
+      "transfererOrganisation",
+      "archiverDeuxZero"
+    ],
+    "CU8": [
+      "creerDeuxZero"
+    ],
+    "CU9": [
+      "engagerClub",
+      "repartirMembres",
+      "composerEffectif"
+    ],
+    "CU10": [
+      "ajouterAEffectif",
+      "erreur",
+      "nommerResponsables"
+    ],
+    "CU11": [
+      "transfererJoueur"
+    ],
+    "CU23": [
+      "getProfil",
+      "getStatistiquesParContexte",
+      "getProfilPublic",
+      "profil"
+    ],
+    "CU24": [
+      "voterHommeDuMatch"
+    ],
+    "CU17": [
+      "demarrerMatch",
+      "saisirEvenement",
+      "annulerDernierEvenement",
+      "terminerMatch"
+    ],
+    "CU18": [
+      "notification",
+      "getSuiviMatch"
+    ],
+    "CU12": [
+      "ouvrirSaison",
+      "cloturerSaison"
+    ],
+    "CU27": [
+      "creerSignalement",
+      "modère",
+      "appliquerDecisionModeration"
+    ],
+    "CU22": [
+      "getStatistiquesSaison",
+      "getClassements",
+      "getStatistiques"
+    ],
+    "CU19": [
+      "signerValidation",
+      "proposerCorrection"
+    ],
+    "CU20": [
+      "getHistoriqueMatch",
+      "décide",
+      "trancherLitige"
+    ]
+  },
+  "cas_utilisation": {
+    "CU1": {
+      "nom": "Créer un compte",
+      "groupe": "comptes",
+      "source": "uml/domain/comptes/fiches/CU1-creer-un-compte.md"
+    },
+    "CU2": {
+      "nom": "Se connecter",
+      "groupe": "comptes",
+      "source": "uml/domain/comptes/fiches/CU2-se-connecter.md"
+    },
+    "CU3": {
+      "nom": "Réinitialiser son mot de passe",
+      "groupe": "comptes",
+      "source": "uml/domain/comptes/fiches/CU3-reinitialiser-mot-de-passe.md"
+    },
+    "CU4": {
+      "nom": "Modifier son profil (et supprimer son compte)",
+      "groupe": "comptes",
+      "source": "uml/domain/comptes/fiches/CU4-modifier-son-profil.md"
+    },
+    "CU5": {
+      "nom": "Créer un club",
+      "groupe": "clubs",
+      "source": "uml/domain/clubs/fiches/CU5-creer-un-club.md"
+    },
+    "CU6": {
+      "nom": "Rejoindre un club",
+      "groupe": "clubs",
+      "source": "uml/domain/clubs/fiches/CU6-rejoindre-un-club.md"
+    },
+    "CU7": {
+      "nom": "Gérer les membres d'un club",
+      "groupe": "clubs",
+      "source": "uml/domain/clubs/fiches/CU7-gerer-les-membres-d-un-club.md"
+    },
+    "CU8": {
+      "nom": "Créer un 2-0",
+      "groupe": "deuxzero",
+      "source": "uml/domain/deuxzero/fiches/CU8-creer-un-2-0.md"
+    },
+    "CU9": {
+      "nom": "Engager un club dans un 2-0 (y compris 2-0 interne)",
+      "groupe": "deuxzero",
+      "source": "uml/domain/deuxzero/fiches/CU9-engager-un-club-dans-un-2-0.md"
+    },
+    "CU10": {
+      "nom": "Composer un effectif engagé",
+      "groupe": "effectifs",
+      "source": "uml/domain/effectifs/fiches/CU10-composer-un-effectif-engage.md"
+    },
+    "CU11": {
+      "nom": "Transférer un joueur de camp",
+      "groupe": "effectifs",
+      "source": "uml/domain/effectifs/fiches/CU11-transferer-un-joueur-de-camp.md"
+    },
+    "CU12": {
+      "nom": "Ouvrir / clôturer une saison",
+      "groupe": "saisons",
+      "source": "uml/domain/saisons/fiches/CU12-ouvrir-cloturer-une-saison.md"
+    },
+    "CU13": {
+      "nom": "Modifier les paramètres d'un 2-0",
+      "groupe": "deuxzero",
+      "source": "uml/domain/deuxzero/fiches/CU13-modifier-les-parametres-d-un-2-0.md"
+    },
+    "CU14": {
+      "nom": "Générer et gérer le calendrier",
+      "groupe": "calendrier",
+      "source": "uml/domain/calendrier/fiches/CU14-generer-et-gerer-le-calendrier.md"
+    },
+    "CU15": {
+      "nom": "Convoquer les joueurs",
+      "groupe": "calendrier",
+      "source": "uml/domain/calendrier/fiches/CU15-convoquer-les-joueurs.md"
+    },
+    "CU16": {
+      "nom": "Composer l'équipe avant-match",
+      "groupe": "calendrier",
+      "source": "uml/domain/calendrier/fiches/CU16-composer-l-equipe-avant-match.md"
+    },
+    "CU17": {
+      "nom": "Saisir les événements en direct",
+      "groupe": "saisie_directe",
+      "source": "uml/domain/saisie_directe/fiches/CU17-saisir-les-evenements-en-direct.md"
+    },
+    "CU18": {
+      "nom": "Suivre un match en direct",
+      "groupe": "saisie_directe",
+      "source": "uml/domain/saisie_directe/fiches/CU18-suivre-un-match-en-direct.md"
+    },
+    "CU19": {
+      "nom": "Valider / contester un résultat",
+      "groupe": "validation",
+      "source": "uml/domain/validation/fiches/CU19-valider-contester-un-resultat.md"
+    },
+    "CU20": {
+      "nom": "Arbitrer un litige",
+      "groupe": "validation",
+      "source": "uml/domain/validation/fiches/CU20-arbitrer-un-litige.md"
+    },
+    "CU21": {
+      "nom": "Organiser un match amical",
+      "groupe": "amicaux",
+      "source": "uml/domain/amicaux/fiches/CU21-organiser-un-match-amical.md"
+    },
+    "CU22": {
+      "nom": "Consulter les statistiques et classements",
+      "groupe": "statistiques",
+      "source": "uml/domain/statistiques/fiches/CU22-consulter-les-statistiques-et-classements.md"
+    },
+    "CU23": {
+      "nom": "Consulter son profil et sa progression",
+      "groupe": "profil",
+      "source": "uml/domain/profil/fiches/CU23-consulter-son-profil-et-sa-progression.md"
+    },
+    "CU24": {
+      "nom": "Voter pour l'homme du match / obtenir un badge",
+      "groupe": "recompenses",
+      "source": "uml/domain/recompenses/fiches/CU24-voter-homme-du-match-obtenir-un-badge.md"
+    },
+    "CU25": {
+      "nom": "Clôturer la saison et consulter le bilan",
+      "groupe": "bilan",
+      "source": "uml/domain/bilan/fiches/CU25-cloturer-la-saison-et-consulter-le-bilan.md"
+    },
+    "CU26": {
+      "nom": "Gérer ses préférences de notification",
+      "groupe": "comptes",
+      "source": "uml/domain/comptes/fiches/CU26-gerer-ses-preferences-de-notification.md"
+    },
+    "CU27": {
+      "nom": "Signaler un contenu",
+      "groupe": "social",
+      "source": "uml/domain/social/fiches/CU27-signaler-un-contenu.md"
+    }
+  },
+  "regles": [
+    "RG-01",
+    "RG-02",
+    "RG-03",
+    "RG-04",
+    "RG-05",
+    "RG-06",
+    "RG-07",
+    "RG-08",
+    "RG-09",
+    "RG-10",
+    "RG-11",
+    "RG-12",
+    "RG-13",
+    "RG-14",
+    "RG-15",
+    "RG-16",
+    "RG-17",
+    "RG-18",
+    "RG-19",
+    "RG-20"
+  ]
+}

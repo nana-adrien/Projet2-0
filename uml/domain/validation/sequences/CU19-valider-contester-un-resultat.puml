@@ -1,0 +1,29 @@
+@startuml cu19-validation
+actor "Capitaine A" as CA
+actor "Capitaine B" as CB
+actor Système as S
+participant "App mobile" as APP
+participant "API" as API
+API -> CA : notifie "Résultat à valider" (F-NOT)
+API -> CB : notifie "Résultat à valider" (F-NOT)
+CA -> APP : consulte récapitulatif, Valide ou Conteste
+APP -> API : signerValidation(matchId, campA, decision)
+CB -> APP : consulte récapitulatif, Valide ou Conteste
+APP -> API : signerValidation(matchId, campB, decision)
+alt les 2 camps valident
+  API -> API : statut -> Officiel (RG-12)
+else contestation
+  CA -> APP : propose une correction (F-VAL-04)
+  APP -> API : proposerCorrection(matchId, correction)
+  CB -> APP : accepte ou refuse la correction
+  alt acceptée
+    API -> API : match corrigé -> Officiel
+  else refusée
+    API -> API : statut -> En litige (RG-13) -- voir CU20
+  end
+else délai expiré sans réponse
+  S -> API : validation automatique (RG-12, F-VAL-03)
+  API -> API : statut -> Officiel
+end
+API --> APP : décision notifiée à tous
+@enduml

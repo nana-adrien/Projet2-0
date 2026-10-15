@@ -1,0 +1,44 @@
+@startuml acteurs
+' Diagramme des acteurs - généralisations de rôles (RG-01 : un compte unique par personne)
+left to right direction
+
+actor Visiteur
+actor Joueur
+actor "Administrateur de club" as AdminClub
+actor Capitaine
+actor "Vice-capitaine" as ViceCapitaine
+actor "Organisateur de 2-0" as Organisateur
+actor Marqueur
+actor "Marqueur suppléant" as MarqueurSuppleant
+actor "Supporter / Abonné" as Supporter
+actor "Administrateur plateforme" as AdminPlateforme
+actor "Équipe invitée" as EquipeInvitee
+actor Système as Systeme <<system>>
+actor "Service de notifications push" as PushService <<system>>
+
+Visiteur <|-- Joueur : inscription (CU1)
+Joueur <|-- AdminClub
+Joueur <|-- Capitaine
+Capitaine <|-- ViceCapitaine
+Joueur <|-- Organisateur
+Joueur <|-- Marqueur
+Marqueur <|-- MarqueurSuppleant
+Joueur <|-- Supporter
+
+note right of AdminPlateforme
+  Acteur indépendant du compte joueur :
+  accède uniquement au back-office web.
+end note
+
+note right of EquipeInvitee
+  Acteur passif : simple nom saisi,
+  aucun compte, aucune action directe
+  dans l'application (F-AMI-03).
+end note
+
+note bottom of Systeme
+  Déclenche la validation automatique (RG-12),
+  la génération du calendrier (F-CAL-01),
+  le calcul des badges/séries/records.
+end note
+@enduml

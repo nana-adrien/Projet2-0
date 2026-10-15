@@ -1,0 +1,11 @@
+@startuml cu3-reinitialiser-mdp
+actor Joueur as J
+participant "App mobile" as APP
+participant "API" as API
+J -> APP : demande réinitialisation
+APP -> API : envoyerCodeReinitialisation(contact)
+API --> J : code par SMS/e-mail
+J -> APP : saisit code + nouveau mot de passe
+APP -> API : reinitialiserMotDePasse(contact, code, nouveauMdp)
+API --> APP : confirmation
+@enduml

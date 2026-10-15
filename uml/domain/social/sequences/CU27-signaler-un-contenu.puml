@@ -1,0 +1,14 @@
+@startuml cu27-signalement
+actor Utilisateur as U
+actor "Administrateur plateforme" as A
+participant "App mobile" as APP
+participant "API" as API
+participant "Back-office" as BO
+U -> APP : signale un contenu / comportement
+APP -> API : creerSignalement(auteurId, cibleId, motif)
+API --> APP : signalement enregistré
+API -> BO : notifie l'équipe de modération
+A -> BO : consulte la liste des signalements
+A -> BO : modère (supprime le contenu / suspend le compte)\nou classe sans suite
+BO -> API : appliquerDecisionModeration(signalementId, decision)
+@enduml

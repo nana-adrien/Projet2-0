@@ -1,0 +1,22 @@
+@startuml activite-cloture-saison
+' A4 - Clôture de saison et bilan
+' Traverse CU12, CU25
+start
+if (Date de fin atteinte ?) then (oui)
+  :Clôture automatique;
+else (non)
+  :Organisateur clôture manuellement (CU12);
+endif
+:Résultats figés (RG-18);
+:Calcul du camp champion\n(victoires, puis différence de buts,\npuis buts marqués, puis dernier match) (RG-17);
+:Calcul des récompenses individuelles\n(buteur, passeur, assidu, gardien);
+if (Vote du joueur de l'année activé ?) then (oui)
+  :Vote ouvert à tous les membres (F-BIL-04);
+else (non)
+  :Calcul automatique du joueur de l'année;
+endif
+:Page "Bilan de l'année" générée (CU25);
+:Visuel partageable généré (F-BIL-05);
+:Nouvelle saison proposée (F-SAI-01);
+stop
+@enduml

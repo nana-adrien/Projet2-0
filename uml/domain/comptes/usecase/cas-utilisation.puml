@@ -1,0 +1,21 @@
+@startuml cas-utilisation-comptes
+left to right direction
+actor Visiteur
+actor Joueur
+Visiteur <|-- Joueur
+
+rectangle "Comptes et authentification" {
+  usecase "CU1 - Créer un compte" as CU1
+  usecase "CU2 - Se connecter" as CU2
+  usecase "CU3 - Réinitialiser son mot de passe" as CU3
+  usecase "CU4 - Modifier son profil" as CU4
+  usecase "CU26 - Gérer ses préférences\nde notification" as CU26
+}
+
+Visiteur --> CU1
+Joueur --> CU2
+Joueur --> CU3
+Joueur --> CU4
+Joueur --> CU26
+CU2 ..> CU3 : <<extend>>
+@enduml

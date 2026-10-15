@@ -1,0 +1,15 @@
+@startuml cu15-convoquer-joueurs
+actor Système as S
+actor Joueur as J
+actor Capitaine as C
+participant "App mobile" as APP
+participant "API" as API
+S -> API : envoie les convocations (délai réglable avant le match)
+API -> J : notification "Convocation" (F-NOT)
+J -> APP : répond Présent / Absent / Incertain
+APP -> API : repondreConvocation(convocationId, reponse)
+S -> API : relance automatique (joueurs sans réponse)
+C -> APP : consulte le compteur de présents par camp
+APP -> API : getPresences(matchId)
+API --> APP : nombre de présents par camp (F-CAL-06)
+@enduml

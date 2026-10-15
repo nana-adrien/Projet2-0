@@ -1,0 +1,14 @@
+@startuml cas-utilisation-social
+left to right direction
+actor Joueur
+actor "Supporter / Abonné" as Supporter
+actor "Administrateur plateforme" as AdminPlateforme
+
+rectangle "Partage et vie communautaire" {
+  usecase "CU27 - Signaler un contenu" as CU27
+}
+
+Joueur --> CU27
+Supporter --> CU27
+AdminPlateforme --> CU27 : modère
+@enduml

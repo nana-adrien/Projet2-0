@@ -1,0 +1,416 @@
+@startuml modele-domaine
+' Classes métier du projet 2-0 (indépendantes de toute base de données).
+' Source : cahier des charges section 4.1 (entités principales) et 4.2 (relations).
+' Les règles de gestion RG-xx sont rattachées en note aux classes qu'elles contraignent.
+
+class Utilisateur {
+  - id : UUID
+  - pseudo : String
+  - nom : String {facultatif}
+  - prenom : String {facultatif}
+  - telephone : String
+  - email : String
+  - motDePasseHache : String
+  - photo : String
+  - dateNaissance : LocalDate {facultatif}
+  - postePrefere : Poste
+  - piedFort : PiedFort
+  - dateCreation : Instant
+  - supprime : Boolean
+}
+note right of Utilisateur
+  RG-01 : une personne = un seul compte,
+  identifié par téléphone ou e-mail.
+  RG-20 : suppression -> anonymisation
+  ("Ancien joueur") dans les feuilles de
+  match passées, scores inchangés.
+end note
+
+class Club {
+  - id : UUID
+  - nom : String
+  - logo : String
+  - couleurs : String
+  - quartier : String
+  - description : String
+  - codeAdhesion : String
+  - statut : StatutClub
+}
+note right of Club
+  RG-02 : un joueur peut être membre
+  d'un nombre illimité de clubs.
+  RG-03 : un club peut être engagé dans
+  un nombre illimité de 2-0.
+end note
+
+class AdhesionClub {
+  - id : UUID
+  - role : RoleClub
+  - statut : StatutAdhesion
+  - dateDemande : Instant
+  - dateReponse : Instant
+}
+
+class DeuxZero {
+  - id : UUID
+  - nom : String
+  - lieu : String
+  - joursHabituels : List<DayOfWeek>
+  - heureHabituelle : LocalTime
+  - dureeMiTemps : Duree
+  - nombreMiTemps : Int
+  - dureePause : Duree
+  - nombreMaxJoueursParCamp : Int
+  - delaiValidationAutomatique : Duree
+  - transfertsAutorisesParSaison : Int {facultatif}
+  - visibilite : Visibilite
+  - estInterne : Boolean
+  - statut : StatutDeuxZero
+}
+note right of DeuxZero
+  RG-04 : exactement 2 camps ; ne peut
+  débuter que si les 2 camps sont engagés
+  et ont chacun un capitaine.
+  RG-05 : les 2 camps peuvent être portés
+  par le même club (2-0 interne) ou 2 clubs
+  différents.
+  RG-10 : durée de mi-temps propre au 2-0,
+  modifiable ponctuellement par match avant
+  le coup d'envoi.
+end note
+
+class Camp {
+  - id : UUID
+  - libelle : String
+  - codeEngagement : String
+}
+note bottom of Camp
+  RG-06 : au sein d'un même 2-0, un joueur
+  n'appartient qu'à un seul camp à un
+  instant donné.
+end note
+
+class EffectifEngage {
+  - id : UUID
+  - numeroMaillot : Int {facultatif}
+  - dateEntree : LocalDate
+  - dateSortie : LocalDate {facultatif}
+}
+note right of EffectifEngage
+  RG-07 : un joueur peut appartenir à des
+  camps de clubs différents s'ils participent
+  à des 2-0 différents.
+  RG-08 : pour être ajouté, le joueur doit être
+  membre accepté du club porteur du camp.
+  RG-09 : un transfert clôture l'appartenance
+  au camp d'origine ; statistiques antérieures
+  conservées sur l'ancien camp.
+end note
+
+class Saison {
+  - id : UUID
+  - libelle : String
+  - dateDebut : LocalDate
+  - dateFin : LocalDate
+  - statut : StatutSaison
+}
+note right of Saison
+  RG-17 : camp vainqueur = plus de victoires ;
+  égalité -> différence de buts cumulée, puis
+  buts marqués, puis résultat du dernier match.
+  RG-18 : saison clôturée = figée (sauf
+  intervention de l'administrateur plateforme).
+end note
+
+class Match {
+  - id : UUID
+  - type : TypeMatch
+  - date : LocalDate
+  - heure : LocalTime
+  - lieu : String
+  - statut : StatutMatch
+  - scoreCampA : Int
+  - scoreCampB : Int
+  - dureeMiTempsAppliquee : Duree
+  - nomEquipeInvitee : String {facultatif}
+}
+note right of Match
+  RG-11 : seul le marqueur désigné (ou son
+  suppléant) peut saisir des événements.
+  RG-12 : officiel quand les 2 camps valident,
+  ou à expiration du délai sans contestation.
+  RG-13 : en litige -> statistiques non
+  comptabilisées tant que non résolu.
+  RG-14 : un match amical ne compte jamais
+  dans le classement de la saison.
+  RG-15 : amical contre équipe invitée ->
+  validé par le seul capitaine du club inscrit.
+end note
+
+class Convocation {
+  - id : UUID
+  - reponse : ReponseConvocation
+  - dateReponse : Instant {facultatif}
+}
+
+class Composition {
+  - id : UUID
+  - titulaire : Boolean
+  - present : Boolean
+}
+
+class Evenement {
+  - id : UUID
+  - type : TypeEvenement
+  - minute : Int
+  - periode : Int
+  - auteurSaisie : Utilisateur
+  - horodatage : Instant
+  - annule : Boolean
+}
+note right of Evenement
+  Base de toutes les statistiques.
+  Identifiant unique généré côté mobile +
+  horodatage : le serveur ignore les doublons
+  et rejoue la file hors-connexion dans l'ordre
+  chronologique (section 9.1).
+end note
+
+class Validation {
+  - id : UUID
+  - decision : DecisionValidation
+  - commentaire : String {facultatif}
+  - correctionProposee : String {facultatif}
+  - horodatage : Instant
+}
+note right of Validation
+  Deux validations par match de 2-0
+  (une par camp, signée par le capitaine
+  ou le vice-capitaine). F-VAL-06 : journal
+  d'audit non modifiable par les utilisateurs.
+end note
+
+class Vote {
+  - id : UUID
+  - horodatage : Instant
+}
+note right of Vote
+  RG-16 : seuls les joueurs présents sur la
+  feuille de match votent ; pas de vote pour
+  soi-même ; vote ouvert 24h après validation.
+end note
+
+class BadgeObtenu {
+  - id : UUID
+  - type : TypeBadge
+  - contexte : String
+  - date : Instant
+}
+
+class Notification {
+  - id : UUID
+  - type : TypeNotification
+  - contenu : String
+  - lienProfond : String
+  - dateEnvoi : Instant
+  - lue : Boolean
+}
+
+class PreferenceNotification {
+  - id : UUID
+  - niveau : NiveauNotification
+  - neRienDerangerNocturne : Boolean
+}
+
+class Signalement {
+  - id : UUID
+  - motif : String
+  - statut : StatutSignalement
+  - dateCreation : Instant
+  - dateTraitement : Instant {facultatif}
+  - decision : String {facultatif}
+}
+note right of Signalement
+  CU27 / F-SOC-05 : traité par
+  l'Administrateur plateforme (back-office).
+  Entité non détaillée dans le tableau
+  d'entités du cahier des charges (section
+  4.1) mais requise par le module 5.15.
+end note
+
+' --- Relations (section 4.2) ---
+Utilisateur "1" -- "0..*" AdhesionClub
+AdhesionClub "0..*" -- "1" Club
+Club "1" -- "0..*" Camp
+Camp "0..*" -- "1" DeuxZero
+DeuxZero "1" -- "2" Camp : contient exactement 2
+Camp "1" -- "0..*" EffectifEngage
+EffectifEngage "0..*" -- "1" Utilisateur
+DeuxZero "1" -- "0..*" Saison
+Saison "1" -- "0..*" Match : matchs de 2-0
+Club "1" -- "0..*" Match : matchs amicaux
+Match "1" -- "0..*" Evenement
+Match "1" -- "0..2" Validation
+Match "1" -- "0..*" Vote
+Match "1" -- "0..*" Convocation
+Convocation "0..*" -- "1" Utilisateur
+Match "1" -- "0..*" Composition
+Composition "0..*" -- "1" Utilisateur
+Utilisateur "1" -- "0..*" BadgeObtenu
+Utilisateur "1" -- "0..*" Notification
+Utilisateur "1" -- "0..*" PreferenceNotification : par 2-0
+Utilisateur "1" -- "0..*" Signalement : auteur
+Camp "1" -- "0..1" Utilisateur : capitaine
+Camp "1" -- "0..1" Utilisateur : vice-capitaine
+DeuxZero "1" -- "1" Utilisateur : organisateur
+Match "0..1" -- "1" Utilisateur : marqueur
+
+' --- Énumérations ---
+enum Poste {
+  GARDIEN
+  DEFENSEUR
+  MILIEU
+  ATTAQUANT
+}
+
+enum PiedFort {
+  GAUCHE
+  DROIT
+  AMBIDEXTRE
+}
+
+enum StatutClub {
+  ACTIF
+  ARCHIVE
+}
+
+enum RoleClub {
+  MEMBRE
+  ADMINISTRATEUR
+}
+
+enum StatutAdhesion {
+  EN_ATTENTE
+  ACCEPTEE
+  REFUSEE
+  QUITTEE
+}
+
+enum Visibilite {
+  PUBLIC
+  PRIVE
+}
+
+enum StatutDeuxZero {
+  CREATION
+  EN_ATTENTE_ENGAGEMENT
+  ACTIF
+  ARCHIVE
+}
+
+enum StatutSaison {
+  A_VENIR
+  EN_COURS
+  CLOTUREE
+}
+
+enum TypeMatch {
+  DEUX_ZERO
+  AMICAL
+}
+
+enum StatutMatch {
+  PROGRAMME
+  EN_COURS
+  EN_ATTENTE_DE_VALIDATION
+  OFFICIEL
+  EN_LITIGE
+  REPORTE
+  ANNULE
+}
+
+enum ReponseConvocation {
+  PRESENT
+  ABSENT
+  INCERTAIN
+  SANS_REPONSE
+}
+
+enum TypeEvenement {
+  BUT
+  BUT_CONTRE_SON_CAMP
+  PENALTY_MARQUE
+  PENALTY_MANQUE
+  ARRET_DECISIF
+  CARTON
+  REMPLACEMENT
+  DEBUT_PERIODE
+  FIN_PERIODE
+}
+
+enum DecisionValidation {
+  VALIDE
+  CONTESTE
+}
+
+enum TypeBadge {
+  PREMIER_BUT
+  DOUBLE
+  TRIPLE
+  QUADRUPLE
+  PASSEUR_DE_GENIE
+  FIDELE
+  MUR
+  INVAINCU
+  HOMME_FORT
+  TOUJOURS_LA
+  PERSONNALISE
+}
+
+enum TypeNotification {
+  BUT
+  CORRECTION
+  COUP_D_ENVOI
+  MI_TEMPS_FIN
+  CONVOCATION
+  RAPPEL
+  CHANGEMENT_DE_PROGRAMME
+  VALIDATION
+  CONTESTATION_LITIGE
+  VOTE
+  BADGE
+  ADHESION
+}
+
+enum NiveauNotification {
+  TOUT
+  BUTS_ET_SCORE_FINAL
+  ME_CONCERNANT
+  AUCUNE
+}
+
+enum StatutSignalement {
+  EN_ATTENTE
+  TRAITE
+  CLASSE_SANS_SUITE
+}
+
+Utilisateur ..> Poste
+Utilisateur ..> PiedFort
+Club ..> StatutClub
+AdhesionClub ..> RoleClub
+AdhesionClub ..> StatutAdhesion
+DeuxZero ..> Visibilite
+DeuxZero ..> StatutDeuxZero
+Saison ..> StatutSaison
+Match ..> TypeMatch
+Match ..> StatutMatch
+Convocation ..> ReponseConvocation
+Evenement ..> TypeEvenement
+Validation ..> DecisionValidation
+BadgeObtenu ..> TypeBadge
+Notification ..> TypeNotification
+PreferenceNotification ..> NiveauNotification
+Signalement ..> StatutSignalement
+
+@enduml

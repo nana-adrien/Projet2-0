@@ -1,0 +1,10 @@
+@startuml cas-utilisation-profil
+left to right direction
+actor Joueur
+
+rectangle "Profil joueur et progression" {
+  usecase "CU23 - Consulter son profil\net sa progression" as CU23
+}
+
+Joueur --> CU23
+@enduml

@@ -1,0 +1,11 @@
+@startuml cu11-transferer-joueur
+actor "Administrateur de club" as A
+participant "App mobile" as APP
+participant "API" as API
+A -> APP : demande le transfert du joueur vers un autre camp
+APP -> API : transfererJoueur(effectifId, nouveauCampId, date)
+API -> API : vérifie quota de transferts de la saison
+API -> API : clôture EffectifEngage d'origine (dateSortie = date) -- RG-09
+API -> API : crée EffectifEngage dans le nouveau camp (RG-06)
+API --> APP : transfert effectué, historique conservé
+@enduml

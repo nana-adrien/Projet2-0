@@ -1,0 +1,20 @@
+@startuml cu25-bilan-saison
+actor Système as S
+actor Utilisateur as U
+participant "App mobile" as APP
+participant "API" as API
+== Saison clôturée (CU12) ==
+S -> API : genererBilanSaison(saisonId)
+API -> API : calcule le champion (RG-17)
+API -> API : calcule récompenses individuelles\n(buteur, passeur, assidu, gardien)
+alt vote du joueur de l'année activé
+  API -> API : ouvre le vote à tous les membres (F-BIL-04)
+else calcul automatique
+  API -> API : désigne le joueur de l'année
+endif
+API -> API : génère le visuel partageable (F-BIL-05)
+U -> APP : ouvre la page "Bilan de l'année"
+APP -> API : getBilanSaison(saisonId)
+API --> APP : champion, récompenses, chiffres clés, visuel
+U -> APP : consulte le palmarès des saisons précédentes (F-BIL-06)
+@enduml

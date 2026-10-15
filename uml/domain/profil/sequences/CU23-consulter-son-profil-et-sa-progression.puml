@@ -1,0 +1,14 @@
+@startuml cu23-profil
+actor Joueur as J
+participant "App mobile" as APP
+participant "API" as API
+J -> APP : ouvre son profil
+APP -> API : getProfil(utilisateurId)
+API --> APP : carte joueur, statistiques de la saison
+J -> APP : filtre par contexte (2-0 / club / amical / global)
+APP -> API : getStatistiquesParContexte(utilisateurId, contexte)
+API --> APP : statistiques filtrées
+J -> APP : consulte le profil public d'un autre joueur
+APP -> API : getProfilPublic(autreUtilisateurId)
+API --> APP : profil (respecte la confidentialité, F-PRO-06)
+@enduml

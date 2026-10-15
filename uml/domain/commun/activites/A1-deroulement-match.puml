@@ -1,0 +1,42 @@
+@startuml activite-deroulement-match
+' A1 - Déroulement complet d'un match de 2-0
+' Traverse CU14, CU15, CU16, CU17, CU18, CU19, CU20, CU22, CU24
+start
+:Match généré au calendrier (CU14);
+:Convocations envoyées la veille (CU15);
+if (Relance nécessaire ?) then (oui)
+  :Relance automatique (F-CAL-05);
+endif
+:Capitaine compose l'équipe à partir des présents (CU16);
+:Capitaine désigne le marqueur et un suppléant (CU17);
+:Marqueur démarre le chronomètre (coup d'envoi);
+repeat
+  :Marqueur saisit un événement (but, carton...);
+  :Notification instantanée aux membres/supporters (< 5 s);
+repeat while (Match en cours ?) is (oui)
+->non;
+:Marqueur déclare la fin du match (CU17);
+:Statut -> En attente de validation;
+fork
+  :Capitaine camp A valide ou conteste (CU19);
+fork again
+  :Capitaine camp B valide ou conteste (CU19);
+end fork
+if (Les deux camps ont validé ?) then (oui)
+  :Statut -> Officiel;
+else (contestation)
+  :Capitaine adverse accepte la correction\nou refuse (CU19);
+  if (Accord trouvé ?) then (oui)
+    :Statut -> Officiel (résultat corrigé);
+  else (non)
+    :Statut -> En litige;
+    :Organisateur tranche (CU20);
+    :Statut -> Officiel ou Annulé;
+  endif
+endif
+if (Statut = Officiel ?) then (oui)
+  :Statistiques intégrées (CU22);
+  :Vote homme du match ouvert 24h (CU24);
+endif
+stop
+@enduml

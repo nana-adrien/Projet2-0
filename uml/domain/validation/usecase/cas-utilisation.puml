@@ -1,0 +1,19 @@
+@startuml cas-utilisation-validation
+left to right direction
+actor Capitaine
+actor "Vice-capitaine" as Vice
+actor "Organisateur de 2-0" as Organisateur
+actor Système <<system>>
+Capitaine <|-- Vice
+
+rectangle "Validation des résultats" {
+  usecase "CU19 - Valider / contester\nun résultat" as CU19
+  usecase "CU20 - Arbitrer un litige" as CU20
+}
+
+Capitaine --> CU19
+Vice --> CU19
+Système --> CU19 : validation automatique
+Organisateur --> CU20
+CU19 ..> CU20 : <<extend>> (si litige)
+@enduml

@@ -1,0 +1,14 @@
+@startuml cas-utilisation-bilan
+left to right direction
+actor Système <<system>>
+actor Joueur
+actor "Organisateur de 2-0" as Organisateur
+
+rectangle "Bilan de fin de saison" {
+  usecase "CU25 - Clôturer la saison\net consulter le bilan" as CU25
+}
+
+Système --> CU25 : génération automatique
+Joueur --> CU25 : consultation
+Organisateur --> CU25 : choix du mode (vote / calcul)
+@enduml

@@ -1,0 +1,14 @@
+@startuml cu22-statistiques
+actor Utilisateur as U
+participant "App mobile" as APP
+participant "API" as API
+U -> APP : ouvre tableau de saison / classements
+APP -> API : getStatistiquesSaison(deuxZeroId, saisonId)
+API --> APP : score de l'année, séries, records, graphique
+U -> APP : ouvre classements individuels
+APP -> API : getClassements(deuxZeroId, saisonId, type)
+API --> APP : buteurs, passeurs, assiduité, gardiens
+U -> APP : applique des filtres (saison, 2-0, type de match, période)
+APP -> API : getStatistiques(filtres)
+API --> APP : résultats filtrés (uniquement matchs Officiel)
+@enduml

@@ -1,0 +1,17 @@
+@startuml cu10-composer-effectif
+actor "Administrateur de club" as A
+participant "App mobile" as APP
+participant "API" as API
+A -> APP : sélectionne un membre du club
+APP -> API : ajouterAEffectif(campId, membreId, numeroMaillot?)
+API -> API : vérifie membre accepté du club (RG-08)
+API -> API : vérifie absence dans l'autre camp du 2-0 (RG-06)
+alt déjà présent dans l'autre camp
+  API --> APP : erreur (RG-06)
+else ok
+  API --> APP : joueur ajouté à l'effectif
+end
+A -> APP : nomme capitaine / vice-capitaine
+APP -> API : nommerResponsables(campId, capitaineId, viceCapitaineId)
+API --> APP : confirmation
+@enduml

@@ -3,7 +3,8 @@ package empire.digiprem.projet2_0.core.data.networking
 object HttpConstants {
     // Dev local : 10.0.2.2 = hôte vu depuis l'émulateur Android ; le simulateur iOS utilise localhost
     // directement. À remplacer par l'URL de production au déploiement.
-    const val BASE_URL = "http://192.168.100.28:8085/api/"
+   // const val BASE_URL = "http://192.168.100.28:8085/api/"
+    const val BASE_URL = "http://10.138.9.208:8085/api/"
 
     // Même hôte que BASE_URL, schéma ws:// et chemin /ws/ (CU18 — WebSocket brut, pas sous /api/).
     const val WS_BASE_URL = "ws://192.168.100.28:8085/ws/"

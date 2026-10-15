@@ -1,0 +1,14 @@
+@startuml cu16-composer-equipe
+actor Capitaine as C
+participant "App mobile" as APP
+participant "API" as API
+C -> APP : choisit titulaires/remplaçants parmi les présents
+APP -> API : composerEquipe(matchId, campId, composition)
+alt joueur occasionnel
+  C -> APP : ajoute un joueur occasionnel (dépannage)
+  APP -> API : ajouterJoueurOccasionnel(matchId, campId, utilisateurId)
+end
+C -> APP : désigne marqueur + suppléant
+APP -> API : designerMarqueur(matchId, marqueurId, suppleantId)
+API --> APP : composition et marqueur confirmés
+@enduml

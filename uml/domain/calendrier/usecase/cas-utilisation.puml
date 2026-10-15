@@ -1,0 +1,22 @@
+@startuml cas-utilisation-calendrier
+left to right direction
+actor Système <<system>>
+actor Joueur
+actor Capitaine
+actor "Organisateur de 2-0" as Organisateur
+Joueur <|-- Capitaine
+
+rectangle "Calendrier et convocations" {
+  usecase "CU14 - Générer et gérer\nle calendrier" as CU14
+  usecase "CU15 - Convoquer les joueurs" as CU15
+  usecase "CU16 - Composer l'équipe\navant-match" as CU16
+}
+
+Système --> CU14
+Capitaine --> CU14
+Organisateur --> CU14
+Système --> CU15 : envoi automatique
+Joueur --> CU15 : répond
+Capitaine --> CU16
+CU15 ..> CU16 : <<include>>
+@enduml

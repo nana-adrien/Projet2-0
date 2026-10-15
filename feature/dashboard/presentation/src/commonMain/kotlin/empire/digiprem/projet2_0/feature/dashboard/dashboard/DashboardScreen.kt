@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -59,7 +60,7 @@ fun DashboardScreen(
         Scaffold(
             modifier  = modifier,
             bottomBar = {
-                NavigationBar {
+                BottomAppBar {
                     DashboardDestination.entries.forEach { dest ->
                         NavigationBarItem(
                             selected = state.currentDestination == dest,
@@ -109,7 +110,7 @@ private fun DashboardContent(
         DashboardDestination.Accueil        -> AccueilTabRoot()
         DashboardDestination.Classements    -> ClassementsTabRoot()
         DashboardDestination.Clubs         -> ClubsTabRoot()
-        DashboardDestination.Profile        -> ProfileRoot()
+        DashboardDestination.Profile        -> ProfileRoot(onAccountDeleted = onLogout)
         DashboardDestination.Notifications  -> NotificationsTabRoot()
         DashboardDestination.Settings       -> SettingsRoot(onLogout = onLogout)
     }

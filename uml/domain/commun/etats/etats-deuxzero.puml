@@ -1,0 +1,17 @@
+@startuml etats-deuxzero
+' États du cycle de vie d'un 2-0 (section 5.3)
+[*] --> Creation : assistant de création (CU8, F-DZ-01)
+Creation --> EnAttenteEngagement : codes d'engagement générés
+EnAttenteEngagement --> Actif : les 2 camps sont engagés,\nchacun avec un capitaine (RG-04) [CU9]
+Actif --> Archive : mise en sommeil d'un 2-0 inactif (F-DZ-11)
+Archive --> Actif : réactivation
+
+note right of EnAttenteEngagement
+  RG-04 : le 2-0 ne peut débuter que
+  lorsque ses deux camps sont engagés
+  et disposent chacun d'un capitaine.
+end note
+note right of Archive
+  Historique conservé (F-DZ-11).
+end note
+@enduml

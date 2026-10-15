@@ -1,0 +1,17 @@
+@startuml cu13-modifier-parametres
+actor "Organisateur de 2-0" as O
+participant "App mobile" as APP
+participant "API" as API
+O -> APP : modifie mi-temps / jours / délai validation / transferts
+APP -> API : modifierParametres(deuxZeroId, parametres)
+API -> API : applique uniquement aux matchs à venir
+API --> APP : 2-0 mis à jour
+alt transfert d'organisation
+  O -> APP : désigne un nouvel organisateur
+  APP -> API : transfererOrganisation(deuxZeroId, nouvelOrganisateurId)
+end
+alt archivage
+  O -> APP : archive le 2-0 inactif
+  APP -> API : archiverDeuxZero(deuxZeroId)
+end
+@enduml

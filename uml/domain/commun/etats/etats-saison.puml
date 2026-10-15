@@ -1,0 +1,16 @@
+@startuml etats-saison
+' États du cycle de vie d'une Saison (section 5.5, F-SAI-01 à 04)
+[*] --> AVenir : création (CU12)
+AVenir --> EnCours : date de début atteinte [Système]
+EnCours --> Cloturee : clôture automatique (date de fin)\nou manuelle (CU12/CU25)
+Cloturee --> [*]
+
+note right of Cloturee
+  RG-17 : calcul du champion.
+  RG-18 : résultats figés ; modification
+  réservée à l'administrateur plateforme
+  sur demande de l'organisateur.
+  Déclenche F-BIL-01 : génération
+  automatique du bilan de saison.
+end note
+@enduml

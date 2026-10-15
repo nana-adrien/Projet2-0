@@ -1,0 +1,14 @@
+@startuml cu18-suivre-match
+actor "Joueur / Supporter" as U
+participant "App mobile" as APP
+participant "API" as API
+participant "Service de notifications push" as PUSH
+PUSH -> APP : notification (but, mi-temps, score final...)
+U -> APP : ouvre l'écran de suivi (ou via lien profond)
+APP -> API : getSuiviMatch(matchId)
+API --> APP : score, minute, chronologie des événements
+note right
+  Filtré selon les préférences de
+  notification du joueur (CU26)
+end note
+@enduml

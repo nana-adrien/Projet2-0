@@ -1,0 +1,13 @@
+@startuml cu6-rejoindre-club
+actor Joueur as J
+actor "Administrateur de club" as A
+participant "App mobile" as APP
+participant "API" as API
+J -> APP : saisit code / scanne QR / ouvre lien
+APP -> API : demanderAdhesion(clubId, joueurId)
+API --> APP : aperçu du club (nom, logo, quartier)
+API -> A : notifie nouvelle demande d'adhésion (F-NOT, "Adhésion")
+A -> APP : accepte ou refuse
+APP -> API : traiterDemandeAdhesion(demandeId, decision)
+API --> J : notification de la décision
+@enduml

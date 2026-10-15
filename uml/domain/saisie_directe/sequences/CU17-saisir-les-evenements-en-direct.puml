@@ -1,0 +1,24 @@
+@startuml cu17-saisie-directe
+actor Marqueur as M
+participant "App mobile" as APP
+participant "API" as API
+participant "Service de notifications push" as PUSH
+M -> APP : appuie "Coup d'envoi"
+APP -> API : demarrerMatch(matchId)
+API -> API : statut -> En cours, chronomètre démarre (RG-10)
+loop pendant le match
+  M -> APP : "But Camp X" -> buteur -> passeur?
+  APP -> API : saisirEvenement(matchId, type=BUT, ...)\n(stocké localement si hors connexion -- F-LIV-06)
+  API -> API : applique l'événement (RG-11 : seul le marqueur désigné)
+  API -> PUSH : notifie le but (< 5 s)
+  PUSH --> APP : notification reçue par les membres/supporters
+  opt annulation
+    M -> APP : "Annuler le dernier événement"
+    APP -> API : annulerDernierEvenement(matchId)
+    API -> PUSH : notification rectificative
+  end
+end
+M -> APP : "Fin du match"
+APP -> API : terminerMatch(matchId)
+API -> API : statut -> En attente de validation (déclenche CU19)
+@enduml

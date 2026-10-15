@@ -1,0 +1,14 @@
+@startuml cas-utilisation-amicaux
+left to right direction
+actor Capitaine
+actor "Administrateur de club" as Admin
+actor "Équipe invitée" as EquipeInvitee
+
+rectangle "Matchs amicaux" {
+  usecase "CU21 - Organiser un\nmatch amical" as CU21
+}
+
+Capitaine --> CU21
+Admin --> CU21
+CU21 ..> EquipeInvitee : adversaire sans compte (optionnel)
+@enduml

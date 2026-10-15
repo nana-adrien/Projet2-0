@@ -1,0 +1,20 @@
+@startuml cu12-ouvrir-cloturer-saison
+actor "Organisateur de 2-0" as O
+actor Système as S
+participant "App mobile" as APP
+participant "API" as API
+O -> APP : définit libellé + dates de la saison
+APP -> API : ouvrirSaison(deuxZeroId, libelle, dateDebut, dateFin)
+API --> APP : saison ouverte (A_VENIR puis EN_COURS)
+...pendant la saison, matchs officiels joués...
+alt clôture manuelle
+  O -> APP : clôture la saison
+  APP -> API : cloturerSaison(saisonId)
+else clôture automatique
+  S -> API : date de fin atteinte -> cloturerSaison(saisonId)
+end
+API -> API : fige les résultats (RG-18)
+API -> API : calcule le camp champion (RG-17)
+API -> API : déclenche le bilan de saison (CU25)
+API --> APP : saison clôturée, nouvelle saison proposée
+@enduml

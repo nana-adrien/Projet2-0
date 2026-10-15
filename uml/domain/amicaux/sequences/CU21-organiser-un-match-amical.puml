@@ -1,0 +1,23 @@
+@startuml cu21-match-amical
+actor Capitaine as C
+participant "App mobile" as APP
+participant "API" as API
+C -> APP : crée un amical (date, lieu, mi-temps)
+alt adversaire inscrit
+  C -> APP : invite un autre club
+  APP -> API : inviterClub(matchId, clubAdverseId)
+  API --> C : acceptation ou refus du club adverse (F-AMI-02)
+else équipe invitée
+  C -> APP : saisit le nom de l'équipe invitée
+  APP -> API : creerMatchAmical(clubId, nomEquipeInvitee, date, lieu)
+end
+C -> APP : convoque librement des membres du club
+... saisie en direct comme CU17/CU18 ...
+alt adversaire inscrit
+  note over C : validation à 2 capitaines (CU19)
+else équipe invitée
+  C -> APP : valide seul (RG-15)
+  APP -> API : validerAmical(matchId, decision)
+end
+API -> API : statistiques -> rubrique "Amicaux" (RG-14, sans impact sur la saison)
+@enduml

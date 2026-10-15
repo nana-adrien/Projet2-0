@@ -1,0 +1,18 @@
+@startuml cu14-calendrier
+actor Système as S
+actor Capitaine as C
+participant "App mobile" as APP
+participant "API" as API
+S -> API : génère les matchs selon les jours récurrents (F-CAL-01)
+API -> API : crée les Match à l'état Programmé
+alt match exceptionnel
+  C -> APP : ajoute un match hors calendrier
+  APP -> API : ajouterMatchExceptionnel(deuxZeroId, date, heure, lieu)
+end
+alt report / annulation
+  C -> APP : déplace ou annule un match (motif)
+  APP -> API : modifierMatch(matchId, nouvelleDate?, statut, motif)
+  API -> API : notifie "Changement de programme" (F-NOT)
+end
+API --> APP : calendrier mis à jour
+@enduml

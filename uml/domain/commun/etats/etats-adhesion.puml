@@ -1,0 +1,18 @@
+@startuml etats-adhesion
+' États du cycle de vie d'une AdhesionClub (section 5.2)
+[*] --> EnAttente : demande (saisie d'un code d'adhésion) [CU6]
+EnAttente --> Acceptee : acceptation par l'administrateur\n(ou automatique si activée) [CU6]
+EnAttente --> Refusee : refus par l'administrateur [CU6]
+Acceptee --> Quittee : le joueur quitte le club\nou est retiré [CU7]
+Refusee --> [*]
+Quittee --> [*]
+
+note right of Acceptee
+  Le joueur peut alors être ajouté
+  aux effectifs engagés (RG-08).
+end note
+note right of Quittee
+  F-CLB-07 : retiré des effectifs engagés
+  à venir, historique conservé.
+end note
+@enduml

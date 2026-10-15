@@ -1,0 +1,17 @@
+@startuml cas-utilisation-effectifs
+left to right direction
+actor Joueur
+actor "Administrateur de club" as Admin
+actor Capitaine
+Joueur <|-- Admin
+Joueur <|-- Capitaine
+
+rectangle "Effectifs et transferts" {
+  usecase "CU10 - Composer un effectif\nengagé" as CU10
+  usecase "CU11 - Transférer un joueur\nde camp" as CU11
+}
+
+Admin --> CU10
+Capitaine --> CU10 : <<extend>> (si délégation)
+Admin --> CU11
+@enduml

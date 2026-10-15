@@ -1,0 +1,21 @@
+@startuml activite-hors-connexion
+' A5 - Saisie en direct hors connexion et synchronisation
+' Traverse CU17, section 9.1
+start
+:Marqueur saisit un événement;
+:Événement reçoit un identifiant unique\net un horodatage (côté mobile);
+if (Réseau disponible ?) then (oui)
+  :Envoi immédiat au serveur;
+else (non)
+  :Stockage local (file d'attente);
+endif
+:Marqueur continue la saisie\n(chronomètre actif même en arrière-plan);
+if (Réseau revient ?) then (oui)
+  :Synchronisation de la file,\ndans l'ordre chronologique;
+  :Serveur ignore les doublons (id unique);
+endif
+if (Perte du téléphone du marqueur ?) then (oui)
+  :Suppléant reprend la saisie\nà partir du dernier état synchronisé (F-LIV-08);
+endif
+stop
+@enduml

@@ -1,0 +1,20 @@
+@startuml cas-utilisation-saisie-directe
+left to right direction
+actor Marqueur
+actor "Marqueur suppléant" as Suppleant
+actor Joueur
+actor "Supporter / Abonné" as Supporter
+actor "Service de notifications push" as Push <<system>>
+Marqueur <|-- Suppleant
+
+rectangle "Saisie en direct" {
+  usecase "CU17 - Saisir les événements\nen direct" as CU17
+  usecase "CU18 - Suivre un match\nen direct" as CU18
+}
+
+Marqueur --> CU17
+Joueur --> CU18
+Supporter --> CU18
+CU17 ..> Push : <<include>> notifie
+Push --> CU18
+@enduml

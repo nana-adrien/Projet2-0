@@ -1,0 +1,19 @@
+@startuml cas-utilisation-deuxzero
+left to right direction
+actor Joueur
+actor "Organisateur de 2-0" as Organisateur
+actor "Administrateur de club" as Admin
+Joueur <|-- Organisateur
+Joueur <|-- Admin
+
+rectangle "2-0" {
+  usecase "CU8 - Créer un 2-0" as CU8
+  usecase "CU9 - Engager un club\ndans un 2-0" as CU9
+  usecase "CU13 - Modifier les paramètres\nd'un 2-0" as CU13
+}
+
+Joueur --> CU8
+CU8 ..> Organisateur : <<include>> (devient organisateur)
+Admin --> CU9
+Organisateur --> CU13
+@enduml

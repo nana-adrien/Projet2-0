@@ -1,0 +1,10 @@
+@startuml cu26-preferences-notification
+actor Joueur as J
+participant "App mobile" as APP
+participant "API" as API
+J -> APP : ouvre préférences de notification du 2-0
+J -> APP : choisit niveau (tout / buts / me concernant / aucune)
+J -> APP : active "Ne pas déranger" nocturne (option)
+APP -> API : enregistrerPreference(utilisateurId, deuxZeroId, niveau, ndd)
+API --> APP : confirmation
+@enduml

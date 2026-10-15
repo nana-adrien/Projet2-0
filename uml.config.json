@@ -1,0 +1,44 @@
+{
+  "projet": "Projet2-0",
+  "modele": "uml/modele.json",
+  "tracabilite": "uml/tracabilite.json",
+  "dossier_domaine": "uml/domain",
+  "motifs": {
+    "cas_utilisation": "CU\\d+",
+    "regle": "RG-\\d+"
+  },
+  "participants_operations": [],
+  "stereotypes_sans_code": [
+    "vue calculée",
+    "vue",
+    "derived"
+  ],
+  "cibles": [
+    {
+      "nom": "code",
+      "racine": "src",
+      "extensions": [],
+      "tests": null,
+      "gravite": "erreur",
+      "operations": true
+    }
+  ],
+  "structure": {},
+  "modeles": [
+    {
+      "nom": "domain",
+      "sources_uml": [
+        "uml/domain/**/*.md",
+        "uml/domain/**/*.puml"
+      ],
+      "cibles": [
+        {
+          "cible": "code",
+          "dossiers": []
+        }
+      ],
+      "verification": "classes",
+      "diagrammes_ignores": []
+    }
+  ]
+}

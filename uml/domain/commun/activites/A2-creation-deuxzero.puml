@@ -1,0 +1,29 @@
+@startuml activite-creation-deuxzero
+' A2 - Création et engagement d'un 2-0 (y compris 2-0 interne)
+' Traverse CU8, CU9
+start
+:Organisateur renseigne informations générales\n(nom, lieu, visibilité) (CU8);
+:Organisateur définit les règles de jeu\n(mi-temps, nb joueurs, pause) (RG-10);
+:Organisateur définit le calendrier\n(jours, heure) et le délai de validation;
+:Organisateur nomme les 2 camps;
+:Codes d'engagement générés (un par camp);
+if (2-0 interne ?) then (oui)
+  :Un seul club occupe les 2 camps;
+  :Écran de répartition des membres\n(manuel ou tirage équilibré F-DZ-06);
+  :Un membre affecté à un seul camp (RG-06);
+else (non)
+  fork
+    :Administrateur club A saisit le code\nd'engagement du camp A (CU9);
+  fork again
+    :Administrateur club B saisit le code\nd'engagement du camp B (CU9);
+  end fork
+endif
+:Chaque administrateur compose l'effectif engagé\net nomme capitaine + vice-capitaine;
+if (Les 2 camps sont engagés avec un capitaine ?) then (oui)
+  :2-0 -> Actif (RG-04);
+  :Première saison ouverte (CU12);
+else (non)
+  :2-0 reste en attente d'engagement;
+endif
+stop
+@enduml

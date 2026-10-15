@@ -1,0 +1,35 @@
+@startuml etats-match
+' États du cycle de vie d'un Match (section 5.9 du cahier des charges)
+[*] --> Programme : planification (CU14)
+
+Programme --> EnCours : coup d'envoi (CU17)
+Programme --> Reporte : report (CU14, motif)
+Programme --> Annule : annulation (CU14, motif)
+
+EnCours --> EnAttenteDeValidation : fin du match déclarée (CU17)
+
+EnAttenteDeValidation --> Officiel : 2 validations reçues (RG-12) [CU19]
+EnAttenteDeValidation --> Officiel : délai de validation expiré\nsans contestation (RG-12) [Système]
+EnAttenteDeValidation --> EnLitige : contestation refusée par l'autre camp [CU19]
+
+EnLitige --> Officiel : accord entre capitaines\nou décision de l'organisateur [CU20]
+EnLitige --> Annule : décision de l'organisateur [CU20]
+
+Officiel --> [*]
+Reporte --> [*]
+Annule --> [*]
+
+note right of EnAttenteDeValidation
+  RG-12 : match terminé, au moins
+  un camp n'a pas encore signé.
+end note
+note right of EnLitige
+  RG-13 : statistiques non comptabilisées
+  tant que le litige n'est pas résolu.
+end note
+note right of Officiel
+  Statistiques intégrées à la saison,
+  aux clubs et aux profils ; ouverture
+  du vote homme du match (RG-16).
+end note
+@enduml

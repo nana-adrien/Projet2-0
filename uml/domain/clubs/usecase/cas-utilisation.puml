@@ -1,0 +1,17 @@
+@startuml cas-utilisation-clubs
+left to right direction
+actor Joueur
+actor "Administrateur de club" as Admin
+Joueur <|-- Admin
+
+rectangle "Clubs" {
+  usecase "CU5 - Créer un club" as CU5
+  usecase "CU6 - Rejoindre un club" as CU6
+  usecase "CU7 - Gérer les membres\nd'un club" as CU7
+}
+
+Joueur --> CU5
+Joueur --> CU6
+Admin --> CU7
+CU5 ..> CU7 : <<include>> (devient admin)
+@enduml

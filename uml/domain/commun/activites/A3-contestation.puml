@@ -1,0 +1,25 @@
+@startuml activite-contestation
+' A3 - Traitement d'une contestation
+' Traverse CU19, CU20
+start
+:Marqueur déclare la fin du match;
+:Capitaine A décide (Valider / Contester);
+:Capitaine B décide (Valider / Contester);
+if (Au moins une contestation ?) then (non)
+  :Match -> Officiel;
+  stop
+endif
+:Capitaine contestataire propose une correction\n(RG-13);
+:Capitaine adverse reçoit la proposition;
+if (Proposition acceptée ?) then (oui)
+  :Match corrigé -> Officiel;
+  stop
+else (non)
+endif
+:Match -> En litige;
+:Organisateur notifié;
+:Organisateur consulte la feuille de match,\nl'historique des saisies et les propositions (CU20);
+:Organisateur tranche\n(résultat initial / corrigé / match annulé);
+:Décision définitive notifiée à tous les membres;
+stop
+@enduml

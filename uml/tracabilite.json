@@ -4,107 +4,240 @@
     "CU1": {
       "nom": "Créer un compte",
       "groupe": "comptes",
-      "modules": { "serveur": "server:user", "kmp": "feature:auth" },
-      "elements": { "domain": ["Utilisateur"] },
-      "regles": ["RG-01"],
-      "ecrans": ["E01", "E02", "E03", "E04"],
+      "modules": {
+        "serveur": "server:user",
+        "kmp": "feature:auth"
+      },
+      "elements": {
+        "domain": [
+          "Utilisateur"
+        ]
+      },
+      "regles": [
+        "RG-01"
+      ],
+      "ecrans": [
+        "E01",
+        "E02",
+        "E03",
+        "E04"
+      ],
       "statut": "fait",
       "note": "Photo/poste préféré/pied fort (étape 5 facultative) différés à CU4/E19 (Jalon 5), pas dupliqués à l'inscription pour éviter une dépendance croisée feature:auth -> feature:profile."
     },
     "CU2": {
       "nom": "Se connecter",
       "groupe": "comptes",
-      "modules": { "serveur": "server:user", "kmp": "feature:auth" },
-      "elements": { "domain": ["Utilisateur"] },
+      "modules": {
+        "serveur": "server:user",
+        "kmp": "feature:auth"
+      },
+      "elements": {
+        "domain": [
+          "Utilisateur"
+        ]
+      },
       "regles": [],
-      "ecrans": ["E03"],
+      "ecrans": [
+        "E03"
+      ],
       "statut": "fait"
     },
     "CU3": {
       "nom": "Réinitialiser son mot de passe",
       "groupe": "comptes",
-      "modules": { "serveur": "server:user", "kmp": "feature:auth" },
-      "elements": { "domain": ["Utilisateur"] },
+      "modules": {
+        "serveur": "server:user",
+        "kmp": "feature:auth"
+      },
+      "elements": {
+        "domain": [
+          "Utilisateur"
+        ]
+      },
       "regles": [],
-      "ecrans": ["E03"],
+      "ecrans": [
+        "E03"
+      ],
       "statut": "fait"
     },
     "CU4": {
       "nom": "Modifier son profil (et supprimer son compte)",
       "groupe": "comptes",
-      "modules": { "serveur": "server:user", "kmp": "feature:profile" },
-      "elements": { "domain": ["Utilisateur"] },
-      "regles": ["RG-20"],
-      "ecrans": ["E19"],
-      "statut": "serveur_fait_mobile_a_faire",
-      "note": "Serveur : ProfileService/ProfileController sur UserRepository (ancien ProfileEntity supprimé, champs fusionnés dans Utilisateur). Mobile (feature:profile, écran E19) prévu au Jalon 5."
+      "modules": {
+        "serveur": "server:user",
+        "kmp": "feature:profile"
+      },
+      "elements": {
+        "domain": [
+          "Utilisateur"
+        ]
+      },
+      "regles": [
+        "RG-20"
+      ],
+      "ecrans": [],
+      "statut": "fait",
+      "note": "Mobile feature:profile aligné sur le vrai contrat serveur (ProfileDto/UpdateProfileRequest de shared-contracts, ProfileController déjà en place) : pseudo, photo (lecture seule, aucun AppFilePicker câblé dans le projet -> upload hors scope), nom/prénom, dateNaissance (texte AAAA-MM-JJ, pas de date picker dédié), postePrefere/piedFort (nouveaux enums core:domain), cacherNomReel/cacherAge. Pas d'écran dédié dans les 29 maquettes : atteint depuis le tab \"Profile\" du dashboard (bouton \"Modifier le profil\" à ajouter depuis E19 quand ce lien existera). Suppression de compte (RG-20, E1 pseudo déjà pris -> ProfileError.PseudoDejaPris) cablée : DELETE /v1/profile, purge authSessionStorage, déconnexion."
     },
     "CU5": {
       "nom": "Créer un club",
       "groupe": "clubs",
-      "modules": { "serveur": "server:clubs", "kmp": "feature:clubs" },
-      "elements": { "domain": ["Club", "AdhesionClub"] },
+      "modules": {
+        "serveur": "server:clubs",
+        "kmp": "feature:clubs"
+      },
+      "elements": {
+        "domain": [
+          "Club",
+          "AdhesionClub"
+        ]
+      },
       "regles": [],
-      "ecrans": ["E22", "E23"],
+      "ecrans": [
+        "E22",
+        "E23"
+      ],
       "statut": "fait",
       "note": "Mobile : CreateClubScreen (nom/quartier/description). Logo/couleurs non saisis à la création (pas de sélecteur d'image en place) — différé, non inventé."
     },
     "CU6": {
       "nom": "Rejoindre un club",
       "groupe": "clubs",
-      "modules": { "serveur": "server:clubs", "kmp": "feature:clubs" },
-      "elements": { "domain": ["AdhesionClub", "Club"] },
-      "regles": ["RG-02", "RG-19"],
-      "ecrans": ["E22"],
+      "modules": {
+        "serveur": "server:clubs",
+        "kmp": "feature:clubs"
+      },
+      "elements": {
+        "domain": [
+          "AdhesionClub",
+          "Club"
+        ]
+      },
+      "regles": [
+        "RG-02",
+        "RG-19"
+      ],
+      "ecrans": [
+        "E22"
+      ],
       "statut": "fait",
       "note": "Y compris le déclenchement via code de club saisi à l'inscription (CU1 étape 4), par UserRegisteredEvent -> ClubEventListener, sans dépendance directe comptes -> clubs. Mobile : JoinClubScreen (saisie du code)."
     },
     "CU7": {
       "nom": "Gérer les membres d'un club",
       "groupe": "clubs",
-      "modules": { "serveur": "server:clubs", "kmp": "feature:clubs" },
-      "elements": { "domain": ["AdhesionClub", "Club"] },
-      "regles": ["RG-19"],
-      "ecrans": ["E23"],
+      "modules": {
+        "serveur": "server:clubs",
+        "kmp": "feature:clubs"
+      },
+      "elements": {
+        "domain": [
+          "AdhesionClub",
+          "Club"
+        ]
+      },
+      "regles": [
+        "RG-19"
+      ],
+      "ecrans": [
+        "E23"
+      ],
       "statut": "fait",
       "note": "Mobile : MesClubsScreen (E22, liste + état vide E28) -> GestionClubScreen (E23 : code + régénération, demandes en attente, réglages, membres avec retirer/co-admin/transfert d'admin, quitter le club)."
     },
     "CU8": {
       "nom": "Créer un 2-0",
       "groupe": "deuxzero",
-      "modules": { "serveur": "server:deuxzero", "kmp": "feature:deuxzero" },
-      "elements": { "domain": ["DeuxZero", "Camp", "Saison"] },
-      "regles": ["RG-04", "RG-10"],
-      "ecrans": ["E24"],
+      "modules": {
+        "serveur": "server:deuxzero",
+        "kmp": "feature:deuxzero"
+      },
+      "elements": {
+        "domain": [
+          "DeuxZero",
+          "Camp",
+          "Saison"
+        ]
+      },
+      "regles": [
+        "RG-04",
+        "RG-10"
+      ],
+      "ecrans": [
+        "E24"
+      ],
       "statut": "fait",
       "note": "Mobile : CreateDeuxZeroScreen, assistant en 5 étapes (infos/règles/calendrier/validation/camps) fidèle à la maquette. BUG CONNU (signalé par Kako, jalon calendrier) : DeuxZeroService.createDeuxZero/updateSettings ignorent silencieusement request.heureHabituelle côté serveur — l'écran l'envoie correctement, à corriger côté server:deuxzero avant toute démo réelle du calendrier (CU14)."
     },
     "CU9": {
       "nom": "Engager un club dans un 2-0 (y compris 2-0 interne)",
       "groupe": "deuxzero",
-      "modules": { "serveur": "server:deuxzero", "kmp": "feature:deuxzero" },
-      "elements": { "domain": ["Camp", "Club", "EffectifEngage", "DeuxZero"] },
-      "regles": ["RG-04", "RG-05", "RG-06", "RG-19"],
-      "ecrans": ["E24", "E25"],
+      "modules": {
+        "serveur": "server:deuxzero",
+        "kmp": "feature:deuxzero"
+      },
+      "elements": {
+        "domain": [
+          "Camp",
+          "Club",
+          "EffectifEngage",
+          "DeuxZero"
+        ]
+      },
+      "regles": [
+        "RG-04",
+        "RG-05",
+        "RG-06",
+        "RG-19"
+      ],
+      "ecrans": [
+        "E24",
+        "E25"
+      ],
       "statut": "fait",
       "note": "2-0 passe ACTIF automatiquement quand les 2 camps sont engagés avec un capitaine chacun. A1 (interne) et A2 (engagement direct sans code si organisateur=admin du club) implémentées côté MOBILE uniquement (CreateDeuxZeroViewModel enchaîne engageClub avec les codes tout juste générés, sans ressaisie) — le serveur reste inchangé (toujours par code), conforme à la note initiale. Mobile : EngagerClubScreen (saisie manuelle du code, cas nominal club externe)."
     },
     "CU10": {
       "nom": "Composer un effectif engagé",
       "groupe": "effectifs",
-      "modules": { "serveur": "server:deuxzero", "kmp": "feature:deuxzero" },
-      "elements": { "domain": ["EffectifEngage", "Camp"] },
-      "regles": ["RG-06", "RG-08"],
-      "ecrans": ["E25"],
+      "modules": {
+        "serveur": "server:deuxzero",
+        "kmp": "feature:deuxzero"
+      },
+      "elements": {
+        "domain": [
+          "EffectifEngage",
+          "Camp"
+        ]
+      },
+      "regles": [
+        "RG-06",
+        "RG-08"
+      ],
+      "ecrans": [
+        "E25"
+      ],
       "statut": "fait",
       "note": "Mobile : RepartitionScreen (E25, 2-0 interne — tirage équilibré simple moitié/moitié, aucune donnée de poste/stats n'existe encore pour un tirage affiné RG-F-DZ-06) + ComposerEffectifScreen (écran utilitaire non numéroté, ajout de membres/numéro de maillot/capitaine-vice-capitaine, réutilisé après E25 et après EngagerClubScreen). Alt A1 (joueur occasionnel, hors effectif permanent) différée au Jalon 3 (CU16, feuille de match)."
     },
     "CU11": {
       "nom": "Transférer un joueur de camp",
       "groupe": "effectifs",
-      "modules": { "serveur": "server:deuxzero", "kmp": "" },
-      "elements": { "domain": ["EffectifEngage", "Camp"] },
-      "regles": ["RG-06", "RG-09"],
+      "modules": {
+        "serveur": "server:deuxzero",
+        "kmp": ""
+      },
+      "elements": {
+        "domain": [
+          "EffectifEngage",
+          "Camp"
+        ]
+      },
+      "regles": [
+        "RG-06",
+        "RG-09"
+      ],
       "ecrans": [],
       "statut": "serveur_fait_mobile_a_faire",
       "note": "Limite de transferts autorisés par saison (DeuxZero.transfertsAutorisesParSaison) non encore comptée/vérifiée — à faire avant d'exposer cet écran. Pas d'écran dédié dans les maquettes (E01-E29) ; aucun écran mobile construit ce jalon (TransferPlayerUseCase existe côté mobile, non câblé à un écran)."
@@ -112,19 +245,43 @@
     "CU12": {
       "nom": "Ouvrir / clôturer une saison",
       "groupe": "saisons",
-      "modules": { "serveur": "server:deuxzero", "kmp": "" },
-      "elements": { "domain": ["Saison", "DeuxZero", "Camp", "Match"] },
-      "regles": ["RG-17", "RG-18"],
-      "ecrans": ["E17"],
+      "modules": {
+        "serveur": "server:deuxzero",
+        "kmp": ""
+      },
+      "elements": {
+        "domain": [
+          "Saison",
+          "DeuxZero",
+          "Camp",
+          "Match"
+        ]
+      },
+      "regles": [
+        "RG-17",
+        "RG-18"
+      ],
+      "ecrans": [
+        "E17"
+      ],
       "statut": "serveur_partiel_mobile_a_faire",
       "note": "Ouverture/clôture fonctionnelles ; calcul du camp champion (RG-17) différé au module statistiques (Jalon 5), aucun match n'existe encore pour le nourrir. Aucun écran mobile construit ce jalon (E17 appartient au Jalon 5) ; ListSaisonsUseCase/OpenSaisonUseCase/CloseSaisonUseCase existent côté mobile, non câblés à un écran."
     },
     "CU13": {
       "nom": "Modifier les paramètres d'un 2-0",
       "groupe": "deuxzero",
-      "modules": { "serveur": "server:deuxzero", "kmp": "" },
-      "elements": { "domain": ["DeuxZero"] },
-      "regles": ["RG-10"],
+      "modules": {
+        "serveur": "server:deuxzero",
+        "kmp": ""
+      },
+      "elements": {
+        "domain": [
+          "DeuxZero"
+        ]
+      },
+      "regles": [
+        "RG-10"
+      ],
       "ecrans": [],
       "statut": "serveur_partiel_mobile_a_faire",
       "note": "Modification ponctuelle de la durée de mi-temps pour un seul match (RG-10 alt) différée au Jalon 3 (Match n'existe pas encore). Pas d'écran dédié dans les maquettes ; TransferOrganisateurUseCase existe côté mobile, non câblé à un écran."
@@ -132,138 +289,311 @@
     "CU14": {
       "nom": "Générer et gérer le calendrier",
       "groupe": "calendrier",
-      "modules": { "serveur": "server:calendrier", "kmp": "feature:calendrier" },
-      "elements": { "domain": ["Match", "Saison", "DeuxZero"] },
-      "regles": ["RG-10"],
-      "ecrans": ["E07"],
+      "modules": {
+        "serveur": "server:calendrier",
+        "kmp": "feature:calendrier"
+      },
+      "elements": {
+        "domain": [
+          "Match",
+          "Saison",
+          "DeuxZero"
+        ]
+      },
+      "regles": [
+        "RG-10"
+      ],
+      "ecrans": [
+        "E07"
+      ],
       "statut": "fait",
       "note": "Serveur : CalendrierService/CalendrierController (server:calendrier, /api/v1/calendrier) couvrent F-CAL-01 (genererCalendrier : jusqu'à 8 occurrences depuis joursHabituels/heureHabituelle du 2-0, idempotent sur (saisonId, date, heure), borné par dateFin), F-CAL-02 (ajouterMatchExceptionnel) et F-CAL-03 (modifierMatch : report/annulation avec motif obligatoire, notification « Changement de programme » aux effectifs actifs des deux camps). Décisions suivies : motif JAMAIS persisté sur Match (aucune colonne prévue — lacune UML documentée en tête de V1__schema_initial.sql — il ne sert qu'au corps de la notification) ; droit « gestionnaire du calendrier » = organisateur OU capitaine/vice-capitaine d'un seul des deux camps (CalendrierDroitsService, réutilisé par CU15) ; F-CAL-01 déclenché manuellement (bouton « Générer le calendrier »), aucun ordonnanceur (@Scheduled) — limitation documentée. RG-10 (alt A1 de CU13) couvert via modifierMatch.dureeMiTempsAppliqueeMinutes. Bug DeuxZeroService.createDeuxZero/updateSettings ignorant heureHabituelle (bloquant pour F-CAL-01) CORRIGÉ (commit cacb449) ; CreateDeuxZeroScreen (E24) envoie désormais aussi les joursHabituels au format DayOfWeek anglais attendu par le serveur (MONDAY..SUNDAY), bug également corrigé (commit 1d1e578). Mobile : CalendrierScreen (E07) — simplifié à un seul 2-0 à la fois (passé par navigation depuis ComposerEffectifScreen via camp.deuxZeroId) : il n'existe pas d'endpoint « mes 2-0 » permettant d'agréger tous les 2-0 du joueur comme le montre la maquette (section 'Tous les 2-0 du joueur réunis') — limitation documentée, pas un choix silencieux. Filtre À venir/Passés (pas de filtre Amical, CU21 différé au Jalon 6)."
     },
     "CU15": {
       "nom": "Convoquer les joueurs",
       "groupe": "calendrier",
-      "modules": { "serveur": "server:calendrier", "kmp": "feature:calendrier" },
-      "elements": { "domain": ["Convocation", "Match", "EffectifEngage"] },
+      "modules": {
+        "serveur": "server:calendrier",
+        "kmp": "feature:calendrier"
+      },
+      "elements": {
+        "domain": [
+          "Convocation",
+          "Match",
+          "EffectifEngage"
+        ]
+      },
       "regles": [],
-      "ecrans": ["E08"],
+      "ecrans": [
+        "E08"
+      ],
       "statut": "fait",
       "note": "Serveur : ConvocationService/ConvocationController (server:calendrier, /api/v1/convocations) couvrent F-CAL-04 (genererConvocations : une Convocation SANS_REPONSE par membre actif des deux camps n'en ayant pas déjà pour ce match, idempotent, notification « Convocation » aux nouveaux convoqués ; rejette les matchs AMICAL, hors scope CU15/CU21-Jalon 6), la réponse du joueur (repondreConvocation, réservée au convoqué — 403 sinon — reponse limitée à PRESENT/ABSENT/INCERTAIN, jamais SANS_REPONSE en saisie), F-CAL-05 (relancerConvocations : notification « Rappel » aux seules convocations encore SANS_REPONSE) et F-CAL-06 (getPresences : comptage PRESENT/ABSENT/INCERTAIN/SANS_REPONSE par camp, réservé au gestionnaire du calendrier via CalendrierDroitsService). F-CAL-05 déclenché manuellement (bouton « Relancer »), aucun ordonnanceur — limitation documentée. Mobile : FicheMatchScreen (E08, partagé avec CU16 pour le résumé du match) — reçoit l'objet Match complet par navigation (pas d'endpoint « get match by id »), barre de présences empilée (présents/incertains/sans réponse), liste triée présents>incertains>sans réponse>absents, boutons de réponse (présent/incertain/absent) pour la convocation du joueur courant, actions générer/relancer les convocations et reporter/annuler le match (motif obligatoire). RepondreConvocationUseCase/ListConvocationsUseCase également réutilisés par l'écran Accueil (E05 très simplifié, voir note CU18/CU22 — ce n'est pas une implémentation de ces CU, seulement un emprunt du créneau d'écran pour la carte « prochain match »)."
     },
     "CU16": {
       "nom": "Composer l'équipe avant-match",
       "groupe": "calendrier",
-      "modules": { "serveur": "server:calendrier", "kmp": "feature:matchendirect" },
-      "elements": { "domain": ["Composition", "Match", "EffectifEngage"] },
-      "regles": ["F-CAL-07", "F-LIV-01"],
-      "ecrans": ["E09"],
+      "modules": {
+        "serveur": "server:calendrier",
+        "kmp": "feature:matchendirect"
+      },
+      "elements": {
+        "domain": [
+          "Composition",
+          "Match",
+          "EffectifEngage"
+        ]
+      },
+      "regles": [
+        "F-CAL-07",
+        "F-LIV-01"
+      ],
+      "ecrans": [
+        "E09"
+      ],
       "statut": "fait",
       "note": "Serveur : CompositionService/CompositionController (/api/v1/matchs/{id}/composition, /marqueur). Résout la lacune UML 'match: marqueur suppléant non modélisé' (migration V2) — ajout de MatchEntity.marqueurSuppleantId. Droit : capitaine OU vice-capitaine du camp DU JOUEUR concerné (pas du gestionnaire calendrier au sens large) — vérifié par curl : composition de son propre camp OK, 403 sur l'autre camp, désignation marqueur + suppléant OK. F-EFF-06 (joueur occasionnel en dépannage, hors effectif permanent) et A2 (ajustement pendant le match par le marqueur) non implémentés — différés avec CU17 (même écran de match en direct). Mobile (E09, feature:matchendirect) : écran de composition par camp — bascule titulaire/remplaçant parmi les présents/incertains convoqués et membres de l'effectif du camp, désignation marqueur + suppléant via une liste restreinte à l'effectif du camp (pas de recherche d'utilisateur quelconque y compris spectateur, comme le permettrait l'UML au sens large — simplification bornée et documentée). F-EFF-06 (joueur occasionnel) toujours non construit."
     },
     "CU17": {
       "nom": "Saisir les événements en direct",
       "groupe": "saisie_directe",
-      "modules": { "serveur": "server:calendrier", "kmp": "feature:matchendirect" },
-      "elements": { "domain": ["Evenement", "Match"] },
-      "regles": ["RG-10", "RG-11"],
-      "ecrans": ["E10", "E11"],
+      "modules": {
+        "serveur": "server:calendrier",
+        "kmp": "feature:matchendirect"
+      },
+      "elements": {
+        "domain": [
+          "Evenement",
+          "Match"
+        ]
+      },
+      "regles": [
+        "RG-10",
+        "RG-11"
+      ],
+      "ecrans": [
+        "E10",
+        "E11"
+      ],
       "statut": "fait",
       "note": "Serveur : EvenementService/MatchEnDirectController (/api/v1/matchs/{id}/demarrer, /evenements, /evenements/annuler-dernier, /mi-temps, /terminer). Résout la lacune UML 'evenement : aucune référence au joueur ni au camp' (migration V2, même commit que CU16) — EvenementEntity.campId/joueurId/joueurSecondaireId. F-LIV-03 (but, 3 touches max) et score auto-calculé (BUT/PENALTY_MARQUE crédite le camp désigné, BUT_CONTRE_SON_CAMP crédite l'adversaire). F-LIV-04 (annuler le dernier événement, avec correction du score et notification rectificative) vérifié par curl. F-LIV-06 (dédoublonnage par clientEventId pour la resynchronisation hors connexion) vérifié par curl : renvoi du même clientEventId -> aucun doublon, score inchangé. RG-11 (seul le marqueur désigné ou son suppléant) vérifié : 403 pour un capitaine non désigné marqueur. Diffusion temps réel via CU18 (MatchEnDirectBroadcaster/WebSocket) à chaque changement d'état. Non implémenté (différé) : mode hors connexion CÔTÉ MOBILE (file locale, F-LIV-06 section 9.1 — seul le dédoublonnage serveur est prêt), passage de relais marqueur->suppléant (F-LIV-08, le suppléant PEUT déjà saisir via RG-11 mais aucune UX de 'reprise' dédiée), saisie a posteriori (F-LIV-10, A3), joueur occasionnel en dépannage (F-EFF-06). Mobile (E10 marqueur + E11 qui a marqué, feature:matchendirect) : chronomètre en direct calé sur le dernier DEBUT_PERIODE reçu (expect/actual nowEpochMillis/parseIsoInstantToEpochMillis ajoutés à core:domain pour éviter le skew kotlinx.datetime.Clock déjà rencontré en session), deux GoalButton 132pt (camp A à gauche), feuille buteur/passeur avec option 'Contre son camp', sheet 'Autre' couvrant pénalty marqué/manqué, carton, remplacement et passage de mi-temps, annulation du dernier événement, fin de match avec confirmation. Non construits côté mobile (différés, non bloquants) : E29 (hors connexion), UX dédiée de relais marqueur->suppléant (F-LIV-08), saisie a posteriori (F-LIV-10), joueur occasionnel (F-EFF-06)."
     },
     "CU18": {
       "nom": "Suivre un match en direct",
       "groupe": "saisie_directe",
-      "modules": { "serveur": "server:calendrier", "kmp": "feature:matchendirect" },
-      "elements": { "domain": ["Match", "Evenement", "Notification"] },
+      "modules": {
+        "serveur": "server:calendrier",
+        "kmp": "feature:matchendirect"
+      },
+      "elements": {
+        "domain": [
+          "Match",
+          "Evenement",
+          "Notification"
+        ]
+      },
       "regles": [],
-      "ecrans": ["E12"],
+      "ecrans": [
+        "E12"
+      ],
       "statut": "fait",
       "note": "Serveur : WebSocket brut (pas STOMP, compatible client Ktor) sur /ws/matchs/{matchId} — MatchEnDirectWebSocketHandler/MatchEnDirectBroadcaster, diffusion en mémoire uniquement (une seule instance serveur, pas de Redis/pub-sub, limite assumée). Authentification par le même filtre JWT que le reste de l'API (en-tête Authorization pendant le handshake). Vérifié par un script de test WebSocket réel : état initial reçu à la connexion, puis diffusion reçue en direct suite à un événement ajouté via REST pendant que le socket restait ouvert. F-NOT-01 à 05 (granularité des notifications, regroupement, lien profond) non implémentées : seules les notifications déjà existantes (NotificationEntity, in-app) sont envoyées à chaque événement/correction/coup d'envoi/fin de match, sans préférences par type ni regroupement — vrai push OS (FCM/APNs) hors scope, aucune infra de push réelle dans le projet à ce jour. Mobile (E12, feature:matchendirect) : écran de suivi en lecture seule, flux WebSocket via ObserveMatchEnDirectUseCase (en-tête Authorization positionné manuellement sur le handshake, pas via le plugin Auth de Ktor), onglets Résumé (chronologie miroir A/B, surlignage jaune 2s sur le dernier événement arrivé) et Compositions (titulaires/remplaçants des deux camps). Non construit (différé, documenté) : E13 (notification push OS réelle, aucune infra FCM/APNs dans le projet) et le partage du score en image."
     },
     "CU19": {
       "nom": "Valider / contester un résultat",
       "groupe": "validation",
-      "modules": { "serveur": "", "kmp": "feature:validation" },
-      "elements": { "domain": ["Validation", "Match"] },
-      "regles": ["RG-12", "RG-13", "RG-15"],
-      "ecrans": ["E14", "E15"],
+      "modules": {
+        "serveur": "",
+        "kmp": "feature:validation"
+      },
+      "elements": {
+        "domain": [
+          "Validation",
+          "Match"
+        ]
+      },
+      "regles": [
+        "RG-12",
+        "RG-13",
+        "RG-15"
+      ],
+      "ecrans": [
+        "E14",
+        "E15"
+      ],
       "statut": "kmp_fait_serveur_en_cours",
       "note": "Mobile (E14 résultat à valider + E15 contester, feature:validation) construit en parallèle du serveur (Jalon 4 en cours sur un autre chantier) : domain/presentation stables (Validation.campId/signataireId, DecisionValidation, mode 'réponse à une contestation' sur E14 quand le camp adverse a proposé une correction non traitée), mais la couche data (routes v1/matchs/{id}/resultat-a-valider, /valider, /contester, /repondre-contestation et leurs payloads JSON) est un contrat mobile-side best-guess à ajuster dès que le serveur CU19 est disponible — c'est précisément ce que l'architecture en couches isole à ValidationKtorDataSource/ValidationDtos. E15 simplifie la correction structurée (type d'erreur + événement + 'bon joueur' en texte libre) en une seule String côté transport, conforme au type UML de Validation.correctionProposee. Scope volontairement limité aux matchs DEUX_ZERO (le cas AMICAL/RG-15 dépend de CU21, pas encore modélisé pour le camp — cf. analyse KNA)."
     },
     "CU20": {
       "nom": "Arbitrer un litige",
       "groupe": "validation",
-      "modules": { "serveur": "", "kmp": "feature:validation" },
-      "elements": { "domain": ["Validation", "Match"] },
-      "regles": ["RG-13"],
-      "ecrans": ["E16"],
+      "modules": {
+        "serveur": "",
+        "kmp": "feature:validation"
+      },
+      "elements": {
+        "domain": [
+          "Validation",
+          "Match"
+        ]
+      },
+      "regles": [
+        "RG-13"
+      ],
+      "ecrans": [
+        "E16"
+      ],
       "statut": "kmp_fait_serveur_en_cours",
       "note": "Mobile (E16 arbitrer un litige, feature:validation) : accès réservé à l'organisateur du 2-0 (résolu via ListMesDeuxZeroUseCase, DeuxZero.organisateurId — pas de usecase dédié 'get par id'), bannière définitive, chronologie des événements saisis + les deux Validation (CONTESTE) affichées comme 'correction proposée' / 'réponse de refus', trois décisions (garder/corriger/annuler) avec motif obligatoire. Même réserve que CU19 : route v1/matchs/{id}/trancher-litige et payload sont un contrat mobile-side provisoire en attente du serveur Jalon 4."
     },
     "CU21": {
       "nom": "Organiser un match amical",
       "groupe": "amicaux",
-      "modules": { "serveur": "", "kmp": "feature:amical" },
-      "elements": { "domain": ["Match", "Club"] },
-      "regles": ["RG-14", "RG-15"],
-      "ecrans": ["E26"],
+      "modules": {
+        "serveur": "",
+        "kmp": "feature:amical"
+      },
+      "elements": {
+        "domain": [
+          "Match",
+          "Club"
+        ]
+      },
+      "regles": [
+        "RG-14",
+        "RG-15"
+      ],
+      "ecrans": [
+        "E26"
+      ],
       "statut": "kmp_partiel_serveur_a_faire",
       "note": "Mobile (E26, feature:amical) : formulaire de création réservé à l'administrateur du club, scénario nominal uniquement — adversaire 'équipe invitée' (RG-15, F-AMI-03), bannière RG-14, mi-temps 45/30/libre. Hors scope documenté et volontaire : adversaire 'club inscrit' avec invitation accepter/refuser (A1, F-AMI-02) — nécessiterait une recherche de clubs et un flux d'acceptation inexistants ; défi public entre clubs (A3, F-AMI-05, P3). Limite structurelle découverte en construisant ce CU : les écrans CU17/18/19 déjà livrés (Marqueur, Suivre en direct, Valider) supposent tous un modèle à 2 Camp (comme un 2-0) — un match amical contre une équipe invitée n'a PAS de Camp au sens UML, donc la saisie en direct et la validation ne sont PAS branchées sur le match créé ici (même lacune déjà identifiée côté serveur par l'agent Jalon 4 : 'Validation.campId référencerait camp(id), qui n'existe pas pour AMICAL'). Après création, retour simple à la gestion du club plutôt que navigation vers un écran de match non fonctionnel. Route REST (v1/clubs/{id}/matchs-amicaux) provisoire, serveur pas encore construit."
     },
     "CU22": {
       "nom": "Consulter les statistiques et classements",
       "groupe": "statistiques",
-      "modules": { "serveur": "", "kmp": "feature:statistiques" },
-      "elements": { "domain": ["Match", "Saison", "Club", "Evenement"] },
+      "modules": {
+        "serveur": "",
+        "kmp": "feature:statistiques"
+      },
+      "elements": {
+        "domain": [
+          "Match",
+          "Saison",
+          "Club",
+          "Evenement"
+        ]
+      },
       "regles": [],
-      "ecrans": ["E17", "E18"],
+      "ecrans": [
+        "E17",
+        "E18"
+      ],
       "statut": "kmp_fait_serveur_en_cours",
       "note": "Mobile (E17 tableau de saison + E18 classements, feature:statistiques) construit en parallèle du serveur (Jalon 5 en cours sur un autre chantier, squelette server:statistiques committé, agrégations pas encore implémentées) : écran de saison avec bande mensuelle, séries/records, et classements buteurs/passeurs/votes avec ligne de l'utilisateur surlignée. Hors scope documenté (F-STA-05/06, P2+) : statistiques consolidées de club tous 2-0/amicaux confondus, historique des confrontations entre deux clubs ; assiduité/moyenne par match (mentionnées 'en version 2' dans la maquette). La couche data (routes v1/saisons/{id}/tableau-saison, /classement) est un contrat mobile-side provisoire à ajuster une fois le serveur disponible."
     },
     "CU23": {
       "nom": "Consulter son profil et sa progression",
       "groupe": "profil",
-      "modules": { "serveur": "", "kmp": "feature:statistiques" },
-      "elements": { "domain": ["Utilisateur", "BadgeObtenu", "Match"] },
+      "modules": {
+        "serveur": "",
+        "kmp": "feature:statistiques"
+      },
+      "elements": {
+        "domain": [
+          "Utilisateur",
+          "BadgeObtenu",
+          "Match"
+        ]
+      },
       "regles": [],
-      "ecrans": ["E19"],
+      "ecrans": [
+        "E19"
+      ],
       "statut": "kmp_fait_serveur_en_cours",
       "note": "Mobile (E19, feature:statistiques) : carte joueur, sélecteur de contexte (2-0/amicaux/total), 6 tuiles de stats, progression mensuelle avec variation vs année précédente, badges obtenus (or) et verrouillés (gris, complément calculé côté client sur l'enum TypeBadge). Reachable depuis l'onglet Classements (tap sur une ligne du classement) — PAS encore intégré à l'onglet Profil existant (feature:profile), scope cut documenté par manque de temps, pas de raison technique. Hors scope : comparateur deux joueurs (F-PRO-05, P3), masquage d'informations (F-PRO-06, déjà couvert par CU4). Contrat REST provisoire comme les autres écrans de ce jalon."
     },
     "CU24": {
       "nom": "Voter pour l'homme du match / obtenir un badge",
       "groupe": "recompenses",
-      "modules": { "serveur": "", "kmp": "feature:statistiques" },
-      "elements": { "domain": ["Vote", "BadgeObtenu", "Match"] },
-      "regles": ["RG-16"],
-      "ecrans": ["E20"],
+      "modules": {
+        "serveur": "",
+        "kmp": "feature:statistiques"
+      },
+      "elements": {
+        "domain": [
+          "Vote",
+          "BadgeObtenu",
+          "Match"
+        ]
+      },
+      "regles": [
+        "RG-16"
+      ],
+      "ecrans": [
+        "E20"
+      ],
       "statut": "kmp_fait_serveur_en_cours",
       "note": "Mobile (E20, feature:statistiques) : candidats des deux camps, ligne de stats calculée côté client depuis la chronologie (buts/passes comptés sur les Evenement reçus, pas de détection du poste gardien — non modélisé, simplification documentée), votant grisé et non sélectionnable, bouton reprenant le nom choisi. RG-16 (fenêtre 24h, un seul vote, pas pour soi) vérifiée côté serveur, pas dupliquée côté client. Accessible depuis la fiche de match (E08) quand statut = OFFICIEL. Attribution automatique des badges (F-REC-02) et badges personnalisés (F-REC-04, P3) : logique 100% serveur, pas d'écran mobile dédié (affichage via E19)."
     },
     "CU25": {
       "nom": "Clôturer la saison et consulter le bilan",
       "groupe": "bilan",
-      "modules": { "serveur": "", "kmp": "feature:statistiques" },
-      "elements": { "domain": ["Saison", "Match", "BadgeObtenu"] },
-      "regles": ["RG-17"],
-      "ecrans": ["E21"],
+      "modules": {
+        "serveur": "",
+        "kmp": "feature:statistiques"
+      },
+      "elements": {
+        "domain": [
+          "Saison",
+          "Match",
+          "BadgeObtenu"
+        ]
+      },
+      "regles": [
+        "RG-17"
+      ],
+      "ecrans": [
+        "E21"
+      ],
       "statut": "kmp_fait_serveur_en_cours",
       "note": "Mobile (E21, feature:statistiques) : champions (RG-17), récompenses individuelles (joueur de l'année, meilleur buteur/passeur, plus assidu, meilleur gardien), nombre de matchs. Accessible depuis l'onglet Classements quand la saison sélectionnée est clôturée (Saison.statut == CLOTUREE). Hors scope documenté : visuel partageable pour réseaux sociaux (F-BIL-05, rendu + partage spécifiques par plateforme), palmarès historique multi-saisons (F-BIL-06), mise en avant du plus beau match/plus longue série, vote du joueur de l'année en alternative au calcul automatique (F-BIL-04, P3)."
     },
     "CU26": {
       "nom": "Gérer ses préférences de notification",
       "groupe": "comptes",
-      "modules": { "serveur": "server:notifications", "kmp": "feature:notifications" },
-      "elements": { "domain": ["PreferenceNotification", "Utilisateur"] },
-      "regles": ["F-NOT-02"],
-      "ecrans": ["E27"],
+      "modules": {
+        "serveur": "server:notifications",
+        "kmp": "feature:notifications"
+      },
+      "elements": {
+        "domain": [
+          "PreferenceNotification",
+          "Utilisateur"
+        ]
+      },
+      "regles": [
+        "F-NOT-02"
+      ],
+      "ecrans": [
+        "E27"
+      ],
       "statut": "kmp_fait_serveur_a_faire",
       "note": "Mobile (E27, feature:notifications/preferences) : onglets par 2-0, quatre niveaux exclusifs (TOUT/BUTS_ET_SCORE_FINAL/ME_CONCERNANT/AUCUNE) avec description, toggle 'Ne pas déranger', aperçu de la notification correspondant au niveau choisi, bouton Enregistrer explicite (scénario nominal étape 4). La plage horaire 'Ne pas déranger' (23h-8h dans la maquette) est un simple Boolean dans le modèle UML (PreferenceNotification.neRienDerangerNocturne), pas configurable — affichée en texte fixe, pas un champ. Accessible via un bouton 'Préférences' dans la barre du haut de l'écran Notifications existant. Route REST (v1/deuxzero/{id}/preference-notification) provisoire, endpoint serveur pas encore construit malgré le module server:notifications déjà existant pour la liste des notifications."
     },
     "CU27": {
       "nom": "Signaler un contenu",
       "groupe": "social",
-      "modules": { "serveur": "", "kmp": "feature:social" },
-      "elements": { "domain": ["Signalement", "Utilisateur"] },
+      "modules": {
+        "serveur": "",
+        "kmp": "feature:social"
+      },
+      "elements": {
+        "domain": [
+          "Signalement",
+          "Utilisateur"
+        ]
+      },
       "regles": [],
       "ecrans": [],
       "statut": "kmp_partiel_serveur_a_faire",

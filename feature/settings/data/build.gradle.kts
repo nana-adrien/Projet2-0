@@ -1,0 +1,20 @@
+plugins {
+    alias(libs.plugins.conventionKmpLibrary)
+}
+
+kotlin {
+    sourceSets {
+        commonMain.dependencies {
+            implementation(project(":core:domain"))
+            api(project(":core:data"))
+            implementation(project(":feature:settings:domain"))
+            implementation(libs.bundles.dataStore.common)
+            implementation(projects.sharedContracts)
+
+        }
+
+        androidMain.dependencies {
+            implementation(libs.bundles.dataStore.android)
+        }
+    }
+}

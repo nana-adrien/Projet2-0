@@ -1,0 +1,20 @@
+@startuml cu7-gerer-membres-club
+actor "Administrateur de club" as A
+participant "App mobile" as APP
+participant "API" as API
+A -> APP : consulte membres / demandes
+alt régénérer le code
+  A -> APP : régénère le code d'adhésion
+  APP -> API : regenererCodeAdhesion(clubId)
+  API -> API : invalide l'ancien code (RG-19)
+end
+alt gérer un membre
+  A -> APP : retire un membre / nomme co-administrateur
+  APP -> API : gererMembre(clubId, membreId, action)
+end
+alt déléguer aux capitaines
+  A -> APP : active délégation composition/amicaux
+  APP -> API : definirDelegations(clubId, droits)
+end
+API --> APP : club mis à jour
+@enduml

@@ -1,0 +1,23 @@
+@startuml activite-rejoindre-club-effectif
+' A6 - Rejoindre un club et intégrer un effectif
+' Traverse CU1, CU6, CU10
+start
+:Joueur s'inscrit, saisit un code\nd'adhésion (facultatif) (CU1);
+if (Code saisi et valide ?) then (oui)
+  :Demande d'adhésion envoyée immédiatement;
+else (non)
+  :Joueur rejoint un club plus tard\nvia code / QR / lien (CU6);
+endif
+:Administrateur du club accepte ou refuse\n(ou acceptation automatique activée);
+if (Accepté ?) then (non)
+  stop
+endif
+:Joueur visible dans l'espace du club;
+:Administrateur (ou capitaine délégué)\najoute le joueur à un effectif engagé (CU10);
+if (Joueur déjà présent dans l'autre camp\ndu même 2-0 ?) then (oui)
+  :Blocage, message explicite (RG-06);
+  stop
+endif
+:Joueur intégré à l'effectif;
+stop
+@enduml

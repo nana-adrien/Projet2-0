@@ -1,0 +1,17 @@
+@startuml cu24-vote-badges
+actor Joueur as J
+actor Système as S
+participant "App mobile" as APP
+participant "API" as API
+== Match officialisé (CU19) ==
+API -> API : ouvre le vote homme du match pour 24h
+J -> APP : consulte la feuille de match, vote pour un joueur
+APP -> API : voterHommeDuMatch(matchId, votantId, joueurChoisiId)
+API -> API : vérifie présence sur feuille de match\net vote != votant (RG-16)
+API --> APP : vote enregistré
+... à l'expiration des 24h ...
+API -> API : calcule le joueur le plus voté (partage si égalité)
+S -> API : vérifie les conditions de badges après chaque match officiel
+API -> API : attribue les badges remplis (F-REC-02)
+API -> J : notifie "Nouveau badge" (F-NOT)
+@enduml

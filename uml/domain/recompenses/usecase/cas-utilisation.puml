@@ -1,0 +1,14 @@
+@startuml cas-utilisation-recompenses
+left to right direction
+actor Joueur
+actor Système <<system>>
+actor "Organisateur de 2-0" as Organisateur
+
+rectangle "Homme du match, badges et récompenses" {
+  usecase "CU24 - Voter pour l'homme du match\n/ obtenir un badge" as CU24
+}
+
+Joueur --> CU24 : vote
+Système --> CU24 : attribution automatique des badges
+Organisateur --> CU24 : badges personnalisés (extension)
+@enduml

@@ -1,0 +1,14 @@
+@startuml cu1-creer-compte
+actor Visiteur as V
+participant "App mobile" as APP
+participant "API" as API
+V -> APP : saisit téléphone/e-mail
+APP -> API : demanderCodeVerification(contact)
+API --> APP : code envoyé
+V -> APP : saisit le code reçu
+APP -> API : verifierCode(contact, code)
+V -> APP : choisit pseudo + mot de passe
+V -> APP : saisit code d'adhésion (facultatif)
+APP -> API : creerCompte(profil, codeAdhesion?)
+API --> APP : Utilisateur créé
+@enduml

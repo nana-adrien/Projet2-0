@@ -1,0 +1,17 @@
+@startuml cu9-engager-club
+actor "Administrateur de club" as A
+participant "App mobile" as APP
+participant "API" as API
+A -> APP : saisit le code d'engagement
+APP -> API : engagerClub(deuxZeroId, clubId, code)
+API --> APP : camp rattaché au club
+alt 2-0 interne
+  A -> APP : répartit les membres (camp A / camp B)\nmanuellement ou tirage équilibré
+  APP -> API : repartirMembres(deuxZeroId, repartition)
+  API -> API : vérifie unicité par membre (RG-06)
+end
+A -> APP : compose l'effectif, nomme capitaine + vice-capitaine
+APP -> API : composerEffectif(campId, membres, capitaineId, viceCapitaineId)
+API -> API : si les 2 camps ont un capitaine -> 2-0 = Actif (RG-04)
+API --> APP : effectif et capitaine confirmés
+@enduml

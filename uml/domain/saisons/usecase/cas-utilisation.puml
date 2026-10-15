@@ -1,0 +1,12 @@
+@startuml cas-utilisation-saisons
+left to right direction
+actor "Organisateur de 2-0" as Organisateur
+actor Système <<system>>
+
+rectangle "Saisons" {
+  usecase "CU12 - Ouvrir / clôturer\nune saison" as CU12
+}
+
+Organisateur --> CU12
+Système --> CU12 : clôture automatique
+@enduml

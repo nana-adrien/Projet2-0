@@ -1,0 +1,9 @@
+@startuml cu5-creer-club
+actor Joueur as J
+participant "App mobile" as APP
+participant "API" as API
+J -> APP : renseigne nom/logo/couleurs/quartier
+APP -> API : creerClub(infos)
+API -> API : génère un code d'adhésion unique
+API --> APP : Club créé, J devient Administrateur
+@enduml

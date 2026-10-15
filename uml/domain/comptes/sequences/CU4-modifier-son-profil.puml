@@ -1,0 +1,14 @@
+@startuml cu4-modifier-profil
+actor Joueur as J
+participant "App mobile" as APP
+participant "API" as API
+J -> APP : modifie pseudo/photo/poste/pied fort
+APP -> API : modifierProfil(utilisateurId, champs)
+API --> APP : profil mis à jour
+alt suppression du compte
+  J -> APP : demande suppression du compte
+  APP -> API : supprimerCompte(utilisateurId)
+  API -> API : anonymise les feuilles de match\npassées ("Ancien joueur") -- RG-20
+  API --> APP : compte supprimé
+end
+@enduml

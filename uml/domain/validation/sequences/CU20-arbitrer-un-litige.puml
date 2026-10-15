@@ -1,0 +1,14 @@
+@startuml cu20-arbitrage
+actor "Organisateur de 2-0" as O
+participant "App mobile" as APP
+participant "API" as API
+API -> O : notifie "Litige à arbitrer" (F-NOT)
+O -> APP : ouvre l'écran d'arbitrage
+APP -> API : getHistoriqueMatch(matchId)
+API --> APP : feuille de match, saisies, propositions (F-VAL-05)
+O -> APP : décide (initial / corrigé / annulé)
+APP -> API : trancherLitige(matchId, decision)
+API -> API : statut -> Officiel ou Annulé
+API -> API : trace la décision (journal d'audit, F-VAL-06)
+API --> APP : décision notifiée à tous les membres
+@enduml

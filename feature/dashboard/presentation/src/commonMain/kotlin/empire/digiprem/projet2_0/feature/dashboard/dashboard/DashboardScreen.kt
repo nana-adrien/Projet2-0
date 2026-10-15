@@ -20,7 +20,7 @@ import empire.digiprem.projet2_0.core.presentation.util.ObservableEvent
 import empire.digiprem.projet2_0.feature.dashboard.accueil.AccueilTabRoot
 import empire.digiprem.projet2_0.feature.dashboard.classements.ClassementsTabRoot
 import empire.digiprem.projet2_0.feature.dashboard.clubs_tab.ClubsTabRoot
-import empire.digiprem.projet2_0.feature.notifications.notifications.NotificationsRoot
+import empire.digiprem.projet2_0.feature.notifications.notifications.NotificationsTabRoot
 import empire.digiprem.projet2_0.feature.profile.profile.ProfileRoot
 import empire.digiprem.projet2_0.feature.settings.settings.SettingsRoot
 import org.koin.compose.viewmodel.koinViewModel
@@ -110,7 +110,7 @@ private fun DashboardContent(
         DashboardDestination.Classements    -> ClassementsTabRoot()
         DashboardDestination.Clubs         -> ClubsTabRoot()
         DashboardDestination.Profile        -> ProfileRoot()
-        DashboardDestination.Notifications  -> NotificationsRoot()
+        DashboardDestination.Notifications  -> NotificationsTabRoot()
         DashboardDestination.Settings       -> SettingsRoot(onLogout = onLogout)
     }
 }

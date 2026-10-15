@@ -4,4 +4,5 @@ sealed interface GestionClubEvent {
     data object OnLeftClub : GestionClubEvent
     data class OnNavigateToCreateDeuxZero(val clubId: String) : GestionClubEvent
     data class OnNavigateToEngagerClub(val clubId: String) : GestionClubEvent
+    data class OnNavigateToOrganiserAmical(val clubId: String) : GestionClubEvent
 }

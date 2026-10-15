@@ -110,4 +110,14 @@ include(
     ":feature:statistiques:data",
     ":feature:statistiques:presentation",
     ":feature:statistiques:config",
+
+    ":feature:amical:domain",
+    ":feature:amical:data",
+    ":feature:amical:presentation",
+    ":feature:amical:config",
+
+    ":feature:social:domain",
+    ":feature:social:data",
+    ":feature:social:presentation",
+    ":feature:social:config",
 )

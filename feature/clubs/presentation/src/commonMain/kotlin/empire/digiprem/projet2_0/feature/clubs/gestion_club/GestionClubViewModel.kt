@@ -68,6 +68,9 @@ class GestionClubViewModel(
             GestionClubAction.OnEngagerClubClick -> viewModelScope.launch {
                 _events.send(GestionClubEvent.OnNavigateToEngagerClub(clubId))
             }
+            GestionClubAction.OnOrganiserAmicalClick -> viewModelScope.launch {
+                _events.send(GestionClubEvent.OnNavigateToOrganiserAmical(clubId))
+            }
         }
     }
 

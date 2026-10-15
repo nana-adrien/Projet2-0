@@ -8,6 +8,8 @@ import empire.digiprem.projet2_0.feature.statistiques.model.ProfilJoueur
 data class ProfilState(
     val utilisateurId: String = "",
     val deuxZeroId: String = "",
+    val estMonPropreProfil: Boolean = true,
+    val showSignaler: Boolean = false,
     val contexte: ContexteStats = ContexteStats.DEUX_ZERO,
     val profil: ProfilJoueur? = null,
     val isLoading: Boolean = true,

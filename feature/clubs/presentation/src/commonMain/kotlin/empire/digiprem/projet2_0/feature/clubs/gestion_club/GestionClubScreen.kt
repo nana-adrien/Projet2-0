@@ -61,6 +61,7 @@ fun GestionClubRoot(
     onLeftClub: () -> Unit,
     onNavigateToCreateDeuxZero: (clubId: String) -> Unit,
     onNavigateToEngagerClub: (clubId: String) -> Unit,
+    onNavigateToOrganiserAmical: (clubId: String) -> Unit = {},
     viewModel: GestionClubViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -74,6 +75,7 @@ fun GestionClubRoot(
             GestionClubEvent.OnLeftClub -> onLeftClub()
             is GestionClubEvent.OnNavigateToCreateDeuxZero -> onNavigateToCreateDeuxZero(event.clubId)
             is GestionClubEvent.OnNavigateToEngagerClub -> onNavigateToEngagerClub(event.clubId)
+            is GestionClubEvent.OnNavigateToOrganiserAmical -> onNavigateToOrganiserAmical(event.clubId)
         }
     }
 
@@ -149,6 +151,19 @@ fun GestionClubScreen(
                                     modifier = Modifier.weight(1f),
                                 )
                             }
+                        }
+                    }
+
+                    if (state.isCurrentUserAdmin) {
+                        item { Spacer(Modifier.height(PDZSpacing.space4)) }
+                        item {
+                            Text(text = "Matchs amicaux", style = MaterialTheme.typography.titleMedium)
+                            Spacer(Modifier.height(PDZSpacing.space2))
+                            PDZButton(
+                                text = "Organiser un match amical",
+                                type = PDZButtonType.Secondary,
+                                onClick = { onAction(GestionClubAction.OnOrganiserAmicalClick) },
+                            )
                         }
                     }
 

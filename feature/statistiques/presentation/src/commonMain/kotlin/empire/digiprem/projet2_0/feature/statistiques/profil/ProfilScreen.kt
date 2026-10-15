@@ -28,12 +28,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import empire.digiprem.projet2_0.core.design_system.components.avatar.AppAvatar
+import empire.digiprem.projet2_0.core.design_system.components.buttons.PDZButton
+import empire.digiprem.projet2_0.core.design_system.components.buttons.PDZButtonType
 import empire.digiprem.projet2_0.core.design_system.components.states.PDZLoadingSpinner
 import empire.digiprem.projet2_0.core.design_system.theme.PDZColor
 import empire.digiprem.projet2_0.core.design_system.theme.PDZSpacing
 import empire.digiprem.projet2_0.feature.statistiques.model.BadgeObtenu
 import empire.digiprem.projet2_0.feature.statistiques.model.ContexteStats
 import empire.digiprem.projet2_0.feature.statistiques.model.MoisValeur
+import empire.digiprem.projet2_0.feature.social.model.TypeContenuSignale
+import empire.digiprem.projet2_0.feature.social.signaler.SignalerSheet
 import empire.digiprem.projet2_0.feature.statistiques.model.ProfilJoueur
 import empire.digiprem.projet2_0.feature.statistiques.model.TypeBadge
 import org.koin.compose.viewmodel.koinViewModel
@@ -66,15 +70,30 @@ fun ProfilScreen(
                 if (profil == null) {
                     PDZLoadingSpinner(modifier = Modifier.padding(padding).fillMaxSize())
                 } else {
-                    ProfilContent(profil = profil, contexte = state.contexte, onAction = onAction, modifier = Modifier.padding(padding).fillMaxSize())
+                    ProfilContent(
+                        profil = profil,
+                        contexte = state.contexte,
+                        montrerSignaler = !state.estMonPropreProfil,
+                        onAction = onAction,
+                        modifier = Modifier.padding(padding).fillMaxSize(),
+                    )
                 }
             }
         }
     }
+
+    if (state.showSignaler) {
+        SignalerSheet(
+            contenuType = TypeContenuSignale.PROFIL_UTILISATEUR,
+            contenuId = state.utilisateurId,
+            onDismissRequest = { onAction(ProfilAction.OnDismissSignaler) },
+            onEnvoye = { onAction(ProfilAction.OnDismissSignaler) },
+        )
+    }
 }
 
 @Composable
-private fun ProfilContent(profil: ProfilJoueur, contexte: ContexteStats, onAction: (ProfilAction) -> Unit, modifier: Modifier = Modifier) {
+private fun ProfilContent(profil: ProfilJoueur, contexte: ContexteStats, montrerSignaler: Boolean, onAction: (ProfilAction) -> Unit, modifier: Modifier = Modifier) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = modifier,
@@ -98,6 +117,15 @@ private fun ProfilContent(profil: ProfilJoueur, contexte: ContexteStats, onActio
                     ContexteChip(label = "2-0", selected = contexte == ContexteStats.DEUX_ZERO, onClick = { onAction(ProfilAction.OnContexteChange(ContexteStats.DEUX_ZERO)) })
                     ContexteChip(label = "Amicaux", selected = contexte == ContexteStats.AMICAUX, onClick = { onAction(ProfilAction.OnContexteChange(ContexteStats.AMICAUX)) })
                     ContexteChip(label = "Total", selected = contexte == ContexteStats.TOTAL, onClick = { onAction(ProfilAction.OnContexteChange(ContexteStats.TOTAL)) })
+                }
+                if (montrerSignaler) {
+                    Spacer(Modifier.height(PDZSpacing.space2))
+                    PDZButton(
+                        text = "Signaler ce profil",
+                        type = PDZButtonType.Text,
+                        fullWidth = false,
+                        onClick = { onAction(ProfilAction.OnSignalerClick) },
+                    )
                 }
                 Spacer(Modifier.height(PDZSpacing.space4))
             }

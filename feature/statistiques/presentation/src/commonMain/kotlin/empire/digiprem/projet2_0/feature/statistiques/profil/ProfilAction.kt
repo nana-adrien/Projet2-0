@@ -7,4 +7,6 @@ sealed interface ProfilAction {
     data class OnInit(val utilisateurId: String?, val deuxZeroId: String) : ProfilAction
     data object OnRetry : ProfilAction
     data class OnContexteChange(val contexte: ContexteStats) : ProfilAction
+    data object OnSignalerClick : ProfilAction
+    data object OnDismissSignaler : ProfilAction
 }

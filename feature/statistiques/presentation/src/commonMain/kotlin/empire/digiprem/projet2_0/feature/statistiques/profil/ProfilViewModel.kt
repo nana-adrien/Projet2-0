@@ -31,11 +31,13 @@ class ProfilViewModel(
                 _state.update { it.copy(contexte = action.contexte) }
                 charger()
             }
+            ProfilAction.OnSignalerClick -> _state.update { it.copy(showSignaler = true) }
+            ProfilAction.OnDismissSignaler -> _state.update { it.copy(showSignaler = false) }
         }
     }
 
     private fun init(utilisateurId: String?, deuxZeroId: String) {
-        _state.update { it.copy(deuxZeroId = deuxZeroId) }
+        _state.update { it.copy(deuxZeroId = deuxZeroId, estMonPropreProfil = utilisateurId == null) }
         if (hasInitialized) return
         hasInitialized = true
         viewModelScope.launch {

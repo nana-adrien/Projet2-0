@@ -16,4 +16,5 @@ sealed interface GestionClubAction {
     data object OnMessageShown : GestionClubAction
     data object OnCreateDeuxZeroClick : GestionClubAction
     data object OnEngagerClubClick : GestionClubAction
+    data object OnOrganiserAmicalClick : GestionClubAction
 }

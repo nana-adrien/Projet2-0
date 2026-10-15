@@ -3,6 +3,7 @@ package empire.digiprem.projet2_0.feature.dashboard.clubs_tab
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
+import empire.digiprem.projet2_0.feature.amical.creer.CreerAmicalRoot
 import empire.digiprem.projet2_0.feature.calendrier.calendrier.CalendrierRoot
 import empire.digiprem.projet2_0.feature.calendrier.fiche_match.FicheMatchRoot
 import empire.digiprem.projet2_0.feature.clubs.create_club.CreateClubRoot
@@ -60,6 +61,7 @@ fun ClubsTabRoot() {
             onLeftClub = { popToMesClubs() },
             onNavigateToCreateDeuxZero = { clubId -> push(ClubsTabScreen.CreateDeuxZero(clubId)) },
             onNavigateToEngagerClub = { clubId -> push(ClubsTabScreen.EngagerClub(clubId)) },
+            onNavigateToOrganiserAmical = { clubId -> push(ClubsTabScreen.CreerAmical(clubId)) },
         )
 
         is ClubsTabScreen.CreateDeuxZero -> CreateDeuxZeroRoot(
@@ -136,6 +138,12 @@ fun ClubsTabRoot() {
             matchId = current.matchId,
             deuxZeroId = current.deuxZeroId,
             onTranche = { pop() },
+        )
+
+        is ClubsTabScreen.CreerAmical -> CreerAmicalRoot(
+            clubId = current.clubId,
+            onNavigateBack = { pop() },
+            onCree = { popToGestionClub() },
         )
 
         is ClubsTabScreen.VoteHommeDuMatch -> VoteRoot(

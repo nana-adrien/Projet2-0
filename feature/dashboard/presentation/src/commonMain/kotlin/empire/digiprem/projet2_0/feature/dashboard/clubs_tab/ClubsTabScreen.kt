@@ -16,6 +16,7 @@ sealed interface ClubsTabScreen {
     data class GestionClub(val clubId: String, val role: MembershipRole) : ClubsTabScreen
     data class CreateDeuxZero(val clubId: String) : ClubsTabScreen
     data class EngagerClub(val clubId: String) : ClubsTabScreen
+    data class CreerAmical(val clubId: String) : ClubsTabScreen
     data class Repartition(val campA: Camp, val campB: Camp, val clubId: String) : ClubsTabScreen
     data class ComposerEffectif(val camp: Camp, val clubId: String) : ClubsTabScreen
     data class Calendrier(val deuxZeroId: String) : ClubsTabScreen

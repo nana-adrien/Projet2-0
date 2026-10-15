@@ -24,6 +24,8 @@ kotlin {
             implementation(project(":feature:validation:presentation"))
             implementation(project(":feature:statistiques:domain"))
             implementation(project(":feature:statistiques:presentation"))
+            implementation(project(":feature:amical:domain"))
+            implementation(project(":feature:amical:presentation"))
         }
     }
 }

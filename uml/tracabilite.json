@@ -473,7 +473,7 @@
       "nom": "Consulter les statistiques et classements",
       "groupe": "statistiques",
       "modules": {
-        "serveur": "",
+        "serveur": "server:statistiques",
         "kmp": "feature:statistiques"
       },
       "elements": {
@@ -489,14 +489,14 @@
         "E17",
         "E18"
       ],
-      "statut": "kmp_fait_serveur_en_cours",
-      "note": "Mobile (E17 tableau de saison + E18 classements, feature:statistiques) construit en parallèle du serveur (Jalon 5 en cours sur un autre chantier, squelette server:statistiques committé, agrégations pas encore implémentées) : écran de saison avec bande mensuelle, séries/records, et classements buteurs/passeurs/votes avec ligne de l'utilisateur surlignée. Hors scope documenté (F-STA-05/06, P2+) : statistiques consolidées de club tous 2-0/amicaux confondus, historique des confrontations entre deux clubs ; assiduité/moyenne par match (mentionnées 'en version 2' dans la maquette). La couche data (routes v1/saisons/{id}/tableau-saison, /classement) est un contrat mobile-side provisoire à ajuster une fois le serveur disponible."
+      "statut": "fait_verification_live_en_attente",
+      "note": "Serveur (module server:statistiques, dependances Gradle vers server:calendrier/deuxzero/clubs/user/common, aucun de ces modules ne depend en retour) : StatistiquesController (/api/v1/statistiques) -- GET /saisons/{saisonId}/tableau (TableauSaisonDto : victoires/nuls/buts par camp, serie en cours, evolution mensuelle), GET /saisons/{saisonId}/classements (ClassementsDto : meilleurs buteurs/passeurs/buteurs-passeurs/plus assidus/hommes du match, moyenne de buts), GET /clubs/{clubId}?dateDebut=&dateFin= (StatistiquesClubDto), GET /clubs/{clubAId}/confrontations/{clubBId} (ConfrontationsDto). Agregations calculees exclusivement sur les matchs statut=OFFICIEL de type DEUX_ZERO (F-STA-07 filtres saison/periode ; AMICAL/CU21 volontairement exclu ce jalon, server:amical existe mais n'est pas consomme ici). 'Meilleur gardien' (F-STA-02) NON implemente : aucune donnee fiable de clean-sheet/arret dans le modele Evenement actuel -- omis du DTO plutot qu'invente. DTOs dans shared-contracts/.../contracts/statistiques/StatistiquesDtos.kt, sans aucune valeur par defaut (regle critique du projet respectee, verifiee par L'Empereur). Revue securite/nommage (L'Empereur) : OK. Conformite UML (KNA) : CONFORME. ATTENTION equipe mobile : feature:statistiques (deja construit en parallele, E17/E18) utilisait un 'contrat REST provisoire' -- a recaler sur les routes/DTOs reels ci-dessus. Verification live par curl NON terminee : voir incident d'infrastructure transverse documente dans la note de CU24."
     },
     "CU23": {
       "nom": "Consulter son profil et sa progression",
       "groupe": "profil",
       "modules": {
-        "serveur": "",
+        "serveur": "server:statistiques",
         "kmp": "feature:statistiques"
       },
       "elements": {
@@ -510,14 +510,14 @@
       "ecrans": [
         "E19"
       ],
-      "statut": "kmp_fait_serveur_en_cours",
-      "note": "Mobile (E19, feature:statistiques) : carte joueur, sélecteur de contexte (2-0/amicaux/total), 6 tuiles de stats, progression mensuelle avec variation vs année précédente, badges obtenus (or) et verrouillés (gris, complément calculé côté client sur l'enum TypeBadge). Reachable depuis l'onglet Classements (tap sur une ligne du classement) — PAS encore intégré à l'onglet Profil existant (feature:profile), scope cut documenté par manque de temps, pas de raison technique. Hors scope : comparateur deux joueurs (F-PRO-05, P3), masquage d'informations (F-PRO-06, déjà couvert par CU4). Contrat REST provisoire comme les autres écrans de ce jalon."
+      "statut": "fait_verification_live_en_attente",
+      "note": "Serveur (server:statistiques) : ProfilProgressionController (/api/v1/statistiques/utilisateurs) -- GET /{userId}?deuxZeroId=&clubId= (ProfilPublicDto, masque nom/prenom si cacherNomReel et dateNaissance si cacherAge, uniquement quand le viewer JWT courant != userId demande -- jamais masque pour son propre profil), GET /{userId}/progression?deuxZeroId=&granularite=MOIS|SAISON (ProgressionMensuelleDto). Reutilise la logique de masquage deja posee par CU4 sans dupliquer ProfileService (server:user, non modifie). Comparateur deux joueurs (F-PRO-05) non implemente, conforme au statut P3 de la fiche. KNA : CONFORME AVEC RESERVES -- reserve HERITEE (pas introduite ce jalon) : cacherNomReel/cacherAge sont absents de la classe Utilisateur du diagramme de classes bien qu'utilises depuis CU4, a signaler au porteur de CU4, pas une regression de ce jalon. ATTENTION mobile : feature:statistiques (E19) construit en parallele sur un contrat provisoire, a recaler sur les routes reelles ci-dessus. Verification live par curl NON terminee, voir incident d'infrastructure documente dans la note de CU24."
     },
     "CU24": {
       "nom": "Voter pour l'homme du match / obtenir un badge",
       "groupe": "recompenses",
       "modules": {
-        "serveur": "",
+        "serveur": "server:statistiques",
         "kmp": "feature:statistiques"
       },
       "elements": {
@@ -533,14 +533,14 @@
       "ecrans": [
         "E20"
       ],
-      "statut": "kmp_fait_serveur_en_cours",
-      "note": "Mobile (E20, feature:statistiques) : candidats des deux camps, ligne de stats calculée côté client depuis la chronologie (buts/passes comptés sur les Evenement reçus, pas de détection du poste gardien — non modélisé, simplification documentée), votant grisé et non sélectionnable, bouton reprenant le nom choisi. RG-16 (fenêtre 24h, un seul vote, pas pour soi) vérifiée côté serveur, pas dupliquée côté client. Accessible depuis la fiche de match (E08) quand statut = OFFICIEL. Attribution automatique des badges (F-REC-02) et badges personnalisés (F-REC-04, P3) : logique 100% serveur, pas d'écran mobile dédié (affichage via E19)."
+      "statut": "fait_verification_live_en_attente",
+      "note": "Serveur (server:statistiques) : migration V5__vote_jalon5.sql (resout la lacune UML 'vote : aucune reference au votant ni au candidat' documentee en tete de V1__schema_initial.sql ; la table vote existait deja depuis V1 avec id/match_id/horodatage) -- ajoute votant_id/candidat_id NOT NULL, contrainte votant_id<>candidat_id, contrainte unique (match_id, votant_id). Renommee V4->V5 en session pour eviter une collision avec la migration V4 validation/litige du Jalon 4, creee en parallele. VoteController (/api/v1/matchs/{matchId}/votes) : POST (body VoteRequest{candidatId}, le votant est TOUJOURS resolu par currentUserId() -- jamais depuis le corps de la requete, verifie explicitement par L'Empereur) -> 400 si vote pour soi-meme, 409 si deja vote pour ce match, 403 si le votant n'est pas present (CompositionEntity.present=true) sur la feuille de match ou si la fenetre de 24h est fermee ; GET /resultat -> VoteResultatDto (tous les gagnants ex-aequo renvoyes en cas d'egalite, conforme a la fiche CU24). Fenetre de 24h calculee depuis le dernier evenement non annule du match (proxy 'fin de match', EvenementRepository.findFirstByMatchIdAndAnnuleFalseOrderByHorodatageDesc) car aucun timestamp d'officialisation explicite n'existe encore (CU19/CU20, Jalon 4, livre en parallele mais pas consomme ici) -- interpretation documentee en KDoc, a revoir quand CU19/20 exposera un vrai timestamp. BadgeController/BadgeAttributionService (POST /api/v1/matchs/{matchId}/badges/calculer, declenche manuellement -- pas de hook automatique sur l'officialisation, limitation documentee ; GET /api/v1/utilisateurs/{userId}/badges) : implemente uniquement PREMIER_BUT (badge a vie, verifie via existsByUtilisateurIdAndType avant attribution), DOUBLE/TRIPLE/QUADRUPLE (buts BUT+PENALTY_MARQUE hors BUT_CONTRE_SON_CAMP du meme joueur dans le meme match), PASSEUR_DE_GENIE (seuil >= 2 passes dans un match, explicitement documente en KDoc comme une interpretation faute de regle quantitative dans l'UML/les maquettes). FIDELE/MUR/INVAINCU/HOMME_FORT/TOUJOURS_LA/PERSONNALISE : NON implementes -- aucune regle quantitative dans l'UML ni les maquettes (seulement les noms des badges), MUR/INVAINCU necessiteraient des donnees de clean-sheet inexistantes dans le modele Evenement actuel -- limitation produit assumee et documentee, pas un oubli silencieux. BadgeObtenuEntity ne reference pas de match (choix UML delibere : pas d'association Match--BadgeObtenu dans le diagramme de classes, champ contexte en texte libre a la place) -- verifie conforme par KNA. VoteEntity/BadgeObtenuEntity verifies par KNA comme correspondant exactement aux attributs UML des classes Vote/BadgeObtenu. Revue securite (L'Empereur) : OK, point d'attention non bloquant -- l'endpoint de calcul de badges n'a pas de controle de role au-dela de l'authentification generique (coherent avec l'acteur UML 'Systeme', a surveiller si un jour cela doit etre restreint a l'organisateur/marqueur). KNA : CONFORME AVEC RESERVES -- absence de tests automatises citant RG-16 (verifie par le coordinateur : AUCUN module serveur du projet n'a de dossier src/test, c'est la convention existante du projet -- testing par curl reel -- pas une regression propre a ce jalon). INCIDENT D'INFRASTRUCTURE PARTAGEE (transverse a CU22-CU25) : la base de dev locale partagee (Supabase local) a ete corrompue par un run concurrent d'un autre agent avec hibernate.ddl-auto=create-drop, qui recreait le schema depuis les entites JPA apres chaque passage de Flyway -- desynchronisant flyway_schema_history (V1-V3 marques success alors que les colonnes ajoutees par V2 avaient disparu de la base reelle). Corrige par un autre agent (commit c8a0f4d, ddl-auto remis a validate), puis par le coordinateur Digiprem (reset complet du schema public -- confirme VIDE par requete en lecture avant toute suppression, aucune donnee reelle perdue -- pour laisser Flyway reconstruire proprement V1 a V5 au prochain demarrage). Le redemarrage du serveur necessaire pour terminer la verification end-to-end par curl a ensuite ete bloque par le classifieur de permission auto-mode (lancement de process serveur refuse juste apres l'operation de reset). Resultat : code CU22-25 ecrit, compile (BUILD SUCCESSFUL sur server:statistiques et server:app), revu en securite/nommage (L'Empereur) et en conformite UML (KNA), mais PAS verifie de bout en bout par curl contre des donnees reelles -- a refaire dès que le demarrage du serveur est de nouveau autorise, en suivant le scenario de test deja prepare (match force a OFFICIEL manuellement, evenements BUT injectes, vote nominal + rejets RG-16, calcul de badges, cloture avec RG-17, palmares)."
     },
     "CU25": {
       "nom": "Clôturer la saison et consulter le bilan",
       "groupe": "bilan",
       "modules": {
-        "serveur": "",
+        "serveur": "server:statistiques",
         "kmp": "feature:statistiques"
       },
       "elements": {
@@ -556,8 +556,8 @@
       "ecrans": [
         "E21"
       ],
-      "statut": "kmp_fait_serveur_en_cours",
-      "note": "Mobile (E21, feature:statistiques) : champions (RG-17), récompenses individuelles (joueur de l'année, meilleur buteur/passeur, plus assidu, meilleur gardien), nombre de matchs. Accessible depuis l'onglet Classements quand la saison sélectionnée est clôturée (Saison.statut == CLOTUREE). Hors scope documenté : visuel partageable pour réseaux sociaux (F-BIL-05, rendu + partage spécifiques par plateforme), palmarès historique multi-saisons (F-BIL-06), mise en avant du plus beau match/plus longue série, vote du joueur de l'année en alternative au calcul automatique (F-BIL-04, P3)."
+      "statut": "fait_verification_live_en_attente",
+      "note": "Serveur (server:statistiques) : BilanController (/api/v1/saisons/{saisonId}) -- POST /cloturer-et-bilan (appelle SaisonService.closeSaison existant de server:deuxzero SANS dupliquer RG-18, puis calcule le champion RG-17 : victoires, puis difference de buts cumulee, puis buts marques, puis resultat du dernier match officiel -- si l'egalite persiste jusqu'au dernier critere, campChampionId=null et egaliteTotale=true dans BilanDto, PAS de departage arbitraire invente -- persiste campChampionId via SaisonRepository.save(), sans modifier SaisonService), GET /bilan (relecture idempotente) ; PalmaresController -- GET /api/v1/deuxzero/{deuxZeroId}/palmares (toutes les saisons CLOTUREE de ce 2-0 + leur champion). 'Meilleur gardien' (F-BIL-03) absent du BilanDto, meme limitation que ClassementsDto (CU22) -- note ajoutee par KNA directement dans la fiche UML CU25 pour que la limitation soit aussi explicite que cote CU22. F-BIL-04 (vote du joueur de l'annee en alternative), F-BIL-05 (visuel partageable reseaux sociaux), F-REC-04 (badges personnalises) : NON implementes, conformes au statut P3 explicite des fiches CU24/CU25. KNA : CONFORME AVEC RESERVES (meme reserve tests automatises que CU24, voir note CU24). Verification live par curl NON terminee -- voir l'incident d'infrastructure partagee documente integralement dans la note de CU24 (transverse aux 4 CU de ce jalon) : code ecrit, compile, revu en securite/nommage/UML, mais le redemarrage serveur necessaire pour peupler des donnees de test et executer les scenarios curl (cloture avec RG-17 nominal et egalite, double cloture rejetee en 409, palmares) a ete bloque par le classifieur de permission apres le reset de schema (base confirmee vide avant reset, aucune perte). Mobile (E21, feature:statistiques) deja construit en parallele sur un 'contrat REST provisoire' -- a recaler sur les routes/DTOs reels listes ici."
     },
     "CU26": {
       "nom": "Gérer ses préférences de notification",

@@ -161,6 +161,7 @@ class CalendrierService(
                 dureeMiTempsAppliqueeMinutes = request.dureeMiTempsAppliqueeMinutes ?: match.dureeMiTempsAppliqueeMinutes,
                 nomEquipeInvitee = match.nomEquipeInvitee,
                 marqueurId = match.marqueurId,
+                entreEnAttenteValidationA = match.entreEnAttenteValidationA,
             )
         )
 

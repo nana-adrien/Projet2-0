@@ -83,6 +83,7 @@ class CompositionService(
                 nomEquipeInvitee = match.nomEquipeInvitee,
                 marqueurId = if (request.suppleant) match.marqueurId else targetId,
                 marqueurSuppleantId = if (request.suppleant) targetId else match.marqueurSuppleantId,
+                entreEnAttenteValidationA = match.entreEnAttenteValidationA,
             )
         )
         return updated.toDto()

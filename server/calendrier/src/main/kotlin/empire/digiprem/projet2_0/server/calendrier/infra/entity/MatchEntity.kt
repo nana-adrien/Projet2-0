@@ -5,6 +5,7 @@ import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.Id
 import jakarta.persistence.Table
+import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
 import java.util.UUID
@@ -51,4 +52,9 @@ class MatchEntity(
 
     /** CU16 — suppléant du marqueur (F-LIV-08 : reprend la saisie en cas de perte du téléphone). */
     val marqueurSuppleantId: UUID? = null,
+
+    /** CU19/CU20 (Jalon 4) — horodatage du passage à EN_ATTENTE_DE_VALIDATION, posé par
+     * EvenementService.terminerMatch. Nécessaire pour calculer l'échéance RG-12 (= cette date +
+     * deuxZero.delaiValidationAutomatiqueHeures). */
+    val entreEnAttenteValidationA: Instant? = null,
 )

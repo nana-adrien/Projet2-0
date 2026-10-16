@@ -23,6 +23,7 @@ import empire.digiprem.projet2_0.server.notifications.infra.repository.Notificat
 import empire.digiprem.projet2_0.server.user.infra.repository.UserRepository
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
+import java.time.Instant
 import java.util.UUID
 
 private const val STATUT_PROGRAMME = "PROGRAMME"
@@ -179,7 +180,9 @@ class EvenementService(
         evenementRepository.save(
             EvenementEntity(matchId = matchId, type = TYPE_FIN_PERIODE, minute = 0, periode = request.periodeTerminee, auteurSaisieId = requesterId)
         )
-        val updated = matchRepository.save(match.copyWith(statut = STATUT_EN_ATTENTE_DE_VALIDATION))
+        val updated = matchRepository.save(
+            match.copyWith(statut = STATUT_EN_ATTENTE_DE_VALIDATION, entreEnAttenteValidationA = Instant.now())
+        )
         notifierMembresDesDeuxCamps(updated, TITRE_FIN_MATCH, "Le match est terminé, en attente de validation.")
         return matchEnDirect(updated).also { broadcaster.broadcast(matchId, it) }
     }
@@ -250,11 +253,13 @@ class EvenementService(
         statut: String = this.statut,
         scoreCampA: Int? = this.scoreCampA,
         scoreCampB: Int? = this.scoreCampB,
+        entreEnAttenteValidationA: Instant? = this.entreEnAttenteValidationA,
     ) = MatchEntity(
         id = id, saisonId = saisonId, clubOrganisateurId = clubOrganisateurId, type = type, date = date, heure = heure,
         lieu = lieu, statut = statut, scoreCampA = scoreCampA, scoreCampB = scoreCampB,
         dureeMiTempsAppliqueeMinutes = dureeMiTempsAppliqueeMinutes, nomEquipeInvitee = nomEquipeInvitee,
         marqueurId = marqueurId, marqueurSuppleantId = marqueurSuppleantId,
+        entreEnAttenteValidationA = entreEnAttenteValidationA,
     )
 
     private fun MatchEntity.toDto() = MatchDto(

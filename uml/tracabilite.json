@@ -450,7 +450,7 @@
       "nom": "Organiser un match amical",
       "groupe": "amicaux",
       "modules": {
-        "serveur": "",
+        "serveur": "server:amical",
         "kmp": "feature:amical"
       },
       "elements": {
@@ -466,8 +466,8 @@
       "ecrans": [
         "E26"
       ],
-      "statut": "kmp_partiel_serveur_a_faire",
-      "note": "Mobile (E26, feature:amical) : formulaire de création réservé à l'administrateur du club, scénario nominal uniquement — adversaire 'équipe invitée' (RG-15, F-AMI-03), bannière RG-14, mi-temps 45/30/libre. Hors scope documenté et volontaire : adversaire 'club inscrit' avec invitation accepter/refuser (A1, F-AMI-02) — nécessiterait une recherche de clubs et un flux d'acceptation inexistants ; défi public entre clubs (A3, F-AMI-05, P3). Limite structurelle découverte en construisant ce CU : les écrans CU17/18/19 déjà livrés (Marqueur, Suivre en direct, Valider) supposent tous un modèle à 2 Camp (comme un 2-0) — un match amical contre une équipe invitée n'a PAS de Camp au sens UML, donc la saisie en direct et la validation ne sont PAS branchées sur le match créé ici (même lacune déjà identifiée côté serveur par l'agent Jalon 4 : 'Validation.campId référencerait camp(id), qui n'existe pas pour AMICAL'). Après création, retour simple à la gestion du club plutôt que navigation vers un écran de match non fonctionnel. Route REST (v1/clubs/{id}/matchs-amicaux) provisoire, serveur pas encore construit."
+      "statut": "fait",
+      "note": "Mobile (E26, feature:amical) : formulaire de création réservé à l'administrateur du club, scénario nominal uniquement — adversaire 'équipe invitée' (RG-15, F-AMI-03), bannière RG-14, mi-temps 45/30/libre. Hors scope documenté et volontaire : adversaire 'club inscrit' avec invitation accepter/refuser (A1, F-AMI-02) — nécessiterait une recherche de clubs et un flux d'acceptation inexistants ; défi public entre clubs (A3, F-AMI-05, P3). Limite structurelle découverte en construisant ce CU : les écrans CU17/18/19 déjà livrés (Marqueur, Suivre en direct, Valider) supposent tous un modèle à 2 Camp (comme un 2-0) — un match amical contre une équipe invitée n'a PAS de Camp au sens UML, donc la saisie en direct et la validation ne sont PAS branchées sur le match créé ici (même lacune déjà identifiée côté serveur par l'agent Jalon 4 : 'Validation.campId référencerait camp(id), qui n'existe pas pour AMICAL'). Après création, retour simple à la gestion du club plutôt que navigation vers un écran de match non fonctionnel. Route REST (v1/clubs/{id}/matchs-amicaux) : construite au Jalon 6 (module server:amical, POST /api/v1/clubs/{clubId}/matchs-amicaux). Droit administrateur du club vérifié via AdhesionClubRepository (server:clubs) ; match créé avec type=AMICAL/clubOrganisateurId, aucune migration nécessaire (colonnes déjà anticipées en V1, cf. commentaire de MatchEntity). La limite structurelle décrite ci-dessus (pas de Camp pour un match AMICAL, donc CU17/18/19 non branchés) n'a pas été corrigée -- hors scope de ce jalon, seule la création est traitée. Testé par curl (création 200, 403 si non-administrateur, 400 si champs obligatoires vides)."
     },
     "CU22": {
       "nom": "Consulter les statistiques et classements",
@@ -578,14 +578,14 @@
       "ecrans": [
         "E27"
       ],
-      "statut": "kmp_fait_serveur_a_faire",
-      "note": "Mobile (E27, feature:notifications/preferences) : onglets par 2-0, quatre niveaux exclusifs (TOUT/BUTS_ET_SCORE_FINAL/ME_CONCERNANT/AUCUNE) avec description, toggle 'Ne pas déranger', aperçu de la notification correspondant au niveau choisi, bouton Enregistrer explicite (scénario nominal étape 4). La plage horaire 'Ne pas déranger' (23h-8h dans la maquette) est un simple Boolean dans le modèle UML (PreferenceNotification.neRienDerangerNocturne), pas configurable — affichée en texte fixe, pas un champ. Accessible via un bouton 'Préférences' dans la barre du haut de l'écran Notifications existant. Route REST (v1/deuxzero/{id}/preference-notification) provisoire, endpoint serveur pas encore construit malgré le module server:notifications déjà existant pour la liste des notifications."
+      "statut": "fait",
+      "note": "Mobile (E27, feature:notifications/preferences) : onglets par 2-0, quatre niveaux exclusifs (TOUT/BUTS_ET_SCORE_FINAL/ME_CONCERNANT/AUCUNE) avec description, toggle 'Ne pas déranger', aperçu de la notification correspondant au niveau choisi, bouton Enregistrer explicite (scénario nominal étape 4). La plage horaire 'Ne pas déranger' (23h-8h dans la maquette) est un simple Boolean dans le modèle UML (PreferenceNotification.neRienDerangerNocturne), pas configurable — affichée en texte fixe, pas un champ. Accessible via un bouton 'Préférences' dans la barre du haut de l'écran Notifications existant. Route REST (v1/deuxzero/{id}/preference-notification) : construite au Jalon 6, ajoutée au module server:notifications déjà existant pour la liste des notifications (GET/PUT, nouvelle entité PreferenceNotificationEntity). Aucune migration nécessaire (colonnes utilisateur_id/deux_zero_id déjà présentes en V1). Droit : membre engagé du 2-0 (camp actif, via server:deuxzero) ou organisateur -- plus large que le droit 'gestionnaire du calendrier' utilisé ailleurs, car tout joueur doit pouvoir régler ses propres notifications. GET crée paresseusement la préférence par défaut (TOUT / neRienDerangerNocturne=false) au premier appel. Testé par curl (défaut au premier GET, mise à jour idempotente sans doublon, 403 si non-membre, 400 si niveau invalide)."
     },
     "CU27": {
       "nom": "Signaler un contenu",
       "groupe": "social",
       "modules": {
-        "serveur": "",
+        "serveur": "server:social",
         "kmp": "feature:social"
       },
       "elements": {
@@ -596,8 +596,8 @@
       },
       "regles": [],
       "ecrans": [],
-      "statut": "kmp_partiel_serveur_a_faire",
-      "note": "Mobile (feature:social) : composant réutilisable SignalerSheet (motif + envoi) construit sans écran dédié, conformément à la fiche UML qui précise qu'aucun écran n'est prévu pour ce CU — F-SOC-01 à 04 (fil du 2-0, réactions, partage, médias) ne sont pas non plus modélisés avec des cas d'utilisation ou écrans propres dans cette analyse. Seul point d'invocation construit : bouton 'Signaler ce profil' sur E19 (profil d'un autre joueur), choisi car c'est le seul contenu généré par les utilisateurs déjà affiché dans l'app à ce stade. Résout la lacune UML 'Signalement sans référence au contenu signalé' via TypeContenuSignale + contenuId. Route REST (v1/signalements) provisoire, serveur pas encore construit. Back-office administrateur plateforme (étapes 2-3 du scénario) hors scope mobile par nature."
+      "statut": "fait",
+      "note": "Mobile (feature:social) : composant réutilisable SignalerSheet (motif + envoi) construit sans écran dédié, conformément à la fiche UML qui précise qu'aucun écran n'est prévu pour ce CU — F-SOC-01 à 04 (fil du 2-0, réactions, partage, médias) ne sont pas non plus modélisés avec des cas d'utilisation ou écrans propres dans cette analyse. Seul point d'invocation construit : bouton 'Signaler ce profil' sur E19 (profil d'un autre joueur), choisi car c'est le seul contenu généré par les utilisateurs déjà affiché dans l'app à ce stade. Résout la lacune UML 'Signalement sans référence au contenu signalé' via TypeContenuSignale + contenuId. Route REST (v1/signalements) : construite au Jalon 6 dans un nouveau module server:social (POST /api/v1/signalements). Colonnes contenu_type/contenu_id ajoutées à la table signalement via la migration V3 (auteur_id, déjà présent en V1, joue le rôle de signaleur -- pas de renommage). Seule la valeur PROFIL_UTILISATEUR est acceptée (enum partagé TypeContenuSignale, extensible plus tard). Back-office administrateur plateforme (étapes 2-3 du scénario) toujours hors scope mobile ET hors scope de ce jalon serveur (consultation/décision non construites). Testé par curl (création 200, 400 si motif vide, 400 si contenuType hors enum)."
     }
   }
 }

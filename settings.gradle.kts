@@ -46,6 +46,8 @@ include(
     ":server:deuxzero",
     ":server:calendrier",
     ":server:statistiques",
+    ":server:amical",
+    ":server:social",
     ":server:app",
 )
 

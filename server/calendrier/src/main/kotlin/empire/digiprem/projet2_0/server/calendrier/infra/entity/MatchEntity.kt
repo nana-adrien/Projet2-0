@@ -39,8 +39,10 @@ class MatchEntity(
     @Column(nullable = false, columnDefinition = "text")
     val statut: String = "PROGRAMME",
 
+    @Column(name = "score_camp_a")
     val scoreCampA: Int? = null,
 
+    @Column(name = "score_camp_b")
     val scoreCampB: Int? = null,
 
     val dureeMiTempsAppliqueeMinutes: Int? = null,
@@ -56,5 +58,6 @@ class MatchEntity(
     /** CU19/CU20 (Jalon 4) — horodatage du passage à EN_ATTENTE_DE_VALIDATION, posé par
      * EvenementService.terminerMatch. Nécessaire pour calculer l'échéance RG-12 (= cette date +
      * deuxZero.delaiValidationAutomatiqueHeures). */
+    @Column(name = "entre_en_attente_validation_a")
     val entreEnAttenteValidationA: Instant? = null,
 )

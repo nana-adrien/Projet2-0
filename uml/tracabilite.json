@@ -247,7 +247,7 @@
       "groupe": "saisons",
       "modules": {
         "serveur": "server:deuxzero",
-        "kmp": ""
+        "kmp": "feature:statistiques"
       },
       "elements": {
         "domain": [
@@ -264,8 +264,8 @@
       "ecrans": [
         "E17"
       ],
-      "statut": "serveur_partiel_mobile_a_faire",
-      "note": "Ouverture/clôture fonctionnelles ; calcul du camp champion (RG-17) différé au module statistiques (Jalon 5), aucun match n'existe encore pour le nourrir. Aucun écran mobile construit ce jalon (E17 appartient au Jalon 5) ; ListSaisonsUseCase/OpenSaisonUseCase/CloseSaisonUseCase existent côté mobile, non câblés à un écran."
+      "statut": "fait",
+      "note": "Mobile câblé dans feature:statistiques:presentation/tableau (TableauSaisonScreen, E17, déjà construit au Jalon 5) : boutons \"Clôturer la saison\" (si la saison sélectionnée est EN_COURS) et \"Ouvrir une nouvelle saison\" (formulaire libellé/dateDebut/dateFin), visibles seulement à l'organisateur du 2-0 (même contournement ListMesDeuxZeroUseCase que CalendrierViewModel/ParametresDeuxZeroViewModel, pas de GetDeuxZeroUseCase dédié). OpenSaisonUseCase/CloseSaisonUseCase existaient déjà côté mobile, non câblés avant ce jalon. Calcul du camp champion (RG-17) reste côté serveur. Modification ponctuelle de la mi-temps pour un seul match (A1) reste hors de cet écran (cf. note CU13)."
     },
     "CU13": {
       "nom": "Modifier les paramètres d'un 2-0",

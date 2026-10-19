@@ -53,7 +53,10 @@ include(
     ":server:calendrier",
     ":server:statistiques",
     ":server:amical",
-    ":server:social",
+    ":server:social:infra",
+    ":server:social:service",
+    ":server:social:api",
+    ":server:social:config",
     ":server:app",
 )
 

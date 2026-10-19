@@ -10,7 +10,7 @@ springBoot {
 
 dependencies {
     implementation(project(":server:common"))
-    implementation(project(":server:user"))
+    implementation(project(":server:user:config"))
     implementation(project(":server:settings"))
     implementation(project(":server:notifications"))
     implementation(project(":server:clubs"))

@@ -39,7 +39,10 @@ include(":androidApp")
 
 include(
     ":server:common",
-    ":server:user",
+    ":server:user:infra",
+    ":server:user:service",
+    ":server:user:api",
+    ":server:user:config",
     ":server:settings",
     ":server:notifications",
     ":server:clubs",

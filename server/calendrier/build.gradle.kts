@@ -6,7 +6,7 @@ plugins {
 
 dependencies {
     implementation(project(":server:common"))
-    implementation(project(":server:user"))
+    implementation(project(":server:user:infra"))
     implementation(project(":server:clubs"))
     implementation(project(":server:deuxzero"))
     implementation(project(":server:notifications"))

@@ -11,7 +11,7 @@ springBoot {
 dependencies {
     implementation(project(":server:common"))
     implementation(project(":server:user:config"))
-    implementation(project(":server:settings"))
+    implementation(project(":server:settings:config"))
     implementation(project(":server:notifications"))
     implementation(project(":server:clubs"))
     implementation(project(":server:deuxzero"))

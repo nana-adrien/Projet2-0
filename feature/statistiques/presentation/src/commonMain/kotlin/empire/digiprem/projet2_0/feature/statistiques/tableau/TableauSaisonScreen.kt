@@ -13,9 +13,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -37,9 +40,12 @@ import empire.digiprem.projet2_0.core.design_system.components.feedback.PDZToast
 import empire.digiprem.projet2_0.core.design_system.components.season.SeasonBoard
 import empire.digiprem.projet2_0.core.design_system.components.states.PDZLoadingSpinner
 import empire.digiprem.projet2_0.core.design_system.components.textfields.PDZTextField
+import empire.digiprem.projet2_0.core.design_system.components.topbar.PDZTopBar
 import empire.digiprem.projet2_0.core.design_system.extension.asString
 import empire.digiprem.projet2_0.core.design_system.theme.PDZColor
 import empire.digiprem.projet2_0.core.design_system.theme.PDZSpacing
+import empire.digiprem.projet2_0.feature.deuxzero.model.Camp
+import empire.digiprem.projet2_0.feature.deuxzero.model.Saison
 import empire.digiprem.projet2_0.feature.deuxzero.model.SaisonStatut
 import empire.digiprem.projet2_0.feature.statistiques.model.MoisResultat
 import empire.digiprem.projet2_0.feature.statistiques.model.Serie
@@ -69,7 +75,23 @@ fun TableauSaisonScreen(
     onVoirBilan: (saisonId: String) -> Unit = {},
 ) {
     Box(modifier = modifier.fillMaxSize()) {
-        Scaffold(modifier = Modifier.fillMaxSize()) { padding ->
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            topBar = {
+                PDZTopBar(
+                    title = "Tableau de la saison",
+                    actions = {
+                        if (state.saisons.size > 1) {
+                            SaisonSelector(
+                                saisons = state.saisons,
+                                saisonSelectionneeId = state.saisonSelectionneeId,
+                                onSaisonChange = { onAction(TableauSaisonAction.OnSaisonChange(it)) },
+                            )
+                        }
+                    },
+                )
+            },
+        ) { padding ->
             when {
                 state.isLoading -> PDZLoadingSpinner(modifier = Modifier.padding(padding).fillMaxSize())
 
@@ -79,20 +101,7 @@ fun TableauSaisonScreen(
                 ) {
                     item {
                         Text(text = state.tableau?.saisonLibelle.orEmpty(), style = MaterialTheme.typography.headlineSmall)
-                        Spacer(Modifier.height(PDZSpacing.space2))
-                        if (state.saisons.size > 1) {
-                            LazyRow(horizontalArrangement = Arrangement.spacedBy(PDZSpacing.space2)) {
-                                items(state.saisons) { saison ->
-                                    Text(
-                                        text = saison.libelle,
-                                        style = MaterialTheme.typography.labelLarge,
-                                        color = if (saison.id == state.saisonSelectionneeId) PDZColor.Gazon else MaterialTheme.colorScheme.onSurfaceVariant,
-                                        modifier = Modifier.padding(PDZSpacing.space2),
-                                    )
-                                }
-                            }
-                            Spacer(Modifier.height(PDZSpacing.space2))
-                        }
+                        Spacer(Modifier.height(PDZSpacing.space4))
                         state.tableau?.let { tableau ->
                             SeasonBoard(
                                 libelleA = state.campA?.libelle.orEmpty(),
@@ -115,6 +124,12 @@ fun TableauSaisonScreen(
                             Text(text = "Mois par mois", style = MaterialTheme.typography.titleMedium)
                             Spacer(Modifier.height(PDZSpacing.space2))
                             BandeMensuelle(bilanMensuel = bilanMensuel, campAId = state.campA?.id, campBId = state.campB?.id)
+                            Spacer(Modifier.height(PDZSpacing.space2))
+                            Text(
+                                text = bilanMensuelLegende(bilanMensuel, state.campA, state.campB),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
                             Spacer(Modifier.height(PDZSpacing.space6))
                         }
                     }
@@ -223,6 +238,47 @@ private fun OuvrirSaisonDialog(onDismiss: () -> Unit, onConfirm: (libelle: Strin
         },
         dismissButton = { TextButton(onClick = onDismiss) { Text("Annuler") } },
     )
+}
+
+/** Sélecteur de saison dans la barre d'app (E17, CU22) : les saisons autres que la saison en
+ * cours restent consultables mais sont annotées « lecture seule » — leurs actions de gestion
+ * (clôturer/ouvrir) ne sont jamais proposées pour elles (voir [TableauSaisonScreen]). */
+@Composable
+private fun SaisonSelector(saisons: List<Saison>, saisonSelectionneeId: String, onSaisonChange: (String) -> Unit) {
+    var expanded by remember { mutableStateOf(false) }
+    val saisonSelectionnee = saisons.firstOrNull { it.id == saisonSelectionneeId }
+
+    Box {
+        TextButton(onClick = { expanded = true }) {
+            Text(text = saisonSelectionnee?.libelle.orEmpty(), style = MaterialTheme.typography.labelLarge)
+            Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = null)
+        }
+        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            saisons.forEach { saison ->
+                DropdownMenuItem(
+                    text = {
+                        Text(
+                            text = if (saison.statut == SaisonStatut.EN_COURS) saison.libelle else "${saison.libelle} · lecture seule",
+                        )
+                    },
+                    onClick = { expanded = false; onSaisonChange(saison.id) },
+                )
+            }
+        }
+    }
+}
+
+/** Légende de la bande mensuelle (E17, CU22) : compte les mois gagnés par chaque camp et les égalités. */
+private fun bilanMensuelLegende(bilanMensuel: List<MoisResultat>, campA: Camp?, campB: Camp?): String {
+    val victoiresA = bilanMensuel.count { it.campVainqueurId == campA?.id }
+    val victoiresB = bilanMensuel.count { it.campVainqueurId == campB?.id }
+    val egalites = bilanMensuel.count { it.campVainqueurId == null }
+    val egaliteTexte = when (egalites) {
+        0 -> "aucun mois à égalité"
+        1 -> "un mois à égalité"
+        else -> "$egalites mois à égalité"
+    }
+    return "${campA?.libelle.orEmpty()} ont gagné $victoiresA mois, ${campB?.libelle.orEmpty()} $victoiresB, $egaliteTexte."
 }
 
 @Composable

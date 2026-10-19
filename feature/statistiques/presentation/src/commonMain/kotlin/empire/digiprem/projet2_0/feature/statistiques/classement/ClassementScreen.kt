@@ -4,15 +4,15 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import empire.digiprem.projet2_0.core.design_system.components.avatar.AppAvatar
 import empire.digiprem.projet2_0.core.design_system.components.list.AppListRow
+import empire.digiprem.projet2_0.core.design_system.components.segmented.PDZSegmentedControl
 import empire.digiprem.projet2_0.core.design_system.components.states.PDZLoadingSpinner
 import empire.digiprem.projet2_0.core.design_system.theme.PDZColor
 import empire.digiprem.projet2_0.core.design_system.theme.PDZSpacing
@@ -54,11 +55,13 @@ fun ClassementScreen(
         Column(modifier = Modifier.padding(padding).fillMaxSize()) {
             Text(text = "Classements", style = MaterialTheme.typography.headlineSmall, modifier = Modifier.padding(PDZSpacing.space4))
 
-            TabRow(selectedTabIndex = TypeClassement.entries.indexOf(state.type)) {
-                Tab(selected = state.type == TypeClassement.BUTEURS, onClick = { onAction(ClassementAction.OnTypeChange(TypeClassement.BUTEURS)) }, text = { Text("Buteurs") })
-                Tab(selected = state.type == TypeClassement.PASSEURS, onClick = { onAction(ClassementAction.OnTypeChange(TypeClassement.PASSEURS)) }, text = { Text("Passeurs") })
-                Tab(selected = state.type == TypeClassement.VOTES, onClick = { onAction(ClassementAction.OnTypeChange(TypeClassement.VOTES)) }, text = { Text("Votes") })
-            }
+            PDZSegmentedControl(
+                options = listOf("Buteurs", "Passeurs", "Votes"),
+                selectedIndex = TypeClassement.entries.indexOf(state.type),
+                onOptionSelected = { onAction(ClassementAction.OnTypeChange(TypeClassement.entries[it])) },
+                modifier = Modifier.padding(horizontal = PDZSpacing.space4),
+            )
+            Spacer(Modifier.height(PDZSpacing.space3))
 
             if (state.isLoading) {
                 PDZLoadingSpinner(modifier = Modifier.fillMaxSize())

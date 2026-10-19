@@ -30,6 +30,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import empire.digiprem.projet2_0.core.design_system.components.avatar.AppAvatar
 import empire.digiprem.projet2_0.core.design_system.components.buttons.PDZButton
 import empire.digiprem.projet2_0.core.design_system.components.buttons.PDZButtonType
+import empire.digiprem.projet2_0.core.design_system.components.segmented.PDZSegmentedControl
 import empire.digiprem.projet2_0.core.design_system.components.states.PDZLoadingSpinner
 import empire.digiprem.projet2_0.core.design_system.theme.PDZColor
 import empire.digiprem.projet2_0.core.design_system.theme.PDZSpacing
@@ -113,11 +114,11 @@ private fun ProfilContent(profil: ProfilJoueur, contexte: ContexteStats, montrer
                     }
                 }
                 Spacer(Modifier.height(PDZSpacing.space4))
-                Row(horizontalArrangement = Arrangement.spacedBy(PDZSpacing.space2)) {
-                    ContexteChip(label = "2-0", selected = contexte == ContexteStats.DEUX_ZERO, onClick = { onAction(ProfilAction.OnContexteChange(ContexteStats.DEUX_ZERO)) })
-                    ContexteChip(label = "Amicaux", selected = contexte == ContexteStats.AMICAUX, onClick = { onAction(ProfilAction.OnContexteChange(ContexteStats.AMICAUX)) })
-                    ContexteChip(label = "Total", selected = contexte == ContexteStats.TOTAL, onClick = { onAction(ProfilAction.OnContexteChange(ContexteStats.TOTAL)) })
-                }
+                PDZSegmentedControl(
+                    options = listOf("2-0", "Amicaux", "Total"),
+                    selectedIndex = ContexteStats.entries.indexOf(contexte),
+                    onOptionSelected = { onAction(ProfilAction.OnContexteChange(ContexteStats.entries[it])) },
+                )
                 if (montrerSignaler) {
                     Spacer(Modifier.height(PDZSpacing.space2))
                     PDZButton(
@@ -156,18 +157,6 @@ private fun ProfilContent(profil: ProfilJoueur, contexte: ContexteStats, montrer
             }
         }
     }
-}
-
-@Composable
-private fun ContexteChip(label: String, selected: Boolean, onClick: () -> Unit) {
-    Text(
-        text = label,
-        style = MaterialTheme.typography.labelLarge,
-        color = if (selected) PDZColor.Blanc else MaterialTheme.colorScheme.onSurfaceVariant,
-        modifier = Modifier
-            .background(if (selected) PDZColor.Gazon else MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(16.dp))
-            .padding(horizontal = PDZSpacing.space3, vertical = PDZSpacing.space1),
-    )
 }
 
 @Composable

@@ -1,14 +1,13 @@
 plugins {
     id("convention.spring.service")
     alias(libs.plugins.springDependencyManagement)
-    alias(libs.plugins.kotlinJpa)
 }
 
 dependencies {
     implementation(project(":server:common"))
+    implementation(project(":server:notifications:infra"))
+    // PreferenceNotificationService lit CampRepository/DeuxZeroRepository/EffectifEngageRepository
+    // pour résoudre les destinataires — seul :deuxzero:infra est nécessaire.
     implementation(project(":server:deuxzero:infra"))
     implementation(project(":shared-contracts"))
-    implementation(libs.spring.boot.starter.data.jpa)
-    implementation(libs.spring.springdoc.openapi)
-    runtimeOnly(libs.postgresql)
 }

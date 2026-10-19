@@ -9,7 +9,7 @@ dependencies {
     implementation(project(":server:user:infra"))
     implementation(project(":server:clubs:infra"))
     implementation(project(":server:deuxzero:infra"))
-    implementation(project(":server:notifications"))
+    implementation(project(":server:notifications:infra"))
     implementation(project(":shared-contracts"))
     implementation(libs.spring.boot.starter.data.jpa)
     implementation(libs.spring.boot.starter.websocket)

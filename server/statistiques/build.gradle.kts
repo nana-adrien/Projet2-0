@@ -13,7 +13,7 @@ dependencies {
     // saison déjà clôturée, RG-18) pour ne pas dupliquer cette règle métier — exception
     // documentée, seul cas où statistiques dépend d'un :service externe plutôt qu'un :infra.
     implementation(project(":server:deuxzero:service"))
-    implementation(project(":server:calendrier"))
+    implementation(project(":server:calendrier:infra"))
     implementation(project(":shared-contracts"))
     implementation(libs.spring.boot.starter.data.jpa)
     runtimeOnly(libs.postgresql)

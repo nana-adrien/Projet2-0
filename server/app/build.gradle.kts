@@ -15,7 +15,7 @@ dependencies {
     implementation(project(":server:notifications:config"))
     implementation(project(":server:clubs:config"))
     implementation(project(":server:deuxzero:config"))
-    implementation(project(":server:calendrier"))
+    implementation(project(":server:calendrier:config"))
     implementation(project(":server:statistiques"))
     implementation(project(":server:amical"))
     implementation(project(":server:social:config"))

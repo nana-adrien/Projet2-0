@@ -7,7 +7,7 @@ plugins {
 dependencies {
     implementation(project(":server:common"))
     implementation(project(":server:clubs:infra"))
-    implementation(project(":server:calendrier"))
+    implementation(project(":server:calendrier:infra"))
     implementation(project(":shared-contracts"))
     implementation(libs.spring.boot.starter.data.jpa)
     implementation(libs.spring.springdoc.openapi)

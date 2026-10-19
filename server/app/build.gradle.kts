@@ -16,7 +16,7 @@ dependencies {
     implementation(project(":server:clubs:config"))
     implementation(project(":server:deuxzero:config"))
     implementation(project(":server:calendrier:config"))
-    implementation(project(":server:statistiques"))
+    implementation(project(":server:statistiques:config"))
     implementation(project(":server:amical:config"))
     implementation(project(":server:social:config"))
     implementation(libs.spring.boot.starter.data.jpa)

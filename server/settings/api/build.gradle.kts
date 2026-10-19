@@ -7,4 +7,5 @@ dependencies {
     implementation(project(":server:common"))
     implementation(project(":server:settings:service"))
     implementation(project(":shared-contracts"))
+    implementation(libs.swagger.annotations.jakarta)
 }

@@ -76,8 +76,8 @@ class SwaggerConfig {
             openApi.paths.values.forEach { pathItem ->
                 pathItem.readOperations().forEach { op ->
                     val rs: ApiResponses = op.getResponses()
-                    // N'écrase pas si déjà défini
-                    if (!rs.containsKey("200")) {
+                    // N'écrase pas une réponse 2xx déjà déclarée (ex. 204 des endpoints sans contenu)
+                    if (rs.keys.none { it.startsWith("2") }) {
                         rs.addApiResponse("200", response200)
                     }
                 }

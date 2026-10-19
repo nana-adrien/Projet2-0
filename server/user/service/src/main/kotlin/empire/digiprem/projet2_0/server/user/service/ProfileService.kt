@@ -84,7 +84,7 @@ class ProfileService(
                 createdAt = existing.createdAt,
             )
         )
-        refreshTokenRepository.deleteAllByUserId(uuid)
+        refreshTokenRepository.deleteAllByUser_Id(uuid)
     }
 
     private fun UserEntity.toDto() = ProfileDto(

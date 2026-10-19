@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository
 import java.util.UUID
 
 interface RefreshTokenRepository : JpaRepository<RefreshTokenEntity, UUID> {
-    fun findByUserIdAndHashedToken(userId: UUID, hashedToken: String): RefreshTokenEntity?
-    fun deleteByUserIdAndHashedToken(userId: UUID, hashedToken: String)
-    fun deleteAllByUserId(userId: UUID)
+    fun findByUser_IdAndHashedToken(userId: UUID, hashedToken: String): RefreshTokenEntity?
+    fun deleteByUser_IdAndHashedToken(userId: UUID, hashedToken: String)
+    fun deleteAllByUser_Id(userId: UUID)
 }

@@ -97,7 +97,7 @@ class AuthService(
         val userId = savedUser.id ?: throw UserNotFoundException()
         eventPublisher.publishEvent(UserRegisteredEvent(userId, request.clubCode?.trim()?.takeIf { it.isNotBlank() }))
 
-        return issueTokens(userId, savedUser.pseudo)
+        return issueTokens(savedUser)
     }
 
     fun login(request: LoginRequest): AuthResponse {
@@ -111,8 +111,7 @@ class AuthService(
             throw InvalidCredentialsException()
         }
 
-        val userId = user.id ?: throw UserNotFoundException()
-        return issueTokens(userId, user.pseudo)
+        return issueTokens(user)
     }
 
     @Transactional
@@ -125,8 +124,7 @@ class AuthService(
         val user = userRepository.findByTelephoneOrEmail(contact, contact)?.takeUnless { it.supprime }
             ?: throw UserNotFoundException()
 
-        val userId = user.id ?: throw UserNotFoundException()
-        return issueTokens(userId, user.pseudo)
+        return issueTokens(user)
     }
 
     @Transactional
@@ -151,32 +149,33 @@ class AuthService(
         val user = userRepository.findByIdOrNull(userId) ?: throw UserNotFoundException()
 
         val hashed = hashToken(refreshToken)
-        refreshTokenRepository.findByUserIdAndHashedToken(userId, hashed)
+        refreshTokenRepository.findByUser_IdAndHashedToken(userId, hashed)
             ?: throw InvalidTokenException("Refresh token not found or already used")
-        refreshTokenRepository.deleteByUserIdAndHashedToken(userId, hashed)
+        refreshTokenRepository.deleteByUser_IdAndHashedToken(userId, hashed)
 
-        return issueTokens(userId, user.pseudo)
+        return issueTokens(user)
     }
 
     @Transactional
     fun logout(refreshToken: String) {
         runCatching {
             val userId = UUID.fromString(jwtService.getUserIdFromToken(refreshToken))
-            refreshTokenRepository.deleteByUserIdAndHashedToken(userId, hashToken(refreshToken))
+            refreshTokenRepository.deleteByUser_IdAndHashedToken(userId, hashToken(refreshToken))
         }
     }
 
-    private fun issueTokens(userId: UUID, pseudo: String): AuthResponse {
+    private fun issueTokens(user: UserEntity): AuthResponse {
+        val userId = user.id ?: throw UserNotFoundException()
         val accessToken = jwtService.generateAccessToken(userId.toString())
         val refreshToken = jwtService.generateRefreshToken(userId.toString())
-        storeRefreshToken(userId, refreshToken)
-        return AuthResponse(accessToken = accessToken, refreshToken = refreshToken, userId = userId.toString(), pseudo = pseudo)
+        storeRefreshToken(user, refreshToken)
+        return AuthResponse(accessToken = accessToken, refreshToken = refreshToken, userId = userId.toString(), pseudo = user.pseudo)
     }
 
-    private fun storeRefreshToken(userId: UUID, token: String) {
+    private fun storeRefreshToken(user: UserEntity, token: String) {
         refreshTokenRepository.save(
             RefreshTokenEntity(
-                userId = userId,
+                user = user,
                 hashedToken = hashToken(token),
                 expiresAt = Instant.now().plusMillis(jwtService.refreshTokenExpiryMsValue),
             )

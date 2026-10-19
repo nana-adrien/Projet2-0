@@ -29,12 +29,17 @@ private sealed interface AccueilTabScreen {
 }
 
 @Composable
-fun AccueilTabRoot() {
+fun AccueilTabRoot(
+    onNotificationsClick: () -> Unit = {},
+    onNavigateToClubs: () -> Unit = {},
+) {
     var screen by remember { mutableStateOf<AccueilTabScreen>(AccueilTabScreen.Accueil) }
 
     when (val current = screen) {
         AccueilTabScreen.Accueil -> AccueilRoot(
             onMatchClick = { match, deuxZeroId -> screen = AccueilTabScreen.FicheMatch(match, deuxZeroId) },
+            onNotificationsClick = onNotificationsClick,
+            onNavigateToClubs = onNavigateToClubs,
         )
 
         is AccueilTabScreen.FicheMatch -> FicheMatchRoot(

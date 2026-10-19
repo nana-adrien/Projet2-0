@@ -13,4 +13,6 @@ sealed interface AccueilAction {
     data class OnRepondre(val reponse: ReponseConvocation) : AccueilAction
     data class OnMatchClick(val match: Match) : AccueilAction
     data object OnMessageShown : AccueilAction
+    data object OnNotificationsClick : AccueilAction
+    data object OnNavigateToClubsClick : AccueilAction
 }

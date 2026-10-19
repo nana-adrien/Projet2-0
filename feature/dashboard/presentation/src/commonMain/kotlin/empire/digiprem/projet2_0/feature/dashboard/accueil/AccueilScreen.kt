@@ -13,8 +13,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
@@ -34,6 +38,7 @@ import empire.digiprem.projet2_0.core.design_system.extension.asString
 import empire.digiprem.projet2_0.core.design_system.theme.PDZSpacing
 import empire.digiprem.projet2_0.core.presentation.util.ObservableEvent
 import empire.digiprem.projet2_0.feature.calendrier.model.Match
+import empire.digiprem.projet2_0.feature.calendrier.model.Presences
 import empire.digiprem.projet2_0.feature.calendrier.model.ReponseConvocation
 import empire.digiprem.projet2_0.feature.deuxzero.model.DeuxZero
 import org.koin.compose.viewmodel.koinViewModel
@@ -41,6 +46,8 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun AccueilRoot(
     onMatchClick: (match: Match, deuxZeroId: String) -> Unit,
+    onNotificationsClick: () -> Unit = {},
+    onNavigateToClubs: () -> Unit = {},
     viewModel: AccueilViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -50,6 +57,8 @@ fun AccueilRoot(
     ObservableEvent(flow = viewModel.events) { event ->
         when (event) {
             is AccueilEvent.OnNavigateToFicheMatch -> onMatchClick(event.match, event.deuxZeroId)
+            AccueilEvent.OnNavigateToNotifications -> onNotificationsClick()
+            AccueilEvent.OnNavigateToClubs -> onNavigateToClubs()
         }
     }
 
@@ -63,7 +72,16 @@ fun AccueilScreen(
     onAction: (AccueilAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Scaffold(modifier = modifier) { padding ->
+    Scaffold(
+        modifier = modifier,
+        topBar = {
+            Row(modifier = Modifier.fillMaxWidth().padding(end = PDZSpacing.space2), horizontalArrangement = Arrangement.End) {
+                IconButton(onClick = { onAction(AccueilAction.OnNotificationsClick) }) {
+                    Icon(imageVector = Icons.Default.Notifications, contentDescription = "Notifications")
+                }
+            }
+        },
+    ) { padding ->
         when {
             state.isLoading -> PDZLoadingSpinner(modifier = Modifier.padding(padding).fillMaxSize())
 
@@ -71,8 +89,13 @@ fun AccueilScreen(
                 PDZStateContent(
                     icon = Icons.Default.Home,
                     title = "Pas encore de 2-0",
-                    description = "Rejoins ou crée un 2-0 depuis l'onglet Clubs pour voir ton prochain match ici.",
+                    description = "Rejoins le club de ton équipe avec son code, ou lance ton propre 2-0 avec tes potes.",
                     modifier = Modifier.weight(1f),
+                )
+                PDZButton(
+                    text = "Rejoindre ou créer",
+                    onClick = { onAction(AccueilAction.OnNavigateToClubsClick) },
+                    modifier = Modifier.padding(PDZSpacing.space4),
                 )
             }
 
@@ -94,6 +117,11 @@ fun AccueilScreen(
                 } else {
                     ProchainMatchCard(state = state, onAction = onAction)
                 }
+
+                state.dernierResultat?.let { match ->
+                    Spacer(Modifier.height(PDZSpacing.space6))
+                    DernierResultatCard(match = match)
+                }
             }
         }
     }
@@ -112,6 +140,22 @@ fun AccueilScreen(
                             onClick = { onAction(AccueilAction.OnSelectDeuxZero(deuxZero)) },
                         )
                     }
+                }
+                Spacer(Modifier.height(PDZSpacing.space3))
+                HorizontalDivider()
+                Spacer(Modifier.height(PDZSpacing.space3))
+                Row(horizontalArrangement = Arrangement.spacedBy(PDZSpacing.space3)) {
+                    PDZButton(
+                        text = "Rejoindre",
+                        type = PDZButtonType.Secondary,
+                        onClick = { onAction(AccueilAction.OnNavigateToClubsClick) },
+                        modifier = Modifier.weight(1f),
+                    )
+                    PDZButton(
+                        text = "Créer un 2-0",
+                        onClick = { onAction(AccueilAction.OnNavigateToClubsClick) },
+                        modifier = Modifier.weight(1f),
+                    )
                 }
             }
         }
@@ -152,7 +196,7 @@ private fun ProchainMatchCard(state: AccueilState, onAction: (AccueilAction) -> 
             )
             Spacer(Modifier.height(PDZSpacing.space2))
             Text(
-                text = "${state.nombrePresents} présent${if (state.nombrePresents > 1) "s" else ""} sur ${state.convocations.size}",
+                text = state.presences.toPresenceLibelle(totalFallback = state.convocations.size, nombrePresentsFallback = state.nombrePresents),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -183,6 +227,39 @@ private fun ProchainMatchCard(state: AccueilState, onAction: (AccueilAction) -> 
                     )
                 }
             }
+        }
+    }
+}
+
+/** Point 3 de la maquette E05 : "9 présents, 8 présents" — un chiffre par camp. Retombe sur le
+ * total (CU15) si le décompte par camp (F-CAL-06) n'a pas encore pu être chargé. */
+private fun Presences?.toPresenceLibelle(totalFallback: Int, nombrePresentsFallback: Int): String {
+    val camps = this?.camps
+    if (camps.isNullOrEmpty()) {
+        return "$nombrePresentsFallback présent${if (nombrePresentsFallback > 1) "s" else ""} sur $totalFallback"
+    }
+    return camps.joinToString(", ") { "${it.presents} présent${if (it.presents > 1) "s" else ""}" }
+}
+
+@Composable
+private fun DernierResultatCard(match: Match, modifier: Modifier = Modifier) {
+    Card(modifier = modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(PDZSpacing.space4)) {
+            Text(text = "Dernier résultat", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Spacer(Modifier.height(PDZSpacing.space2))
+            Text(
+                text = "${match.scoreCampA} – ${match.scoreCampB}",
+                style = MaterialTheme.typography.headlineMedium,
+            )
+            Spacer(Modifier.height(PDZSpacing.space1))
+            Text(
+                text = buildString {
+                    append(match.date)
+                    match.lieu?.let { append(" · $it") }
+                },
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         }
     }
 }

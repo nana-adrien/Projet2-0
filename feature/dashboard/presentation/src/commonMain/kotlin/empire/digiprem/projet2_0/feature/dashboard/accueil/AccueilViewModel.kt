@@ -8,6 +8,7 @@ import empire.digiprem.projet2_0.core.domain.util.todayIso
 import empire.digiprem.projet2_0.core.presentation.util.AbstractViewModel
 import empire.digiprem.projet2_0.feature.calendrier.extension.toUiText as toCalendrierUiText
 import empire.digiprem.projet2_0.feature.calendrier.model.ReponseConvocation
+import empire.digiprem.projet2_0.feature.calendrier.usecase.GetPresencesUseCase
 import empire.digiprem.projet2_0.feature.calendrier.usecase.ListConvocationsUseCase
 import empire.digiprem.projet2_0.feature.calendrier.usecase.ListMatchsUseCase
 import empire.digiprem.projet2_0.feature.calendrier.usecase.RepondreConvocationUseCase
@@ -22,6 +23,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 private const val STATUT_PROGRAMME = "PROGRAMME"
+private const val STATUT_OFFICIEL = "OFFICIEL"
 
 /** E05 — Accueil (simplifié, voir AccueilState). */
 class AccueilViewModel(
@@ -29,6 +31,7 @@ class AccueilViewModel(
     private val listMatchsUseCase: ListMatchsUseCase,
     private val listConvocationsUseCase: ListConvocationsUseCase,
     private val repondreConvocationUseCase: RepondreConvocationUseCase,
+    private val getPresencesUseCase: GetPresencesUseCase,
     private val authSessionStorage: AuthSessionStorage,
 ) : AbstractViewModel() {
 
@@ -54,6 +57,8 @@ class AccueilViewModel(
                 }
             }
             AccueilAction.OnMessageShown -> _state.update { it.copy(message = null) }
+            AccueilAction.OnNotificationsClick -> viewModelScope.launch { _events.send(AccueilEvent.OnNavigateToNotifications) }
+            AccueilAction.OnNavigateToClubsClick -> viewModelScope.launch { _events.send(AccueilEvent.OnNavigateToClubs) }
         }
     }
 
@@ -83,7 +88,16 @@ class AccueilViewModel(
     }
 
     private fun selectDeuxZero(deuxZero: DeuxZero) {
-        _state.update { it.copy(deuxZeroActuel = deuxZero, showChangerDeuxZero = false, prochainMatch = null, convocations = emptyList()) }
+        _state.update {
+            it.copy(
+                deuxZeroActuel = deuxZero,
+                showChangerDeuxZero = false,
+                prochainMatch = null,
+                dernierResultat = null,
+                convocations = emptyList(),
+                presences = null,
+            )
+        }
         loadProchainMatch(deuxZero)
     }
 
@@ -92,12 +106,16 @@ class AccueilViewModel(
         viewModelScope.launch {
             listMatchsUseCase(deuxZero.id)
                 .onSuccess { matchs ->
+                    val liste = matchs.orEmpty()
                     val aujourdHui = todayIso()
-                    val prochain = matchs.orEmpty()
+                    val prochain = liste
                         .filter { it.statut == STATUT_PROGRAMME && it.date >= aujourdHui }
                         .minByOrNull { it.date + it.heure }
-                    _state.update { it.copy(isLoading = false, prochainMatch = prochain) }
-                    if (prochain != null) loadConvocations(prochain.id) else _state.update { it.copy(convocations = emptyList()) }
+                    val dernierResultat = liste
+                        .filter { it.statut == STATUT_OFFICIEL && it.scoreCampA != null && it.scoreCampB != null }
+                        .maxByOrNull { it.date + it.heure }
+                    _state.update { it.copy(isLoading = false, prochainMatch = prochain, dernierResultat = dernierResultat) }
+                    if (prochain != null) loadConvocations(prochain.id) else _state.update { it.copy(convocations = emptyList(), presences = null) }
                 }
                 .onFailure { error -> _state.update { it.copy(isLoading = false, errorMessage = error.toCalendrierUiText()) } }
         }
@@ -108,6 +126,10 @@ class AccueilViewModel(
             listConvocationsUseCase(matchId)
                 .onSuccess { convocations -> _state.update { it.copy(convocations = convocations.orEmpty()) } }
                 .onFailure { /* pas de convocations générées : état silencieux, pas d'erreur bloquante */ }
+
+            getPresencesUseCase(matchId)
+                .onSuccess { presences -> _state.update { it.copy(presences = presences) } }
+                .onFailure { /* décompte par camp non bloquant : l'écran retombe sur le total */ }
         }
     }
 

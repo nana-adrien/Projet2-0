@@ -76,6 +76,7 @@ fun DashboardScreen(
                 DashboardContent(
                     destination = state.currentDestination,
                     onLogout    = onLogout,
+                    onNavigateToDestination = { onAction(DashboardAction.OnDestinationChange(it)) },
                 )
             }
         }
@@ -95,6 +96,7 @@ fun DashboardScreen(
                 DashboardContent(
                     destination = state.currentDestination,
                     onLogout    = onLogout,
+                    onNavigateToDestination = { onAction(DashboardAction.OnDestinationChange(it)) },
                 )
             }
         }
@@ -105,9 +107,13 @@ fun DashboardScreen(
 private fun DashboardContent(
     destination: DashboardDestination,
     onLogout   : () -> Unit,
+    onNavigateToDestination: (DashboardDestination) -> Unit,
 ) {
     when (destination) {
-        DashboardDestination.Accueil        -> AccueilTabRoot()
+        DashboardDestination.Accueil        -> AccueilTabRoot(
+            onNotificationsClick = { onNavigateToDestination(DashboardDestination.Notifications) },
+            onNavigateToClubs    = { onNavigateToDestination(DashboardDestination.Clubs) },
+        )
         DashboardDestination.Classements    -> ClassementsTabRoot()
         DashboardDestination.Clubs         -> ClubsTabRoot()
         DashboardDestination.Profile        -> ProfileRoot(onAccountDeleted = onLogout)

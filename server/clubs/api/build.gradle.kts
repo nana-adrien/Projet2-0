@@ -1,15 +1,12 @@
 plugins {
     id("convention.spring.service")
     alias(libs.plugins.springDependencyManagement)
-    alias(libs.plugins.kotlinJpa)
 }
 
 dependencies {
     implementation(project(":server:common"))
-    implementation(project(":server:user:infra"))
+    implementation(project(":server:clubs:service"))
     implementation(project(":shared-contracts"))
-    implementation(libs.spring.boot.starter.data.jpa)
+    // ClubController utilise @Tag (io.swagger.v3.oas.annotations) directement.
     implementation(libs.spring.springdoc.openapi)
-
-    runtimeOnly(libs.postgresql)
 }

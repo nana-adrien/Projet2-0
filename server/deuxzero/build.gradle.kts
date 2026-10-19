@@ -7,7 +7,7 @@ plugins {
 dependencies {
     implementation(project(":server:common"))
     implementation(project(":server:user:infra"))
-    implementation(project(":server:clubs"))
+    implementation(project(":server:clubs:infra"))
     implementation(project(":shared-contracts"))
     implementation(libs.spring.boot.starter.data.jpa)
     runtimeOnly(libs.postgresql)

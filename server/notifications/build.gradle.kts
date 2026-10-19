@@ -6,7 +6,7 @@ plugins {
 
 dependencies {
     implementation(project(":server:common"))
-    implementation(project(":server:deuxzero"))
+    implementation(project(":server:deuxzero:infra"))
     implementation(project(":shared-contracts"))
     implementation(libs.spring.boot.starter.data.jpa)
     implementation(libs.spring.springdoc.openapi)

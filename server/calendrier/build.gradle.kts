@@ -8,7 +8,7 @@ dependencies {
     implementation(project(":server:common"))
     implementation(project(":server:user:infra"))
     implementation(project(":server:clubs:infra"))
-    implementation(project(":server:deuxzero"))
+    implementation(project(":server:deuxzero:infra"))
     implementation(project(":server:notifications"))
     implementation(project(":shared-contracts"))
     implementation(libs.spring.boot.starter.data.jpa)

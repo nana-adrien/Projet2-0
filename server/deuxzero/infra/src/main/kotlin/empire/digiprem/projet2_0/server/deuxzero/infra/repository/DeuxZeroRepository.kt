@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository
 import java.util.UUID
 
 interface DeuxZeroRepository : JpaRepository<DeuxZeroEntity, UUID> {
-    fun findAllByOrganisateurId(organisateurId: UUID): List<DeuxZeroEntity>
+    fun findAllByOrganisateur_Id(organisateurId: UUID): List<DeuxZeroEntity>
 }

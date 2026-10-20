@@ -15,21 +15,22 @@ class NotificationsService(
 
     fun getNotifications(userId: String): List<NotificationDto> {
         val uuid = UUID.fromString(userId)
-        return notificationRepository.findByUserIdOrderByCreatedAtDesc(uuid)
+        return notificationRepository.findByUser_IdOrderByCreatedAtDesc(uuid)
             .map { it.toDto() }
     }
 
+    /** @Transactional : accès à la relation LAZY NotificationEntity.user. */
     @Transactional
     fun markRead(userId: String, id: String) {
         val userUuid = UUID.fromString(userId)
         val notificationUuid = UUID.fromString(id)
         val notification = notificationRepository.findById(notificationUuid)
-            .filter { it.userId == userUuid }
+            .filter { it.user.id == userUuid }
             .orElseThrow { UserNotFoundException() }
         notificationRepository.save(
             NotificationEntity(
                 id = notification.id,
-                userId = notification.userId,
+                user = notification.user,
                 title = notification.title,
                 body = notification.body,
                 isRead = true,
@@ -41,12 +42,12 @@ class NotificationsService(
     @Transactional
     fun markAllRead(userId: String) {
         val uuid = UUID.fromString(userId)
-        val unread = notificationRepository.findByUserIdOrderByCreatedAtDesc(uuid)
+        val unread = notificationRepository.findByUser_IdOrderByCreatedAtDesc(uuid)
             .filter { !it.isRead }
         val updated = unread.map {
             NotificationEntity(
                 id = it.id,
-                userId = it.userId,
+                user = it.user,
                 title = it.title,
                 body = it.body,
                 isRead = true,

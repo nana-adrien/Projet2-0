@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository
 import java.util.UUID
 
 interface MatchRepository : JpaRepository<MatchEntity, UUID> {
-    fun findAllBySaisonId(saisonId: UUID): List<MatchEntity>
-    fun findAllBySaisonIdAndStatut(saisonId: UUID, statut: String): List<MatchEntity>
+    fun findAllBySaison_Id(saisonId: UUID): List<MatchEntity>
+    fun findAllBySaison_IdAndStatut(saisonId: UUID, statut: String): List<MatchEntity>
 }

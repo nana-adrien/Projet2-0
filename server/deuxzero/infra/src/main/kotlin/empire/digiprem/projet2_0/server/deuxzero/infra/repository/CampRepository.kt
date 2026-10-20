@@ -6,6 +6,6 @@ import java.util.UUID
 
 interface CampRepository : JpaRepository<CampEntity, UUID> {
     fun findByCodeEngagement(codeEngagement: String): CampEntity?
-    fun findAllByDeuxZeroId(deuxZeroId: UUID): List<CampEntity>
-    fun findAllByCapitaineIdOrViceCapitaineId(capitaineId: UUID, viceCapitaineId: UUID): List<CampEntity>
+    fun findAllByDeuxZero_Id(deuxZeroId: UUID): List<CampEntity>
+    fun findAllByCapitaine_IdOrViceCapitaine_Id(capitaineId: UUID, viceCapitaineId: UUID): List<CampEntity>
 }

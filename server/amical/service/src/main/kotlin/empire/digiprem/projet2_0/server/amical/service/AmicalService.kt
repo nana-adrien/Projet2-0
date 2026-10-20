@@ -5,6 +5,7 @@ import empire.digiprem.projet2_0.contracts.calendrier.MatchDto
 import empire.digiprem.projet2_0.contracts.validation.validateCreerMatchAmicalRequest
 import empire.digiprem.projet2_0.server.calendrier.infra.entity.MatchEntity
 import empire.digiprem.projet2_0.server.calendrier.infra.repository.MatchRepository
+import empire.digiprem.projet2_0.server.clubs.infra.entity.ClubEntity
 import empire.digiprem.projet2_0.server.clubs.infra.repository.AdhesionClubRepository
 import empire.digiprem.projet2_0.server.common.exception.ForbiddenActionException
 import empire.digiprem.projet2_0.server.common.exception.ValidationException
@@ -43,11 +44,11 @@ class AmicalService(
     @Transactional
     fun creerMatchAmical(clubId: UUID, requesterId: UUID, request: CreerMatchAmicalRequest): MatchDto {
         validateCreerMatchAmicalRequest(request).orThrow()
-        requireAdminDuClub(clubId, requesterId)
+        val club = requireAdminDuClub(clubId, requesterId)
 
         val match = matchRepository.save(
             MatchEntity(
-                clubOrganisateurId = clubId,
+                clubOrganisateur = club,
                 type = TYPE_AMICAL,
                 date = parseDate(request.date),
                 heure = parseHeure(request.heure),
@@ -59,11 +60,12 @@ class AmicalService(
         return match.toDto()
     }
 
-    private fun requireAdminDuClub(clubId: UUID, requesterId: UUID) {
-        val adhesion = adhesionClubRepository.findByUtilisateurIdAndClubId(requesterId, clubId)
+    private fun requireAdminDuClub(clubId: UUID, requesterId: UUID): ClubEntity {
+        val adhesion = adhesionClubRepository.findByUtilisateur_IdAndClub_Id(requesterId, clubId)
         if (adhesion?.role != ROLE_ADMIN || adhesion.statut != STATUT_ACCEPTEE) {
             throw ForbiddenActionException("Seul un administrateur du club peut organiser un match amical")
         }
+        return adhesion.club
     }
 
     private fun parseDate(value: String): LocalDate = try {
@@ -78,9 +80,11 @@ class AmicalService(
         throw ValidationException(listOf("heure: format invalide, attendu HH:MM ou HH:MM:SS"))
     }
 
+    /** @Transactional : appelant (creerMatchAmical) déjà annoté — accès aux relations LAZY
+     * MatchEntity.saison/marqueur/marqueurSuppleant (toujours nulles pour un match AMICAL). */
     private fun MatchEntity.toDto() = MatchDto(
         id = id.toString(),
-        saisonId = saisonId?.toString(),
+        saisonId = saison?.id?.toString(),
         type = type,
         date = date.toString(),
         heure = heure.toString(),
@@ -90,7 +94,7 @@ class AmicalService(
         scoreCampB = scoreCampB,
         dureeMiTempsAppliqueeMinutes = dureeMiTempsAppliqueeMinutes,
         nomEquipeInvitee = nomEquipeInvitee,
-        marqueurId = marqueurId?.toString(),
-        marqueurSuppleantId = marqueurSuppleantId?.toString(),
+        marqueurId = marqueur?.id?.toString(),
+        marqueurSuppleantId = marqueurSuppleant?.id?.toString(),
     )
 }

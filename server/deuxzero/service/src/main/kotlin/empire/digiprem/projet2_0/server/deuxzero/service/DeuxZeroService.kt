@@ -50,6 +50,7 @@ class DeuxZeroService(
     @Transactional
     fun createDeuxZero(userId: UUID, request: CreateDeuxZeroRequest): DeuxZeroDto {
         validateCreateDeuxZeroRequest(request).orThrow()
+        val organisateur = findUser(userId)
 
         val deuxZero = deuxZeroRepository.save(
             DeuxZeroEntity(
@@ -66,17 +67,16 @@ class DeuxZeroService(
                 visibilite = request.visibilite,
                 estInterne = request.estInterne,
                 statut = STATUT_EN_ATTENTE_ENGAGEMENT,
-                organisateurId = userId,
+                organisateur = organisateur,
             )
         )
-        val deuxZeroId = deuxZero.id ?: throw ResourceNotFoundException("2-0 introuvable après création")
 
-        campRepository.save(CampEntity(deuxZeroId = deuxZeroId, libelle = request.libelleCampA, codeEngagement = generateEngagementCode()))
-        campRepository.save(CampEntity(deuxZeroId = deuxZeroId, libelle = request.libelleCampB, codeEngagement = generateEngagementCode()))
+        campRepository.save(CampEntity(deuxZero = deuxZero, libelle = request.libelleCampA, codeEngagement = generateEngagementCode()))
+        campRepository.save(CampEntity(deuxZero = deuxZero, libelle = request.libelleCampB, codeEngagement = generateEngagementCode()))
 
         saisonRepository.save(
             SaisonEntity(
-                deuxZeroId = deuxZeroId,
+                deuxZero = deuxZero,
                 libelle = request.libelleSaison.trim(),
                 dateDebut = LocalDate.parse(request.dateDebutSaison),
                 statut = "EN_COURS",
@@ -91,70 +91,69 @@ class DeuxZeroService(
         validateEngageClubRequest(request).orThrow()
         val camp = campRepository.findByCodeEngagement(request.codeEngagement.trim())
             ?: throw ResourceNotFoundException("Ce code ne correspond à aucun camp")
-        if (camp.clubId != null) throw ConflictException("Ce camp est déjà engagé")
+        if (camp.club != null) throw ConflictException("Ce camp est déjà engagé")
 
         // L'appelant doit administrer AU MOINS un club ; on prend le premier trouvé par cohérence
         // avec l'intention "j'engage mon club" — l'UI ne propose que les clubs que l'utilisateur administre.
-        val adminMemberships = adhesionClubRepository.findAllByUtilisateurId(userId)
+        val adminMemberships = adhesionClubRepository.findAllByUtilisateur_Id(userId)
             .filter { it.role == ROLE_ADMIN && it.statut == STATUT_ACCEPTEE }
         if (adminMemberships.isEmpty()) {
             throw ForbiddenActionException("Il faut être administrateur d'un club pour l'engager")
         }
-        val club = clubRepository.findById(adminMemberships.first().clubId).orElseThrow {
-            ResourceNotFoundException("Club introuvable")
-        }
+        val club = adminMemberships.first().club
 
         val updated = campRepository.save(
             CampEntity(
                 id = camp.id,
-                deuxZeroId = camp.deuxZeroId,
-                clubId = club.id,
+                deuxZero = camp.deuxZero,
+                club = club,
                 libelle = camp.libelle,
                 codeEngagement = camp.codeEngagement,
-                capitaineId = camp.capitaineId,
-                viceCapitaineId = camp.viceCapitaineId,
+                capitaine = camp.capitaine,
+                viceCapitaine = camp.viceCapitaine,
             )
         )
-        activateIfBothCampsReady(camp.deuxZeroId)
-        return updated.toDto(club.nom)
+        activateIfBothCampsReady(camp.deuxZero.id!!)
+        return updated.toDto()
     }
 
     /** CU9 étape 4 : capitaine/vice-capitaine, uniquement parmi les membres déjà engagés (CU10). */
     @Transactional
     fun nommerCapitaine(campId: UUID, requesterId: UUID, request: NommerCapitaineRequest): CampDto {
         val camp = campRepository.findById(campId).orElseThrow { ResourceNotFoundException("Camp introuvable") }
-        requireClubAdmin(camp.clubId, requesterId)
-        val targetId = UUID.fromString(request.utilisateurId)
+        requireClubAdmin(camp.club?.id, requesterId)
+        val target = findUser(UUID.fromString(request.utilisateurId))
 
         val updated = campRepository.save(
             CampEntity(
                 id = camp.id,
-                deuxZeroId = camp.deuxZeroId,
-                clubId = camp.clubId,
+                deuxZero = camp.deuxZero,
+                club = camp.club,
                 libelle = camp.libelle,
                 codeEngagement = camp.codeEngagement,
-                capitaineId = if (request.viceCapitaine) camp.capitaineId else targetId,
-                viceCapitaineId = if (request.viceCapitaine) targetId else camp.viceCapitaineId,
+                capitaine = if (request.viceCapitaine) camp.capitaine else target,
+                viceCapitaine = if (request.viceCapitaine) target else camp.viceCapitaine,
             )
         )
-        activateIfBothCampsReady(camp.deuxZeroId)
-        return updated.toDto(clubRepository.findById(camp.clubId!!).orElseThrow { ResourceNotFoundException("Club introuvable") }.nom)
+        activateIfBothCampsReady(camp.deuxZero.id!!)
+        return updated.toDto()
     }
 
+    @Transactional
     fun listCamps(deuxZeroId: UUID): List<CampDto> =
-        campRepository.findAllByDeuxZeroId(deuxZeroId).map { camp ->
-            val clubNom = camp.clubId?.let { clubRepository.findById(it).map { c -> c.nom }.orElse(null) }
-            camp.toDto(clubNom)
-        }
+        campRepository.findAllByDeuxZero_Id(deuxZeroId).map { it.toDto() }
 
     /** Pas un CU numéroté — nécessaire pour atteindre un 2-0 sans le faire transiter par la
      * navigation mobile (E05/E06). Un 2-0 est "mien" si j'en suis l'organisateur, le capitaine ou
-     * le vice-capitaine d'un camp, ou un membre actif de l'effectif engagé d'un camp. */
+     * le vice-capitaine d'un camp, ou un membre actif de l'effectif engagé d'un camp.
+     * @Transactional : [CampEntity.deuxZero] et [EffectifEngageEntity.camp] sont des relations LAZY
+     * navigées directement ci-dessous (plus de lookup manuel par repository). */
+    @Transactional
     fun listMesDeuxZero(userId: UUID): List<DeuxZeroDto> {
-        val organises = deuxZeroRepository.findAllByOrganisateurId(userId).mapNotNull { it.id }
-        val capitaine = campRepository.findAllByCapitaineIdOrViceCapitaineId(userId, userId).map { it.deuxZeroId }
-        val joueur = effectifEngageRepository.findAllByUtilisateurIdAndDateSortieIsNull(userId)
-            .mapNotNull { campRepository.findById(it.campId).map { camp -> camp.deuxZeroId }.orElse(null) }
+        val organises = deuxZeroRepository.findAllByOrganisateur_Id(userId).mapNotNull { it.id }
+        val capitaine = campRepository.findAllByCapitaine_IdOrViceCapitaine_Id(userId, userId).mapNotNull { it.deuxZero.id }
+        val joueur = effectifEngageRepository.findAllByUtilisateur_IdAndDateSortieIsNull(userId)
+            .mapNotNull { it.camp.deuxZero.id }
 
         val deuxZeroIds = (organises + capitaine + joueur).distinct()
         return deuxZeroRepository.findAllById(deuxZeroIds).map { it.toDto() }
@@ -180,7 +179,7 @@ class DeuxZeroService(
                 visibilite = request.visibilite ?: deuxZero.visibilite,
                 estInterne = deuxZero.estInterne,
                 statut = request.statut ?: deuxZero.statut,
-                organisateurId = deuxZero.organisateurId,
+                organisateur = deuxZero.organisateur,
             )
         ).toDto()
     }
@@ -189,6 +188,7 @@ class DeuxZeroService(
     @Transactional
     fun transferOrganisateur(deuxZeroId: UUID, requesterId: UUID, targetUserId: UUID): DeuxZeroDto {
         val deuxZero = requireOrganisateur(deuxZeroId, requesterId)
+        val target = findUser(targetUserId)
         return deuxZeroRepository.save(
             DeuxZeroEntity(
                 id = deuxZero.id,
@@ -205,14 +205,14 @@ class DeuxZeroService(
                 visibilite = deuxZero.visibilite,
                 estInterne = deuxZero.estInterne,
                 statut = deuxZero.statut,
-                organisateurId = targetUserId,
+                organisateur = target,
             )
         ).toDto()
     }
 
     private fun activateIfBothCampsReady(deuxZeroId: UUID) {
-        val camps = campRepository.findAllByDeuxZeroId(deuxZeroId)
-        val bothEngagedWithCaptain = camps.size == 2 && camps.all { it.clubId != null && it.capitaineId != null }
+        val camps = campRepository.findAllByDeuxZero_Id(deuxZeroId)
+        val bothEngagedWithCaptain = camps.size == 2 && camps.all { it.club != null && it.capitaine != null }
         if (bothEngagedWithCaptain) {
             val deuxZero = deuxZeroRepository.findById(deuxZeroId).orElseThrow { ResourceNotFoundException("2-0 introuvable") }
             if (deuxZero.statut != STATUT_ACTIF) {
@@ -225,45 +225,51 @@ class DeuxZeroService(
                         delaiValidationAutomatiqueHeures = deuxZero.delaiValidationAutomatiqueHeures,
                         transfertsAutorisesParSaison = deuxZero.transfertsAutorisesParSaison,
                         visibilite = deuxZero.visibilite, estInterne = deuxZero.estInterne,
-                        statut = STATUT_ACTIF, organisateurId = deuxZero.organisateurId,
+                        statut = STATUT_ACTIF, organisateur = deuxZero.organisateur,
                     )
                 )
             }
         }
     }
 
+    /** Accès à [DeuxZeroEntity.organisateur] (relation LAZY) : les deux appelants
+     * (updateSettings, transferOrganisateur) sont déjà @Transactional. */
     private fun requireOrganisateur(deuxZeroId: UUID, userId: UUID): DeuxZeroEntity {
         val deuxZero = deuxZeroRepository.findById(deuxZeroId).orElseThrow { ResourceNotFoundException("2-0 introuvable") }
-        if (deuxZero.organisateurId != userId) {
+        if (deuxZero.organisateur.id != userId) {
             throw ForbiddenActionException("Seul l'organisateur du 2-0 peut faire cette action")
         }
         return deuxZero
     }
 
     private fun requireClubAdmin(clubId: UUID?, userId: UUID) {
-        val adhesion = clubId?.let { adhesionClubRepository.findByUtilisateurIdAndClubId(userId, it) }
+        val adhesion = clubId?.let { adhesionClubRepository.findByUtilisateur_IdAndClub_Id(userId, it) }
         if (adhesion?.role != ROLE_ADMIN || adhesion.statut != STATUT_ACCEPTEE) {
             throw ForbiddenActionException("Seul un administrateur du club peut faire cette action")
         }
     }
 
+    private fun findUser(userId: UUID) =
+        userRepository.findById(userId).orElseThrow { ResourceNotFoundException("Utilisateur introuvable") }
+
     private fun generateEngagementCode(): String = (1..8).map { ENGAGEMENT_CODE_CHARS.random(Random) }.joinToString("")
 
+    /** Accès à [DeuxZeroEntity.organisateur] (relation LAZY) : tous les appelants de [toDto] sont
+     * déjà @Transactional (createDeuxZero, updateSettings, transferOrganisateur, activateIfBothCampsReady,
+     * listMesDeuxZero). */
     private fun DeuxZeroEntity.toDto() = DeuxZeroDto(
         id = id.toString(), nom = nom, lieu = lieu, visibilite = visibilite, estInterne = estInterne,
         joursHabituels = joursHabituels, heureHabituelle = heureHabituelle?.toString(),
         dureeMiTempsMinutes = dureeMiTempsMinutes, nombreMiTemps = nombreMiTemps, dureePauseMinutes = dureePauseMinutes,
         nombreMaxJoueursParCamp = nombreMaxJoueursParCamp, delaiValidationAutomatiqueHeures = delaiValidationAutomatiqueHeures,
-        transfertsAutorisesParSaison = transfertsAutorisesParSaison, statut = statut, organisateurId = organisateurId.toString(),
+        transfertsAutorisesParSaison = transfertsAutorisesParSaison, statut = statut, organisateurId = organisateur.id.toString(),
     )
 
-    private fun CampEntity.toDto(clubNom: String?): CampDto {
-        val capitainePseudo = capitaineId?.let { userRepository.findById(it).map { u -> u.pseudo }.orElse(null) }
-        val viceCapitainePseudo = viceCapitaineId?.let { userRepository.findById(it).map { u -> u.pseudo }.orElse(null) }
-        return CampDto(
-            id = id.toString(), deuxZeroId = deuxZeroId.toString(), clubId = clubId?.toString(), clubNom = clubNom,
-            libelle = libelle, codeEngagement = codeEngagement, capitaineId = capitaineId?.toString(),
-            capitainePseudo = capitainePseudo, viceCapitaineId = viceCapitaineId?.toString(), viceCapitainePseudo = viceCapitainePseudo,
-        )
-    }
+    /** Accès à [CampEntity.deuxZero]/[CampEntity.club]/[CampEntity.capitaine]/[CampEntity.viceCapitaine]
+     * (relations LAZY) : tous les appelants (engageClub, nommerCapitaine, listCamps) sont @Transactional. */
+    private fun CampEntity.toDto(): CampDto = CampDto(
+        id = id.toString(), deuxZeroId = deuxZero.id.toString(), clubId = club?.id?.toString(), clubNom = club?.nom,
+        libelle = libelle, codeEngagement = codeEngagement, capitaineId = capitaine?.id?.toString(),
+        capitainePseudo = capitaine?.pseudo, viceCapitaineId = viceCapitaine?.id?.toString(), viceCapitainePseudo = viceCapitaine?.pseudo,
+    )
 }

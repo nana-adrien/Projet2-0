@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository
 import java.util.UUID
 
 interface CompositionRepository : JpaRepository<CompositionEntity, UUID> {
-    fun findAllByMatchId(matchId: UUID): List<CompositionEntity>
-    fun findByMatchIdAndUtilisateurId(matchId: UUID, utilisateurId: UUID): CompositionEntity?
+    fun findAllByMatch_Id(matchId: UUID): List<CompositionEntity>
+    fun findByMatch_IdAndUtilisateur_Id(matchId: UUID, utilisateurId: UUID): CompositionEntity?
 }

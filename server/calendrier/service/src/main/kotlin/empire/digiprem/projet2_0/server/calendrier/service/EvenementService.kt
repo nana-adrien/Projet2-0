@@ -15,11 +15,12 @@ import empire.digiprem.projet2_0.server.common.exception.ForbiddenActionExceptio
 import empire.digiprem.projet2_0.server.common.exception.ResourceNotFoundException
 import empire.digiprem.projet2_0.server.common.exception.ValidationException
 import empire.digiprem.projet2_0.server.common.util.orThrow
+import empire.digiprem.projet2_0.server.deuxzero.infra.entity.CampEntity
 import empire.digiprem.projet2_0.server.deuxzero.infra.repository.CampRepository
 import empire.digiprem.projet2_0.server.deuxzero.infra.repository.EffectifEngageRepository
-import empire.digiprem.projet2_0.server.deuxzero.infra.repository.SaisonRepository
 import empire.digiprem.projet2_0.server.notifications.infra.entity.NotificationEntity
 import empire.digiprem.projet2_0.server.notifications.infra.repository.NotificationRepository
+import empire.digiprem.projet2_0.server.user.infra.entity.UserEntity
 import empire.digiprem.projet2_0.server.user.infra.repository.UserRepository
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
@@ -48,7 +49,6 @@ private const val TITRE_FIN_MATCH = "Fin du match"
 class EvenementService(
     private val evenementRepository: EvenementRepository,
     private val matchRepository: MatchRepository,
-    private val saisonRepository: SaisonRepository,
     private val campRepository: CampRepository,
     private val effectifEngageRepository: EffectifEngageRepository,
     private val notificationRepository: NotificationRepository,
@@ -64,10 +64,11 @@ class EvenementService(
         if (match.statut != STATUT_PROGRAMME) {
             throw ValidationException(listOf("statut: le match doit être PROGRAMME pour démarrer (actuel : ${match.statut})"))
         }
+        val auteur = findUser(requesterId)
 
         val updated = matchRepository.save(match.copyWith(statut = STATUT_EN_COURS))
         evenementRepository.save(
-            EvenementEntity(matchId = matchId, type = TYPE_DEBUT_PERIODE, minute = 0, periode = 1, auteurSaisieId = requesterId)
+            EvenementEntity(match = match, type = TYPE_DEBUT_PERIODE, minute = 0, periode = 1, auteurSaisie = auteur)
         )
         notifierMembresDesDeuxCamps(updated, TITRE_COUP_ENVOI, "Le match a commencé.")
         return matchEnDirect(updated).also { broadcaster.broadcast(matchId, it) }
@@ -89,18 +90,20 @@ class EvenementService(
             return matchEnDirect(match)
         }
 
-        val campId = request.campId?.let { UUID.fromString(it) }
-        val joueurId = request.joueurId?.let { UUID.fromString(it) }
-        val joueurSecondaireId = request.joueurSecondaireId?.let { UUID.fromString(it) }
+        val camp = request.campId?.let { findCamp(UUID.fromString(it)) }
+        val joueur = request.joueurId?.let { findUser(UUID.fromString(it)) }
+        val joueurSecondaire = request.joueurSecondaireId?.let { findUser(UUID.fromString(it)) }
+        val auteur = findUser(requesterId)
 
         evenementRepository.save(
             EvenementEntity(
-                matchId = matchId, type = request.type, minute = request.minute, periode = request.periode,
-                campId = campId, joueurId = joueurId, joueurSecondaireId = joueurSecondaireId,
-                auteurSaisieId = requesterId, clientEventId = clientEventId,
+                match = match, type = request.type, minute = request.minute, periode = request.periode,
+                camp = camp, joueur = joueur, joueurSecondaire = joueurSecondaire,
+                auteurSaisie = auteur, clientEventId = clientEventId,
             )
         )
 
+        val campId = camp?.id
         val updatedMatch = when {
             campId == null -> match
             request.type == TYPE_BUT || request.type == TYPE_PENALTY_MARQUE -> incrementerScore(match, campId)
@@ -110,7 +113,7 @@ class EvenementService(
         if (updatedMatch !== match) matchRepository.save(updatedMatch)
 
         if (request.type == TYPE_BUT || request.type == TYPE_BUT_CSC || request.type == TYPE_PENALTY_MARQUE) {
-            val buteur = joueurId?.let { userRepository.findById(it).map { u -> u.pseudo }.orElse(null) }
+            val buteur = joueur?.pseudo
             notifierMembresDesDeuxCamps(updatedMatch, TITRE_BUT, buteur?.let { "But de $it !" } ?: "But !")
         }
 
@@ -123,18 +126,18 @@ class EvenementService(
         val match = findMatch(matchId)
         droits.requireMarqueurOuSuppleant(match, requesterId)
 
-        val dernier = evenementRepository.findFirstByMatchIdAndAnnuleFalseOrderByHorodatageDesc(matchId)
+        val dernier = evenementRepository.findFirstByMatch_IdAndAnnuleFalseOrderByHorodatageDesc(matchId)
             ?: throw ResourceNotFoundException("Aucun événement à annuler")
         evenementRepository.save(
             EvenementEntity(
-                id = dernier.id, matchId = dernier.matchId, type = dernier.type, minute = dernier.minute,
-                periode = dernier.periode, campId = dernier.campId, joueurId = dernier.joueurId,
-                joueurSecondaireId = dernier.joueurSecondaireId, auteurSaisieId = dernier.auteurSaisieId,
+                id = dernier.id, match = dernier.match, type = dernier.type, minute = dernier.minute,
+                periode = dernier.periode, camp = dernier.camp, joueur = dernier.joueur,
+                joueurSecondaire = dernier.joueurSecondaire, auteurSaisie = dernier.auteurSaisie,
                 clientEventId = dernier.clientEventId, horodatage = dernier.horodatage, annule = true,
             )
         )
 
-        val campId = dernier.campId
+        val campId = dernier.camp?.id
         val updatedMatch = when {
             campId == null -> match
             dernier.type == TYPE_BUT || dernier.type == TYPE_PENALTY_MARQUE -> decrementerScore(match, campId)
@@ -156,12 +159,13 @@ class EvenementService(
         if (match.statut != STATUT_EN_COURS) {
             throw ValidationException(listOf("statut: le match doit être EN_COURS"))
         }
+        val auteur = findUser(requesterId)
 
         evenementRepository.save(
-            EvenementEntity(matchId = matchId, type = TYPE_FIN_PERIODE, minute = 0, periode = request.periodeTerminee, auteurSaisieId = requesterId)
+            EvenementEntity(match = match, type = TYPE_FIN_PERIODE, minute = 0, periode = request.periodeTerminee, auteurSaisie = auteur)
         )
         evenementRepository.save(
-            EvenementEntity(matchId = matchId, type = TYPE_DEBUT_PERIODE, minute = 0, periode = request.periodeTerminee + 1, auteurSaisieId = requesterId)
+            EvenementEntity(match = match, type = TYPE_DEBUT_PERIODE, minute = 0, periode = request.periodeTerminee + 1, auteurSaisie = auteur)
         )
         notifierMembresDesDeuxCamps(match, TITRE_MI_TEMPS, "La période suivante a commencé.")
         return matchEnDirect(match).also { broadcaster.broadcast(matchId, it) }
@@ -176,9 +180,10 @@ class EvenementService(
         if (match.statut != STATUT_EN_COURS) {
             throw ValidationException(listOf("statut: le match doit être EN_COURS"))
         }
+        val auteur = findUser(requesterId)
 
         evenementRepository.save(
-            EvenementEntity(matchId = matchId, type = TYPE_FIN_PERIODE, minute = 0, periode = request.periodeTerminee, auteurSaisieId = requesterId)
+            EvenementEntity(match = match, type = TYPE_FIN_PERIODE, minute = 0, periode = request.periodeTerminee, auteurSaisie = auteur)
         )
         val updated = matchRepository.save(
             match.copyWith(statut = STATUT_EN_ATTENTE_DE_VALIDATION, entreEnAttenteValidationA = Instant.now())
@@ -187,10 +192,17 @@ class EvenementService(
         return matchEnDirect(updated).also { broadcaster.broadcast(matchId, it) }
     }
 
+    /** @Transactional : [matchEnDirect] navigue [MatchEntity.saison]/[MatchEntity.marqueur]/... et
+     * [EvenementEntity.joueur]/... (relations LAZY). Appelé directement par le handler WebSocket
+     * (CU18) à la connexion — sans cette annotation, l'accès à la relation après la fermeture de
+     * la session lèverait une LazyInitializationException silencieusement avalée par le
+     * `runCatching` du handler (fermeture de socket "Match introuvable" au lieu de l'état réel). */
+    @Transactional
     fun getMatchEnDirect(matchId: UUID): MatchEnDirectDto = matchEnDirect(findMatch(matchId))
 
+    @Transactional
     fun listEvenements(matchId: UUID): List<EvenementDto> =
-        evenementRepository.findAllByMatchIdOrderByPeriodeAscMinuteAsc(matchId).map { it.toDto() }
+        evenementRepository.findAllByMatch_IdOrderByPeriodeAscMinuteAsc(matchId).map { it.toDto() }
 
     private fun matchEnDirect(match: MatchEntity): MatchEnDirectDto =
         MatchEnDirectDto(match = match.toDto(), evenements = listEvenements(match.id!!))
@@ -223,31 +235,35 @@ class EvenementService(
     /** RG-04 : toujours exactement 2 camps par 2-0 ; l'ordre (A/B) suit l'ordre de création. */
     private fun deuxCampsDe(match: MatchEntity): Pair<UUID, UUID> {
         val deuxZeroId = deuxZeroIdOf(match)
-        val camps = campRepository.findAllByDeuxZeroId(deuxZeroId)
+        val camps = campRepository.findAllByDeuxZero_Id(deuxZeroId)
         if (camps.size != 2) throw ResourceNotFoundException("Ce 2-0 n'a pas exactement 2 camps")
         return camps[0].id!! to camps[1].id!!
     }
 
-    private fun deuxZeroIdOf(match: MatchEntity): UUID {
-        val saisonId = match.saisonId ?: throw ForbiddenActionException("Ce match n'est pas rattaché à un 2-0")
-        return saisonRepository.findById(saisonId).orElseThrow { ResourceNotFoundException("Saison introuvable") }.deuxZeroId
-    }
+    private fun deuxZeroIdOf(match: MatchEntity): UUID =
+        match.saison?.deuxZero?.id ?: throw ForbiddenActionException("Ce match n'est pas rattaché à un 2-0")
 
     private fun notifierMembresDesDeuxCamps(match: MatchEntity, titre: String, corps: String) {
         val deuxZeroId = runCatching { deuxZeroIdOf(match) }.getOrNull() ?: return
-        val destinataires = campRepository.findAllByDeuxZeroId(deuxZeroId)
+        val destinataires = campRepository.findAllByDeuxZero_Id(deuxZeroId)
             .mapNotNull { it.id }
-            .flatMap { effectifEngageRepository.findAllByCampId(it) }
+            .flatMap { effectifEngageRepository.findAllByCamp_Id(it) }
             .filter { it.dateSortie == null }
-            .map { it.utilisateurId }
+            .map { it.utilisateur.id!! }
             .distinct()
         destinataires.forEach { userId ->
-            notificationRepository.save(NotificationEntity(userId = userId, title = titre, body = corps))
+            notificationRepository.save(NotificationEntity(user = userRepository.getReferenceById(userId), title = titre, body = corps))
         }
     }
 
     private fun findMatch(matchId: UUID): MatchEntity =
         matchRepository.findById(matchId).orElseThrow { ResourceNotFoundException("Match introuvable") }
+
+    private fun findCamp(campId: UUID): CampEntity =
+        campRepository.findById(campId).orElseThrow { ResourceNotFoundException("Camp introuvable") }
+
+    private fun findUser(userId: UUID): UserEntity =
+        userRepository.findById(userId).orElseThrow { ResourceNotFoundException("Utilisateur introuvable") }
 
     private fun MatchEntity.copyWith(
         statut: String = this.statut,
@@ -255,28 +271,27 @@ class EvenementService(
         scoreCampB: Int? = this.scoreCampB,
         entreEnAttenteValidationA: Instant? = this.entreEnAttenteValidationA,
     ) = MatchEntity(
-        id = id, saisonId = saisonId, clubOrganisateurId = clubOrganisateurId, type = type, date = date, heure = heure,
+        id = id, saison = saison, clubOrganisateur = clubOrganisateur, type = type, date = date, heure = heure,
         lieu = lieu, statut = statut, scoreCampA = scoreCampA, scoreCampB = scoreCampB,
         dureeMiTempsAppliqueeMinutes = dureeMiTempsAppliqueeMinutes, nomEquipeInvitee = nomEquipeInvitee,
-        marqueurId = marqueurId, marqueurSuppleantId = marqueurSuppleantId,
+        marqueur = marqueur, marqueurSuppleant = marqueurSuppleant,
         entreEnAttenteValidationA = entreEnAttenteValidationA,
     )
 
+    /** Accès aux relations LAZY de [MatchEntity] : appelants déjà @Transactional (voir
+     * matchEnDirect / getMatchEnDirect). */
     private fun MatchEntity.toDto() = MatchDto(
-        id = id.toString(), saisonId = saisonId?.toString(), type = type, date = date.toString(), heure = heure.toString(),
+        id = id.toString(), saisonId = saison?.id?.toString(), type = type, date = date.toString(), heure = heure.toString(),
         lieu = lieu, statut = statut, scoreCampA = scoreCampA, scoreCampB = scoreCampB,
         dureeMiTempsAppliqueeMinutes = dureeMiTempsAppliqueeMinutes, nomEquipeInvitee = nomEquipeInvitee,
-        marqueurId = marqueurId?.toString(), marqueurSuppleantId = marqueurSuppleantId?.toString(),
+        marqueurId = marqueur?.id?.toString(), marqueurSuppleantId = marqueurSuppleant?.id?.toString(),
     )
 
-    private fun EvenementEntity.toDto(): EvenementDto {
-        val joueurPseudo = joueurId?.let { userRepository.findById(it).map { u -> u.pseudo }.orElse(null) }
-        val joueurSecondairePseudo = joueurSecondaireId?.let { userRepository.findById(it).map { u -> u.pseudo }.orElse(null) }
-        return EvenementDto(
-            id = id.toString(), matchId = matchId.toString(), type = type, minute = minute, periode = periode,
-            campId = campId?.toString(), joueurId = joueurId?.toString(), joueurPseudo = joueurPseudo,
-            joueurSecondaireId = joueurSecondaireId?.toString(), joueurSecondairePseudo = joueurSecondairePseudo,
-            auteurSaisieId = auteurSaisieId.toString(), horodatage = horodatage.toString(), annule = annule,
-        )
-    }
+    /** Accès aux relations LAZY de [EvenementEntity] : appelants déjà @Transactional (listEvenements). */
+    private fun EvenementEntity.toDto(): EvenementDto = EvenementDto(
+        id = id.toString(), matchId = match.id.toString(), type = type, minute = minute, periode = periode,
+        campId = camp?.id?.toString(), joueurId = joueur?.id?.toString(), joueurPseudo = joueur?.pseudo,
+        joueurSecondaireId = joueurSecondaire?.id?.toString(), joueurSecondairePseudo = joueurSecondaire?.pseudo,
+        auteurSaisieId = auteurSaisie.id.toString(), horodatage = horodatage.toString(), annule = annule,
+    )
 }

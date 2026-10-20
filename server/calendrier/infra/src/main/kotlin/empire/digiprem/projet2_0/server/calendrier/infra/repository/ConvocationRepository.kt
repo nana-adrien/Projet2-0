@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository
 import java.util.UUID
 
 interface ConvocationRepository : JpaRepository<ConvocationEntity, UUID> {
-    fun findAllByMatchId(matchId: UUID): List<ConvocationEntity>
-    fun findByMatchIdAndUtilisateurId(matchId: UUID, utilisateurId: UUID): ConvocationEntity?
+    fun findAllByMatch_Id(matchId: UUID): List<ConvocationEntity>
+    fun findByMatch_IdAndUtilisateur_Id(matchId: UUID, utilisateurId: UUID): ConvocationEntity?
 }

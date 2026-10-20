@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository
 import java.util.UUID
 
 interface ValidationRepository : JpaRepository<ValidationEntity, UUID> {
-    fun findAllByMatchId(matchId: UUID): List<ValidationEntity>
-    fun findByMatchIdAndCampId(matchId: UUID, campId: UUID): ValidationEntity?
+    fun findAllByMatch_Id(matchId: UUID): List<ValidationEntity>
+    fun findByMatch_IdAndCamp_Id(matchId: UUID, campId: UUID): ValidationEntity?
 }

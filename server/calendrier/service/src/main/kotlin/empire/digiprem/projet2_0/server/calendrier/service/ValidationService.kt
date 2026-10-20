@@ -21,12 +21,13 @@ import empire.digiprem.projet2_0.server.common.exception.ForbiddenActionExceptio
 import empire.digiprem.projet2_0.server.common.exception.ResourceNotFoundException
 import empire.digiprem.projet2_0.server.common.exception.ValidationException
 import empire.digiprem.projet2_0.server.common.util.orThrow
+import empire.digiprem.projet2_0.server.deuxzero.infra.entity.CampEntity
 import empire.digiprem.projet2_0.server.deuxzero.infra.repository.CampRepository
 import empire.digiprem.projet2_0.server.deuxzero.infra.repository.DeuxZeroRepository
 import empire.digiprem.projet2_0.server.deuxzero.infra.repository.EffectifEngageRepository
-import empire.digiprem.projet2_0.server.deuxzero.infra.repository.SaisonRepository
 import empire.digiprem.projet2_0.server.notifications.infra.entity.NotificationEntity
 import empire.digiprem.projet2_0.server.notifications.infra.repository.NotificationRepository
+import empire.digiprem.projet2_0.server.user.infra.entity.UserEntity
 import empire.digiprem.projet2_0.server.user.infra.repository.UserRepository
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
@@ -68,7 +69,6 @@ class ValidationService(
     private val matchRepository: MatchRepository,
     private val evenementRepository: EvenementRepository,
     private val validationRepository: ValidationRepository,
-    private val saisonRepository: SaisonRepository,
     private val campRepository: CampRepository,
     private val deuxZeroRepository: DeuxZeroRepository,
     private val effectifEngageRepository: EffectifEngageRepository,
@@ -95,10 +95,10 @@ class ValidationService(
         val campId = resolveCampSignataireOuThrow(deuxZeroId, requesterId)
         requireAucuneContestationAdverseEnAttente(matchId, campId)
 
-        upsertSignature(matchId, campId, requesterId, decision = DECISION_VALIDE, commentaire = null, correctionProposee = null)
+        upsertSignature(match, campId, requesterId, decision = DECISION_VALIDE, commentaire = null, correctionProposee = null)
 
-        val validationsApres = validationRepository.findAllByMatchId(matchId).filter { it.campId != null }
-        val adverseApres = validationsApres.firstOrNull { it.campId != campId }
+        val validationsApres = validationRepository.findAllByMatch_Id(matchId).filter { it.camp != null }
+        val adverseApres = validationsApres.firstOrNull { it.camp?.id != campId }
         if (adverseApres != null && adverseApres.decision == DECISION_VALIDE) {
             val updated = matchRepository.save(match.copyWith(statut = STATUT_OFFICIEL))
             notifierMembresDesDeuxCamps(updated, TITRE_RESULTAT_OFFICIALISE, "Le résultat du match a été officialisé.")
@@ -120,12 +120,12 @@ class ValidationService(
         requireAucuneContestationAdverseEnAttente(matchId, campId)
 
         upsertSignature(
-            matchId, campId, requesterId, decision = DECISION_CONTESTE,
+            match, campId, requesterId, decision = DECISION_CONTESTE,
             commentaire = request.commentaire, correctionProposee = request.correctionProposee,
         )
 
-        val validationsApres = validationRepository.findAllByMatchId(matchId).filter { it.campId != null }
-        val adverseApres = validationsApres.firstOrNull { it.campId != campId }
+        val validationsApres = validationRepository.findAllByMatch_Id(matchId).filter { it.camp != null }
+        val adverseApres = validationsApres.firstOrNull { it.camp?.id != campId }
         if (adverseApres != null && adverseApres.decision == DECISION_CONTESTE) {
             // Contestation mutuelle : aucune négociation possible, litige ouvert.
             val updated = matchRepository.save(match.copyWith(statut = STATUT_EN_LITIGE))
@@ -151,17 +151,17 @@ class ValidationService(
         val deuxZeroId = deuxZeroIdOf(match)
         val monCampId = resolveCampSignataireOuThrow(deuxZeroId, requesterId)
 
-        val validations = validationRepository.findAllByMatchId(matchId).filter { it.campId != null }
-        validations.firstOrNull { it.campId != monCampId && it.decision == DECISION_CONTESTE }
+        val validations = validationRepository.findAllByMatch_Id(matchId).filter { it.camp != null }
+        validations.firstOrNull { it.camp?.id != monCampId && it.decision == DECISION_CONTESTE }
             ?: throw ValidationException(listOf("aucune contestation à traiter"))
 
         if (request.accepter) {
             // Score INCHANGÉ : voir limitation documentée en tête de classe.
             val updated = matchRepository.save(match.copyWith(statut = STATUT_OFFICIEL))
-            upsertSignature(matchId, monCampId, requesterId, decision = DECISION_VALIDE, commentaire = request.commentaire, correctionProposee = null)
+            upsertSignature(match, monCampId, requesterId, decision = DECISION_VALIDE, commentaire = request.commentaire, correctionProposee = null)
             notifierMembresDesDeuxCamps(updated, TITRE_RESULTAT_CORRIGE, "Le résultat du match a été corrigé et officialisé.")
         } else {
-            upsertSignature(matchId, monCampId, requesterId, decision = DECISION_CONTESTE, commentaire = request.commentaire, correctionProposee = null)
+            upsertSignature(match, monCampId, requesterId, decision = DECISION_CONTESTE, commentaire = request.commentaire, correctionProposee = null)
             val updated = matchRepository.save(match.copyWith(statut = STATUT_EN_LITIGE))
             notifierMembresDesDeuxCamps(updated, TITRE_LITIGE_OUVERT, "Un litige a été ouvert — contestation refusée.", inclureOrganisateur = true)
         }
@@ -186,12 +186,12 @@ class ValidationService(
         val nouveauStatut = if (request.decision == DECISION_ANNULER_MATCH) STATUT_ANNULE else STATUT_OFFICIEL
         val updated = matchRepository.save(match.copyWith(statut = nouveauStatut))
 
-        // Ligne d'audit CU20 : campId = null signale une ligne d'arbitrage (jamais une signature
+        // Ligne d'audit CU20 : camp = null signale une ligne d'arbitrage (jamais une signature
         // de camp). correctionProposee réutilisé pour stocker le nom de la DecisionLitige choisie,
         // faute de colonne dédiée (décision actée côté kna-concepteur dans uml/tracabilite.json).
         validationRepository.save(
             ValidationEntity(
-                matchId = matchId, campId = null, signataireId = requesterId,
+                match = match, camp = null, signataire = findUser(requesterId),
                 decision = DECISION_VALIDE, commentaire = request.motif, correctionProposee = request.decision,
             )
         )
@@ -212,7 +212,7 @@ class ValidationService(
         val echeance = entreEnAttente.plus(Duration.ofHours(deuxZero.delaiValidationAutomatiqueHeures.toLong()))
         if (Instant.now().isBefore(echeance)) return
 
-        val validations = validationRepository.findAllByMatchId(match.id!!).filter { it.campId != null }
+        val validations = validationRepository.findAllByMatch_Id(match.id!!).filter { it.camp != null }
         val auMoinsUneContestation = validations.any { it.decision == DECISION_CONTESTE }
         if (!auMoinsUneContestation) {
             val updated = matchRepository.save(match.copyWith(statut = STATUT_OFFICIEL))
@@ -227,26 +227,27 @@ class ValidationService(
             ?: throw ForbiddenActionException("Seul un capitaine ou vice-capitaine d'un des deux camps peut signer la validation")
 
     private fun requireAucuneContestationAdverseEnAttente(matchId: UUID, monCampId: UUID) {
-        val validations = validationRepository.findAllByMatchId(matchId).filter { it.campId != null }
-        val maLigne = validations.firstOrNull { it.campId == monCampId }
-        val adverse = validations.firstOrNull { it.campId != monCampId }
+        val validations = validationRepository.findAllByMatch_Id(matchId).filter { it.camp != null }
+        val maLigne = validations.firstOrNull { it.camp?.id == monCampId }
+        val adverse = validations.firstOrNull { it.camp?.id != monCampId }
         if (adverse != null && adverse.decision == DECISION_CONTESTE && maLigne == null) {
             throw ValidationException(listOf("une contestation est en attente de votre réponse, utilisez repondre-contestation"))
         }
     }
 
     private fun upsertSignature(
-        matchId: UUID,
+        match: MatchEntity,
         campId: UUID,
         signataireId: UUID,
         decision: String,
         commentaire: String?,
         correctionProposee: String?,
     ) {
-        val existante = validationRepository.findByMatchIdAndCampId(matchId, campId)
+        val matchId = match.id!!
+        val existante = validationRepository.findByMatch_IdAndCamp_Id(matchId, campId)
         validationRepository.save(
             ValidationEntity(
-                id = existante?.id, matchId = matchId, campId = campId, signataireId = signataireId,
+                id = existante?.id, match = match, camp = findCamp(campId), signataire = findUser(signataireId),
                 decision = decision, commentaire = commentaire, correctionProposee = correctionProposee,
                 horodatage = Instant.now(),
             )
@@ -264,68 +265,65 @@ class ValidationService(
 
     private fun resultatDe(match: MatchEntity): ResultatMatchDto = ResultatMatchDto(
         match = match.toDto(),
-        evenements = evenementRepository.findAllByMatchIdOrderByPeriodeAscMinuteAsc(match.id!!).map { it.toDto() },
-        validations = validationRepository.findAllByMatchId(match.id!!).filter { it.campId != null }.map { it.toValidationDto() },
+        evenements = evenementRepository.findAllByMatch_IdOrderByPeriodeAscMinuteAsc(match.id!!).map { it.toDto() },
+        validations = validationRepository.findAllByMatch_Id(match.id!!).filter { it.camp != null }.map { it.toValidationDto() },
     )
 
     private fun notifierMembresDesDeuxCamps(match: MatchEntity, titre: String, corps: String, inclureOrganisateur: Boolean = false) {
         val deuxZeroId = runCatching { deuxZeroIdOf(match) }.getOrNull() ?: return
-        val destinataires = campRepository.findAllByDeuxZeroId(deuxZeroId)
+        val destinataires = campRepository.findAllByDeuxZero_Id(deuxZeroId)
             .mapNotNull { it.id }
-            .flatMap { effectifEngageRepository.findAllByCampId(it) }
+            .flatMap { effectifEngageRepository.findAllByCamp_Id(it) }
             .filter { it.dateSortie == null }
-            .map { it.utilisateurId }
+            .map { it.utilisateur.id!! }
             .toMutableSet()
         if (inclureOrganisateur) {
-            deuxZeroRepository.findById(deuxZeroId).orElse(null)?.organisateurId?.let { destinataires += it }
+            deuxZeroRepository.findById(deuxZeroId).orElse(null)?.organisateur?.id?.let { destinataires += it }
         }
         destinataires.forEach { userId ->
-            notificationRepository.save(NotificationEntity(userId = userId, title = titre, body = corps))
+            notificationRepository.save(NotificationEntity(user = userRepository.getReferenceById(userId), title = titre, body = corps))
         }
     }
 
     private fun findMatch(matchId: UUID): MatchEntity =
         matchRepository.findById(matchId).orElseThrow { ResourceNotFoundException("Match introuvable") }
 
-    private fun deuxZeroIdOf(match: MatchEntity): UUID {
-        val saisonId = match.saisonId ?: throw ForbiddenActionException("Ce match n'est pas rattaché à un 2-0")
-        return saisonRepository.findById(saisonId).orElseThrow { ResourceNotFoundException("Saison introuvable") }.deuxZeroId
-    }
+    private fun findCamp(campId: UUID): CampEntity =
+        campRepository.findById(campId).orElseThrow { ResourceNotFoundException("Camp introuvable") }
+
+    private fun findUser(userId: UUID): UserEntity =
+        userRepository.findById(userId).orElseThrow { ResourceNotFoundException("Utilisateur introuvable") }
+
+    private fun deuxZeroIdOf(match: MatchEntity): UUID =
+        match.saison?.deuxZero?.id ?: throw ForbiddenActionException("Ce match n'est pas rattaché à un 2-0")
 
     private fun MatchEntity.copyWith(
         statut: String = this.statut,
     ) = MatchEntity(
-        id = id, saisonId = saisonId, clubOrganisateurId = clubOrganisateurId, type = type, date = date, heure = heure,
+        id = id, saison = saison, clubOrganisateur = clubOrganisateur, type = type, date = date, heure = heure,
         lieu = lieu, statut = statut, scoreCampA = scoreCampA, scoreCampB = scoreCampB,
         dureeMiTempsAppliqueeMinutes = dureeMiTempsAppliqueeMinutes, nomEquipeInvitee = nomEquipeInvitee,
-        marqueurId = marqueurId, marqueurSuppleantId = marqueurSuppleantId,
+        marqueur = marqueur, marqueurSuppleant = marqueurSuppleant,
         entreEnAttenteValidationA = entreEnAttenteValidationA,
     )
 
     private fun MatchEntity.toDto() = MatchDto(
-        id = id.toString(), saisonId = saisonId?.toString(), type = type, date = date.toString(), heure = heure.toString(),
+        id = id.toString(), saisonId = saison?.id?.toString(), type = type, date = date.toString(), heure = heure.toString(),
         lieu = lieu, statut = statut, scoreCampA = scoreCampA, scoreCampB = scoreCampB,
         dureeMiTempsAppliqueeMinutes = dureeMiTempsAppliqueeMinutes, nomEquipeInvitee = nomEquipeInvitee,
-        marqueurId = marqueurId?.toString(), marqueurSuppleantId = marqueurSuppleantId?.toString(),
+        marqueurId = marqueur?.id?.toString(), marqueurSuppleantId = marqueurSuppleant?.id?.toString(),
     )
 
-    private fun EvenementEntity.toDto(): EvenementDto {
-        val joueurPseudo = joueurId?.let { userRepository.findById(it).map { u -> u.pseudo }.orElse(null) }
-        val joueurSecondairePseudo = joueurSecondaireId?.let { userRepository.findById(it).map { u -> u.pseudo }.orElse(null) }
-        return EvenementDto(
-            id = id.toString(), matchId = matchId.toString(), type = type, minute = minute, periode = periode,
-            campId = campId?.toString(), joueurId = joueurId?.toString(), joueurPseudo = joueurPseudo,
-            joueurSecondaireId = joueurSecondaireId?.toString(), joueurSecondairePseudo = joueurSecondairePseudo,
-            auteurSaisieId = auteurSaisieId.toString(), horodatage = horodatage.toString(), annule = annule,
-        )
-    }
+    private fun EvenementEntity.toDto(): EvenementDto = EvenementDto(
+        id = id.toString(), matchId = match.id.toString(), type = type, minute = minute, periode = periode,
+        campId = camp?.id?.toString(), joueurId = joueur?.id?.toString(), joueurPseudo = joueur?.pseudo,
+        joueurSecondaireId = joueurSecondaire?.id?.toString(), joueurSecondairePseudo = joueurSecondaire?.pseudo,
+        auteurSaisieId = auteurSaisie.id.toString(), horodatage = horodatage.toString(), annule = annule,
+    )
 
-    private fun ValidationEntity.toValidationDto(): ValidationDto {
-        val pseudo = userRepository.findById(signataireId).map { it.pseudo }.orElse("")
-        return ValidationDto(
-            id = id.toString(), matchId = matchId.toString(), campId = campId!!.toString(),
-            signataireId = signataireId.toString(), signatairePseudo = pseudo, decision = decision,
-            commentaire = commentaire, correctionProposee = correctionProposee, horodatage = horodatage.toString(),
-        )
-    }
+    private fun ValidationEntity.toValidationDto(): ValidationDto = ValidationDto(
+        id = id.toString(), matchId = match.id.toString(), campId = camp!!.id.toString(),
+        signataireId = signataire.id.toString(), signatairePseudo = signataire.pseudo, decision = decision,
+        commentaire = commentaire, correctionProposee = correctionProposee, horodatage = horodatage.toString(),
+    )
 }

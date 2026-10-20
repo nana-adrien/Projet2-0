@@ -1,6 +1,7 @@
 package empire.digiprem.projet2_0.server.calendrier.service
 
 import empire.digiprem.projet2_0.server.deuxzero.infra.repository.CampRepository
+import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import java.util.UUID
 
@@ -14,8 +15,10 @@ class ValidationDroitsService(
 ) {
 
     /** Résout le camp (du 2-0 donné) dont [requesterId] est capitaine ou vice-capitaine, ou
-     * `null` si [requesterId] n'occupe ce rôle dans aucun des deux camps. */
+     * `null` si [requesterId] n'occupe ce rôle dans aucun des deux camps.
+     * @Transactional : accès aux relations LAZY CampEntity.capitaine/viceCapitaine. */
+    @Transactional
     fun campDuCapitaineOuViceCapitaine(deuxZeroId: UUID, requesterId: UUID): UUID? =
-        campRepository.findAllByDeuxZeroId(deuxZeroId)
-            .firstOrNull { it.capitaineId == requesterId || it.viceCapitaineId == requesterId }?.id
+        campRepository.findAllByDeuxZero_Id(deuxZeroId)
+            .firstOrNull { it.capitaine?.id == requesterId || it.viceCapitaine?.id == requesterId }?.id
 }

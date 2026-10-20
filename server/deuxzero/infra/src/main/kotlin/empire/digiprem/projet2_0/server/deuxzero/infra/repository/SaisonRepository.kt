@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository
 import java.util.UUID
 
 interface SaisonRepository : JpaRepository<SaisonEntity, UUID> {
-    fun findAllByDeuxZeroId(deuxZeroId: UUID): List<SaisonEntity>
-    fun findFirstByDeuxZeroIdAndStatutOrderByDateDebutDesc(deuxZeroId: UUID, statut: String): SaisonEntity?
+    fun findAllByDeuxZero_Id(deuxZeroId: UUID): List<SaisonEntity>
+    fun findFirstByDeuxZero_IdAndStatutOrderByDateDebutDesc(deuxZeroId: UUID, statut: String): SaisonEntity?
 }

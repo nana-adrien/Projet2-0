@@ -13,7 +13,6 @@ import empire.digiprem.projet2_0.server.calendrier.infra.repository.MatchReposit
 import empire.digiprem.projet2_0.server.common.exception.ForbiddenActionException
 import empire.digiprem.projet2_0.server.common.exception.ResourceNotFoundException
 import empire.digiprem.projet2_0.server.common.util.orThrow
-import empire.digiprem.projet2_0.server.deuxzero.infra.repository.SaisonRepository
 import empire.digiprem.projet2_0.server.user.infra.repository.UserRepository
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
@@ -25,7 +24,6 @@ import java.util.UUID
 class CompositionService(
     private val compositionRepository: CompositionRepository,
     private val matchRepository: MatchRepository,
-    private val saisonRepository: SaisonRepository,
     private val userRepository: UserRepository,
     private val droits: MatchEnDirectDroitsService,
 ) {
@@ -35,17 +33,17 @@ class CompositionService(
         validateDesignerCompositionRequest(request).orThrow()
         val match = findMatch(matchId)
         val deuxZeroId = deuxZeroIdOf(match)
-        val targetId = UUID.fromString(request.utilisateurId)
-        val campId = droits.campDuJoueur(deuxZeroId, targetId)
+        val target = findUser(UUID.fromString(request.utilisateurId))
+        val campId = droits.campDuJoueur(deuxZeroId, target.id!!)
             ?: throw ForbiddenActionException("Ce joueur n'appartient à aucun camp de ce 2-0")
         droits.requireCapitaineOuViceCapitaineDuCamp(campId, requesterId)
 
-        val existing = compositionRepository.findByMatchIdAndUtilisateurId(matchId, targetId)
+        val existing = compositionRepository.findByMatch_IdAndUtilisateur_Id(matchId, target.id!!)
         val saved = compositionRepository.save(
             CompositionEntity(
                 id = existing?.id,
-                matchId = matchId,
-                utilisateurId = targetId,
+                match = match,
+                utilisateur = target,
                 titulaire = request.titulaire,
                 present = request.present,
             )
@@ -53,8 +51,10 @@ class CompositionService(
         return saved.toDto()
     }
 
+    /** @Transactional : [CompositionEntity.utilisateur] (relation LAZY) navigué par [toDto]. */
+    @Transactional
     fun listComposition(matchId: UUID): List<CompositionDto> =
-        compositionRepository.findAllByMatchId(matchId).map { it.toDto() }
+        compositionRepository.findAllByMatch_Id(matchId).map { it.toDto() }
 
     /** F-LIV-01 — un marqueur et un suppléant, désignés par un capitaine du camp concerné. */
     @Transactional
@@ -62,16 +62,16 @@ class CompositionService(
         validateDesignerMarqueurRequest(request).orThrow()
         val match = findMatch(matchId)
         val deuxZeroId = deuxZeroIdOf(match)
-        val targetId = UUID.fromString(request.utilisateurId)
-        val campId = droits.campDuJoueur(deuxZeroId, targetId)
+        val target = findUser(UUID.fromString(request.utilisateurId))
+        val campId = droits.campDuJoueur(deuxZeroId, target.id!!)
             ?: throw ForbiddenActionException("Ce joueur n'appartient à aucun camp de ce 2-0")
         droits.requireCapitaineOuViceCapitaineDuCamp(campId, requesterId)
 
         val updated = matchRepository.save(
             MatchEntity(
                 id = match.id,
-                saisonId = match.saisonId,
-                clubOrganisateurId = match.clubOrganisateurId,
+                saison = match.saison,
+                clubOrganisateur = match.clubOrganisateur,
                 type = match.type,
                 date = match.date,
                 heure = match.heure,
@@ -81,34 +81,34 @@ class CompositionService(
                 scoreCampB = match.scoreCampB,
                 dureeMiTempsAppliqueeMinutes = match.dureeMiTempsAppliqueeMinutes,
                 nomEquipeInvitee = match.nomEquipeInvitee,
-                marqueurId = if (request.suppleant) match.marqueurId else targetId,
-                marqueurSuppleantId = if (request.suppleant) targetId else match.marqueurSuppleantId,
+                marqueur = if (request.suppleant) match.marqueur else target,
+                marqueurSuppleant = if (request.suppleant) target else match.marqueurSuppleant,
                 entreEnAttenteValidationA = match.entreEnAttenteValidationA,
             )
         )
         return updated.toDto()
     }
 
-    private fun deuxZeroIdOf(match: MatchEntity): UUID {
-        val saisonId = match.saisonId ?: throw ForbiddenActionException("Ce match n'est pas rattaché à un 2-0")
-        return saisonRepository.findById(saisonId).orElseThrow { ResourceNotFoundException("Saison introuvable") }.deuxZeroId
-    }
+    private fun deuxZeroIdOf(match: MatchEntity): UUID =
+        match.saison?.deuxZero?.id ?: throw ForbiddenActionException("Ce match n'est pas rattaché à un 2-0")
 
     private fun findMatch(matchId: UUID): MatchEntity =
         matchRepository.findById(matchId).orElseThrow { ResourceNotFoundException("Match introuvable") }
 
-    private fun CompositionEntity.toDto(): CompositionDto {
-        val pseudo = userRepository.findById(utilisateurId).map { it.pseudo }.orElse("")
-        return CompositionDto(
-            id = id.toString(), matchId = matchId.toString(), utilisateurId = utilisateurId.toString(),
-            pseudo = pseudo, titulaire = titulaire, present = present,
-        )
-    }
+    private fun findUser(userId: UUID) =
+        userRepository.findById(userId).orElseThrow { ResourceNotFoundException("Utilisateur introuvable") }
+
+    /** Accès à [CompositionEntity.utilisateur] (relation LAZY) : tous les appelants
+     * (designerComposition, listComposition) sont @Transactional. */
+    private fun CompositionEntity.toDto(): CompositionDto = CompositionDto(
+        id = id.toString(), matchId = match.id.toString(), utilisateurId = utilisateur.id.toString(),
+        pseudo = utilisateur.pseudo, titulaire = titulaire, present = present,
+    )
 
     private fun MatchEntity.toDto() = MatchDto(
-        id = id.toString(), saisonId = saisonId?.toString(), type = type, date = date.toString(), heure = heure.toString(),
+        id = id.toString(), saisonId = saison?.id?.toString(), type = type, date = date.toString(), heure = heure.toString(),
         lieu = lieu, statut = statut, scoreCampA = scoreCampA, scoreCampB = scoreCampB,
         dureeMiTempsAppliqueeMinutes = dureeMiTempsAppliqueeMinutes, nomEquipeInvitee = nomEquipeInvitee,
-        marqueurId = marqueurId?.toString(), marqueurSuppleantId = marqueurSuppleantId?.toString(),
+        marqueurId = marqueur?.id?.toString(), marqueurSuppleantId = marqueurSuppleant?.id?.toString(),
     )
 }

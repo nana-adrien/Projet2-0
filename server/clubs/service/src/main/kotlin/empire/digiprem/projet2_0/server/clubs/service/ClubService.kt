@@ -39,6 +39,7 @@ class ClubService(
     @Transactional
     fun createClub(userId: UUID, request: CreateClubRequest): ClubDto {
         validateCreateClubRequest(request).orThrow()
+        val user = findUser(userId)
 
         var code = ClubCodeGenerator.generate(request.nom)
         while (clubRepository.findByCodeAdhesion(code) != null) {
@@ -55,12 +56,11 @@ class ClubService(
                 codeAdhesion = code,
             )
         )
-        val clubId = club.id ?: throw ResourceNotFoundException("Club introuvable après création")
 
         adhesionClubRepository.save(
             AdhesionClubEntity(
-                utilisateurId = userId,
-                clubId = clubId,
+                utilisateur = user,
+                club = club,
                 role = ROLE_ADMIN,
                 statut = STATUT_ACCEPTEE,
                 dateReponse = Instant.now(),
@@ -86,7 +86,8 @@ class ClubService(
 
     private fun joinClub(userId: UUID, club: ClubEntity): MembershipDto {
         val clubId = club.id ?: throw ResourceNotFoundException("Club introuvable")
-        val existing = adhesionClubRepository.findByUtilisateurIdAndClubId(userId, clubId)
+        val user = findUser(userId)
+        val existing = adhesionClubRepository.findByUtilisateur_IdAndClub_Id(userId, clubId)
         if (existing != null && existing.statut in setOf(STATUT_EN_ATTENTE, STATUT_ACCEPTEE)) {
             throw ConflictException("Tu es déjà membre de ce club ou ta demande est en attente")
         }
@@ -95,8 +96,8 @@ class ClubService(
         val adhesion = adhesionClubRepository.save(
             AdhesionClubEntity(
                 id = existing?.id,
-                utilisateurId = userId,
-                clubId = clubId,
+                utilisateur = user,
+                club = club,
                 role = ROLE_MEMBRE,
                 statut = statut,
                 dateReponse = if (statut == STATUT_ACCEPTEE) Instant.now() else null,
@@ -107,37 +108,37 @@ class ClubService(
 
     /** N'importe quel membre accepté (quel que soit son rôle) peut consulter la fiche du club. */
     fun getClub(clubId: UUID, requesterId: UUID): ClubDto {
-        val adhesion = adhesionClubRepository.findByUtilisateurIdAndClubId(requesterId, clubId)
+        val adhesion = adhesionClubRepository.findByUtilisateur_IdAndClub_Id(requesterId, clubId)
         if (adhesion?.statut != STATUT_ACCEPTEE) {
             throw ForbiddenActionException("Il faut être membre accepté de ce club")
         }
         return findClub(clubId).toDto()
     }
 
+    /** @Transactional : [AdhesionClubEntity.club] et [AdhesionClubEntity.utilisateur]
+     * (via [toDto]) sont des relations LAZY désormais navigées directement — sans la transaction,
+     * l'accès déclenche une LazyInitializationException après la fermeture de la session. */
+    @Transactional
     fun listMyClubs(userId: UUID): List<MembershipDto> =
-        adhesionClubRepository.findAllByUtilisateurId(userId).map { adhesion ->
-            val club = clubRepository.findById(adhesion.clubId).orElseThrow {
-                ResourceNotFoundException("Club introuvable")
-            }
-            adhesion.toDto(club)
-        }
+        adhesionClubRepository.findAllByUtilisateur_Id(userId).map { adhesion -> adhesion.toDto(adhesion.club) }
 
+    @Transactional
     fun listMembers(clubId: UUID, requesterId: UUID): List<MembershipDto> {
         requireAdmin(clubId, requesterId)
         val club = findClub(clubId)
-        return adhesionClubRepository.findAllByClubId(clubId).map { it.toDto(club) }
+        return adhesionClubRepository.findAllByClub_Id(clubId).map { it.toDto(club) }
     }
 
     @Transactional
     fun respondToRequest(clubId: UUID, requesterId: UUID, targetUserId: UUID, accept: Boolean): MembershipDto {
         requireAdmin(clubId, requesterId)
-        val adhesion = adhesionClubRepository.findByUtilisateurIdAndClubId(targetUserId, clubId)
+        val adhesion = adhesionClubRepository.findByUtilisateur_IdAndClub_Id(targetUserId, clubId)
             ?: throw ResourceNotFoundException("Demande introuvable")
         val updated = adhesionClubRepository.save(
             AdhesionClubEntity(
                 id = adhesion.id,
-                utilisateurId = adhesion.utilisateurId,
-                clubId = adhesion.clubId,
+                utilisateur = adhesion.utilisateur,
+                club = adhesion.club,
                 role = adhesion.role,
                 statut = if (accept) STATUT_ACCEPTEE else STATUT_REFUSEE,
                 dateDemande = adhesion.dateDemande,
@@ -187,10 +188,10 @@ class ClubService(
     /** F-CLB-07 : un membre quitte de lui-même. E1 : dernier administrateur sans successeur -> bloqué. */
     @Transactional
     fun leaveClub(userId: UUID, clubId: UUID) {
-        val adhesion = adhesionClubRepository.findByUtilisateurIdAndClubId(userId, clubId)
+        val adhesion = adhesionClubRepository.findByUtilisateur_IdAndClub_Id(userId, clubId)
             ?: throw ResourceNotFoundException("Adhésion introuvable")
         if (adhesion.role == ROLE_ADMIN) {
-            val otherAdmins = adhesionClubRepository.countByClubIdAndRoleAndStatut(clubId, ROLE_ADMIN, STATUT_ACCEPTEE)
+            val otherAdmins = adhesionClubRepository.countByClub_IdAndRoleAndStatut(clubId, ROLE_ADMIN, STATUT_ACCEPTEE)
             if (otherAdmins <= 1) {
                 throw ForbiddenActionException("Nomme un autre administrateur avant de quitter le club")
             }
@@ -202,10 +203,10 @@ class ClubService(
     @Transactional
     fun removeMember(clubId: UUID, requesterId: UUID, targetUserId: UUID) {
         requireAdmin(clubId, requesterId)
-        val adhesion = adhesionClubRepository.findByUtilisateurIdAndClubId(targetUserId, clubId)
+        val adhesion = adhesionClubRepository.findByUtilisateur_IdAndClub_Id(targetUserId, clubId)
             ?: throw ResourceNotFoundException("Adhésion introuvable")
         if (adhesion.role == ROLE_ADMIN) {
-            val otherAdmins = adhesionClubRepository.countByClubIdAndRoleAndStatut(clubId, ROLE_ADMIN, STATUT_ACCEPTEE)
+            val otherAdmins = adhesionClubRepository.countByClub_IdAndRoleAndStatut(clubId, ROLE_ADMIN, STATUT_ACCEPTEE)
             if (otherAdmins <= 1) {
                 throw ForbiddenActionException("Nomme un autre administrateur avant de retirer celui-ci")
             }
@@ -214,13 +215,13 @@ class ClubService(
     }
 
     private fun setRole(clubId: UUID, userId: UUID, role: String): MembershipDto {
-        val adhesion = adhesionClubRepository.findByUtilisateurIdAndClubId(userId, clubId)
+        val adhesion = adhesionClubRepository.findByUtilisateur_IdAndClub_Id(userId, clubId)
             ?: throw ResourceNotFoundException("Adhésion introuvable")
         val updated = adhesionClubRepository.save(
             AdhesionClubEntity(
                 id = adhesion.id,
-                utilisateurId = adhesion.utilisateurId,
-                clubId = adhesion.clubId,
+                utilisateur = adhesion.utilisateur,
+                club = adhesion.club,
                 role = role,
                 statut = adhesion.statut,
                 dateDemande = adhesion.dateDemande,
@@ -234,8 +235,8 @@ class ClubService(
         adhesionClubRepository.save(
             AdhesionClubEntity(
                 id = adhesion.id,
-                utilisateurId = adhesion.utilisateurId,
-                clubId = adhesion.clubId,
+                utilisateur = adhesion.utilisateur,
+                club = adhesion.club,
                 role = adhesion.role,
                 statut = statut,
                 dateDemande = adhesion.dateDemande,
@@ -245,7 +246,7 @@ class ClubService(
     }
 
     private fun requireAdmin(clubId: UUID, userId: UUID) {
-        val adhesion = adhesionClubRepository.findByUtilisateurIdAndClubId(userId, clubId)
+        val adhesion = adhesionClubRepository.findByUtilisateur_IdAndClub_Id(userId, clubId)
         if (adhesion?.role != ROLE_ADMIN || adhesion.statut != STATUT_ACCEPTEE) {
             throw ForbiddenActionException("Seul un administrateur du club peut faire cette action")
         }
@@ -253,6 +254,9 @@ class ClubService(
 
     private fun findClub(clubId: UUID): ClubEntity =
         clubRepository.findById(clubId).orElseThrow { ResourceNotFoundException("Club introuvable") }
+
+    private fun findUser(userId: UUID) =
+        userRepository.findById(userId).orElseThrow { ResourceNotFoundException("Utilisateur introuvable") }
 
     private fun ClubEntity.copyWith(
         codeAdhesion: String = this.codeAdhesion,
@@ -285,14 +289,13 @@ class ClubService(
     )
 
     private fun AdhesionClubEntity.toDto(club: ClubEntity): MembershipDto {
-        val pseudo = userRepository.findById(utilisateurId).map { it.pseudo }.orElse("")
         return MembershipDto(
             id = id.toString(),
-            clubId = clubId.toString(),
+            clubId = club.id.toString(),
             clubNom = club.nom,
             clubLogo = club.logo,
-            utilisateurId = utilisateurId.toString(),
-            pseudo = pseudo,
+            utilisateurId = utilisateur.id.toString(),
+            pseudo = utilisateur.pseudo,
             role = role,
             statut = statut,
             dateDemande = dateDemande.toString(),

@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository
 import java.util.UUID
 
 interface EvenementRepository : JpaRepository<EvenementEntity, UUID> {
-    fun findAllByMatchIdOrderByPeriodeAscMinuteAsc(matchId: UUID): List<EvenementEntity>
+    fun findAllByMatch_IdOrderByPeriodeAscMinuteAsc(matchId: UUID): List<EvenementEntity>
     fun findByClientEventId(clientEventId: UUID): EvenementEntity?
-    fun findFirstByMatchIdAndAnnuleFalseOrderByHorodatageDesc(matchId: UUID): EvenementEntity?
+    fun findFirstByMatch_IdAndAnnuleFalseOrderByHorodatageDesc(matchId: UUID): EvenementEntity?
 }

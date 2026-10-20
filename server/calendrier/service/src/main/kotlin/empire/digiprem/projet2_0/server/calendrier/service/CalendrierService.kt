@@ -75,7 +75,7 @@ class CalendrierService(
             }
         }.toSet()
 
-        val creneauxExistants = matchRepository.findAllBySaisonId(saisonId).map { it.date to it.heure }.toSet()
+        val creneauxExistants = matchRepository.findAllBySaison_Id(saisonId).map { it.date to it.heure }.toSet()
 
         val nouveauxMatchs = mutableListOf<MatchEntity>()
         var curseur = LocalDate.now().minusDays(1)
@@ -88,7 +88,7 @@ class CalendrierService(
                 val creneau = curseur to heureHabituelle
                 if (creneau !in creneauxExistants) {
                     nouveauxMatchs += MatchEntity(
-                        saisonId = saisonId,
+                        saison = saison,
                         type = TYPE_DEUX_ZERO,
                         date = curseur,
                         heure = heureHabituelle,
@@ -110,7 +110,7 @@ class CalendrierService(
 
         val match = matchRepository.save(
             MatchEntity(
-                saisonId = saison.id,
+                saison = saison,
                 type = TYPE_DEUX_ZERO,
                 date = parseDate(request.date),
                 heure = parseHeure(request.heure),
@@ -122,12 +122,15 @@ class CalendrierService(
     }
 
     /** Lecture simple — matchs de la saison EN_COURS du 2-0 (future évolution possible : paramètre
-     * saisonId optionnel pour consulter l'historique). */
+     * saisonId optionnel pour consulter l'historique).
+     * @Transactional : [MatchEntity.saison]/[MatchEntity.clubOrganisateur]/[MatchEntity.marqueur]/
+     * [MatchEntity.marqueurSuppleant] (relations LAZY) sont navigués par [toDto]. */
+    @Transactional
     fun listMatchs(deuxZeroId: UUID): List<MatchDto> {
-        val saison = saisonRepository.findFirstByDeuxZeroIdAndStatutOrderByDateDebutDesc(deuxZeroId, STATUT_SAISON_EN_COURS)
+        val saison = saisonRepository.findFirstByDeuxZero_IdAndStatutOrderByDateDebutDesc(deuxZeroId, STATUT_SAISON_EN_COURS)
             ?: return emptyList()
         val saisonId = saison.id ?: return emptyList()
-        return matchRepository.findAllBySaisonId(saisonId)
+        return matchRepository.findAllBySaison_Id(saisonId)
             .sortedWith(compareBy({ it.date }, { it.heure }))
             .map { it.toDto() }
     }
@@ -136,9 +139,9 @@ class CalendrierService(
     fun modifierMatch(matchId: UUID, requesterId: UUID, request: ModifierMatchRequest): MatchDto {
         validateModifierMatchRequest(request).orThrow()
         val match = matchRepository.findById(matchId).orElseThrow { ResourceNotFoundException("Match introuvable") }
-        val saisonId = match.saisonId
+        val saison = match.saison
             ?: throw ForbiddenActionException("Ce match n'est pas rattaché à une saison de 2-0 (modification hors scope Jalon 2)")
-        val deuxZeroId = droits.requireGestionnaireCalendrierPourSaison(saisonId, requesterId)
+        val deuxZeroId = droits.requireGestionnaireCalendrierPourSaison(saison.id!!, requesterId)
 
         val estReportOuAnnulation = request.nouveauStatut == StatutMatchModifiable.REPORTE.name ||
             request.nouveauStatut == StatutMatchModifiable.ANNULE.name
@@ -149,8 +152,8 @@ class CalendrierService(
         val updated = matchRepository.save(
             MatchEntity(
                 id = match.id,
-                saisonId = match.saisonId,
-                clubOrganisateurId = match.clubOrganisateurId,
+                saison = match.saison,
+                clubOrganisateur = match.clubOrganisateur,
                 type = match.type,
                 date = request.nouvelleDate?.let { parseDate(it) } ?: match.date,
                 heure = request.nouvelleHeure?.let { parseHeure(it) } ?: match.heure,
@@ -160,7 +163,7 @@ class CalendrierService(
                 scoreCampB = match.scoreCampB,
                 dureeMiTempsAppliqueeMinutes = request.dureeMiTempsAppliqueeMinutes ?: match.dureeMiTempsAppliqueeMinutes,
                 nomEquipeInvitee = match.nomEquipeInvitee,
-                marqueurId = match.marqueurId,
+                marqueur = match.marqueur,
                 entreEnAttenteValidationA = match.entreEnAttenteValidationA,
             )
         )
@@ -175,19 +178,19 @@ class CalendrierService(
     }
 
     private fun notifierChangementDeProgramme(deuxZeroId: UUID, motif: String) {
-        val destinataires = campRepository.findAllByDeuxZeroId(deuxZeroId)
+        val destinataires = campRepository.findAllByDeuxZero_Id(deuxZeroId)
             .mapNotNull { it.id }
-            .flatMap { effectifEngageRepository.findAllByCampId(it) }
+            .flatMap { effectifEngageRepository.findAllByCamp_Id(it) }
             .filter { it.dateSortie == null }
-            .map { it.utilisateurId }
-            .distinct()
-        destinataires.forEach { userId ->
-            notificationRepository.save(NotificationEntity(userId = userId, title = TITRE_CHANGEMENT_PROGRAMME, body = motif))
+            .map { it.utilisateur }
+            .distinctBy { it.id }
+        destinataires.forEach { user ->
+            notificationRepository.save(NotificationEntity(user = user, title = TITRE_CHANGEMENT_PROGRAMME, body = motif))
         }
     }
 
     private fun saisonEnCours(deuxZeroId: UUID) =
-        saisonRepository.findFirstByDeuxZeroIdAndStatutOrderByDateDebutDesc(deuxZeroId, STATUT_SAISON_EN_COURS)
+        saisonRepository.findFirstByDeuxZero_IdAndStatutOrderByDateDebutDesc(deuxZeroId, STATUT_SAISON_EN_COURS)
             ?: throw ResourceNotFoundException("Aucune saison en cours pour ce 2-0")
 
     private fun parseDate(value: String): LocalDate = try {
@@ -202,9 +205,11 @@ class CalendrierService(
         throw ValidationException(listOf("heure: format invalide, attendu HH:MM ou HH:MM:SS"))
     }
 
+    /** @Transactional : appelants = genererCalendrier, ajouterMatchExceptionnel, listMatchs,
+     * modifierMatch — tous déjà annotés. */
     private fun MatchEntity.toDto() = MatchDto(
         id = id.toString(),
-        saisonId = saisonId?.toString(),
+        saisonId = saison?.id?.toString(),
         type = type,
         date = date.toString(),
         heure = heure.toString(),
@@ -214,7 +219,7 @@ class CalendrierService(
         scoreCampB = scoreCampB,
         dureeMiTempsAppliqueeMinutes = dureeMiTempsAppliqueeMinutes,
         nomEquipeInvitee = nomEquipeInvitee,
-        marqueurId = marqueurId?.toString(),
-        marqueurSuppleantId = marqueurSuppleantId?.toString(),
+        marqueurId = marqueur?.id?.toString(),
+        marqueurSuppleantId = marqueurSuppleant?.id?.toString(),
     )
 }

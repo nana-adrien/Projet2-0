@@ -4,6 +4,7 @@ import empire.digiprem.projet2_0.contracts.deuxzero.OpenSaisonRequest
 import empire.digiprem.projet2_0.contracts.deuxzero.SaisonDto
 import empire.digiprem.projet2_0.server.common.exception.ForbiddenActionException
 import empire.digiprem.projet2_0.server.common.exception.ResourceNotFoundException
+import empire.digiprem.projet2_0.server.deuxzero.infra.entity.DeuxZeroEntity
 import empire.digiprem.projet2_0.server.deuxzero.infra.entity.SaisonEntity
 import empire.digiprem.projet2_0.server.deuxzero.infra.repository.DeuxZeroRepository
 import empire.digiprem.projet2_0.server.deuxzero.infra.repository.SaisonRepository
@@ -19,15 +20,18 @@ class SaisonService(
     private val deuxZeroRepository: DeuxZeroRepository,
 ) {
 
+    /** @Transactional : [SaisonEntity.deuxZero]/[SaisonEntity.campChampion] (relations LAZY)
+     * sont navigués directement par [toDto]. */
+    @Transactional
     fun listSaisons(deuxZeroId: UUID): List<SaisonDto> =
-        saisonRepository.findAllByDeuxZeroId(deuxZeroId).map { it.toDto() }
+        saisonRepository.findAllByDeuxZero_Id(deuxZeroId).map { it.toDto() }
 
     @Transactional
     fun openSaison(deuxZeroId: UUID, requesterId: UUID, request: OpenSaisonRequest): SaisonDto {
-        requireOrganisateur(deuxZeroId, requesterId)
+        val deuxZero = requireOrganisateur(deuxZeroId, requesterId)
         return saisonRepository.save(
             SaisonEntity(
-                deuxZeroId = deuxZeroId,
+                deuxZero = deuxZero,
                 libelle = request.libelle.trim(),
                 dateDebut = LocalDate.parse(request.dateDebut),
                 dateFin = request.dateFin?.let { LocalDate.parse(it) },
@@ -45,7 +49,7 @@ class SaisonService(
     @Transactional
     fun closeSaison(saisonId: UUID, requesterId: UUID): SaisonDto {
         val saison = saisonRepository.findById(saisonId).orElseThrow { ResourceNotFoundException("Saison introuvable") }
-        requireOrganisateur(saison.deuxZeroId, requesterId)
+        requireOrganisateur(saison.deuxZero.id!!, requesterId)
         if (saison.statut == "CLOTUREE") {
             throw ForbiddenActionException("Cette saison est déjà clôturée")
         }
@@ -53,26 +57,27 @@ class SaisonService(
         return saisonRepository.save(
             SaisonEntity(
                 id = saison.id,
-                deuxZeroId = saison.deuxZeroId,
+                deuxZero = saison.deuxZero,
                 libelle = saison.libelle,
                 dateDebut = saison.dateDebut,
                 dateFin = saison.dateFin ?: LocalDate.now(),
                 statut = "CLOTUREE",
-                campChampionId = saison.campChampionId,
+                campChampion = saison.campChampion,
             )
         ).toDto()
     }
 
-    private fun requireOrganisateur(deuxZeroId: UUID, userId: UUID) {
+    private fun requireOrganisateur(deuxZeroId: UUID, userId: UUID): DeuxZeroEntity {
         val deuxZero = deuxZeroRepository.findById(deuxZeroId).orElseThrow { ResourceNotFoundException("2-0 introuvable") }
-        if (deuxZero.organisateurId != userId) {
+        if (deuxZero.organisateur.id != userId) {
             throw ForbiddenActionException("Seul l'organisateur du 2-0 peut faire cette action")
         }
+        return deuxZero
     }
 
     private fun SaisonEntity.toDto() = SaisonDto(
-        id = id.toString(), deuxZeroId = deuxZeroId.toString(), libelle = libelle,
+        id = id.toString(), deuxZeroId = deuxZero.id.toString(), libelle = libelle,
         dateDebut = dateDebut.toString(), dateFin = dateFin?.toString(), statut = statut,
-        campChampionId = campChampionId?.toString(),
+        campChampionId = campChampion?.id?.toString(),
     )
 }

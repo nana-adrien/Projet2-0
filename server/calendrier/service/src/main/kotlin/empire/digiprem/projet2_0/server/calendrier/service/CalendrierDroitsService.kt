@@ -5,6 +5,7 @@ import empire.digiprem.projet2_0.server.common.exception.ResourceNotFoundExcepti
 import empire.digiprem.projet2_0.server.deuxzero.infra.repository.CampRepository
 import empire.digiprem.projet2_0.server.deuxzero.infra.repository.DeuxZeroRepository
 import empire.digiprem.projet2_0.server.deuxzero.infra.repository.SaisonRepository
+import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import java.util.UUID
 
@@ -21,12 +22,16 @@ class CalendrierDroitsService(
     private val saisonRepository: SaisonRepository,
 ) {
 
+    /** @Transactional : [CampEntity.capitaine]/[CampEntity.viceCapitaine] (relations LAZY) sont
+     * navigués directement — annoté indépendamment des appelants pour rester sûr même si ce
+     * service est un jour invoqué hors d'une transaction déjà ouverte. */
+    @Transactional
     fun requireGestionnaireCalendrier(deuxZeroId: UUID, requesterId: UUID) {
         val deuxZero = deuxZeroRepository.findById(deuxZeroId).orElseThrow { ResourceNotFoundException("2-0 introuvable") }
-        if (deuxZero.organisateurId == requesterId) return
+        if (deuxZero.organisateur.id == requesterId) return
 
-        val estCapitaineOuViceCapitaine = campRepository.findAllByDeuxZeroId(deuxZeroId).any {
-            it.capitaineId == requesterId || it.viceCapitaineId == requesterId
+        val estCapitaineOuViceCapitaine = campRepository.findAllByDeuxZero_Id(deuxZeroId).any {
+            it.capitaine?.id == requesterId || it.viceCapitaine?.id == requesterId
         }
         if (!estCapitaineOuViceCapitaine) {
             throw ForbiddenActionException(
@@ -37,9 +42,11 @@ class CalendrierDroitsService(
 
     /** Résout le 2-0 porteur de la saison et applique [requireGestionnaireCalendrier]. Retourne le
      * deuxZeroId résolu pour éviter à l'appelant de le recalculer. */
+    @Transactional
     fun requireGestionnaireCalendrierPourSaison(saisonId: UUID, requesterId: UUID): UUID {
         val saison = saisonRepository.findById(saisonId).orElseThrow { ResourceNotFoundException("Saison introuvable") }
-        requireGestionnaireCalendrier(saison.deuxZeroId, requesterId)
-        return saison.deuxZeroId
+        val deuxZeroId = saison.deuxZero.id!!
+        requireGestionnaireCalendrier(deuxZeroId, requesterId)
+        return deuxZeroId
     }
 }

@@ -14,10 +14,9 @@ import empire.digiprem.projet2_0.server.common.exception.ResourceNotFoundExcepti
 import empire.digiprem.projet2_0.server.common.util.orThrow
 import empire.digiprem.projet2_0.server.deuxzero.infra.repository.CampRepository
 import empire.digiprem.projet2_0.server.deuxzero.infra.repository.EffectifEngageRepository
-import empire.digiprem.projet2_0.server.deuxzero.infra.repository.SaisonRepository
 import empire.digiprem.projet2_0.server.notifications.infra.entity.NotificationEntity
 import empire.digiprem.projet2_0.server.notifications.infra.repository.NotificationRepository
-import empire.digiprem.projet2_0.server.user.infra.repository.UserRepository
+import empire.digiprem.projet2_0.server.user.infra.entity.UserEntity
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import java.time.Instant
@@ -39,58 +38,58 @@ private const val TITRE_RAPPEL = "Rappel"
 class ConvocationService(
     private val convocationRepository: ConvocationRepository,
     private val matchRepository: MatchRepository,
-    private val saisonRepository: SaisonRepository,
     private val campRepository: CampRepository,
     private val effectifEngageRepository: EffectifEngageRepository,
     private val notificationRepository: NotificationRepository,
-    private val userRepository: UserRepository,
     private val droits: CalendrierDroitsService,
 ) {
 
     @Transactional
     fun genererConvocations(matchId: UUID, requesterId: UUID): List<ConvocationDto> {
         val match = findMatchDeuxZero(matchId)
-        val saisonId = match.saisonId ?: throw ResourceNotFoundException("Saison introuvable pour ce match")
+        val saisonId = match.saison?.id ?: throw ResourceNotFoundException("Saison introuvable pour ce match")
         val deuxZeroId = droits.requireGestionnaireCalendrierPourSaison(saisonId, requesterId)
 
         val membresActifs = membresActifsDesDeuxCamps(deuxZeroId)
-        val dejaConvoques = convocationRepository.findAllByMatchId(matchId).map { it.utilisateurId }.toSet()
+        val dejaConvoques = convocationRepository.findAllByMatch_Id(matchId).map { it.utilisateur.id }.toSet()
 
-        val nouvelles = membresActifs.filterNot { it in dejaConvoques }.map { utilisateurId ->
-            ConvocationEntity(matchId = matchId, utilisateurId = utilisateurId, reponse = REPONSE_SANS_REPONSE)
+        val nouvelles = membresActifs.filterNot { it.id in dejaConvoques }.map { utilisateur ->
+            ConvocationEntity(match = match, utilisateur = utilisateur, reponse = REPONSE_SANS_REPONSE)
         }
         val creees = convocationRepository.saveAll(nouvelles)
 
         creees.forEach { convocation ->
             notificationRepository.save(
                 NotificationEntity(
-                    userId = convocation.utilisateurId,
+                    user = convocation.utilisateur,
                     title = TITRE_CONVOCATION,
                     body = "Tu es convoqué pour le match du ${match.date} à ${match.heure}",
                 )
             )
         }
 
-        return convocationRepository.findAllByMatchId(matchId).map { it.toDto() }
+        return convocationRepository.findAllByMatch_Id(matchId).map { it.toDto() }
     }
 
+    /** @Transactional : [ConvocationEntity.utilisateur] (relation LAZY) navigué par [toDto]. */
+    @Transactional
     fun listConvocations(matchId: UUID): List<ConvocationDto> =
-        convocationRepository.findAllByMatchId(matchId).map { it.toDto() }
+        convocationRepository.findAllByMatch_Id(matchId).map { it.toDto() }
 
     @Transactional
     fun repondreConvocation(convocationId: UUID, requesterId: UUID, request: RepondreConvocationRequest): ConvocationDto {
         validateRepondreConvocationRequest(request).orThrow()
         val convocation = convocationRepository.findById(convocationId)
             .orElseThrow { ResourceNotFoundException("Convocation introuvable") }
-        if (convocation.utilisateurId != requesterId) {
+        if (convocation.utilisateur.id != requesterId) {
             throw ForbiddenActionException("Seul le joueur convoqué peut répondre à sa convocation")
         }
 
         val updated = convocationRepository.save(
             ConvocationEntity(
                 id = convocation.id,
-                matchId = convocation.matchId,
-                utilisateurId = convocation.utilisateurId,
+                match = convocation.match,
+                utilisateur = convocation.utilisateur,
                 reponse = request.reponse,
                 dateReponse = Instant.now(),
             )
@@ -103,14 +102,14 @@ class ConvocationService(
     @Transactional
     fun relancerConvocations(matchId: UUID, requesterId: UUID): List<ConvocationDto> {
         val match = findMatchDeuxZero(matchId)
-        val saisonId = match.saisonId ?: throw ResourceNotFoundException("Saison introuvable pour ce match")
+        val saisonId = match.saison?.id ?: throw ResourceNotFoundException("Saison introuvable pour ce match")
         droits.requireGestionnaireCalendrierPourSaison(saisonId, requesterId)
 
-        val sansReponse = convocationRepository.findAllByMatchId(matchId).filter { it.reponse == REPONSE_SANS_REPONSE }
+        val sansReponse = convocationRepository.findAllByMatch_Id(matchId).filter { it.reponse == REPONSE_SANS_REPONSE }
         sansReponse.forEach { convocation ->
             notificationRepository.save(
                 NotificationEntity(
-                    userId = convocation.utilisateurId,
+                    user = convocation.utilisateur,
                     title = TITRE_RAPPEL,
                     body = "Rappel : réponds à ta convocation pour le match du ${match.date} à ${match.heure}",
                 )
@@ -119,20 +118,24 @@ class ConvocationService(
         return sansReponse.map { it.toDto() }
     }
 
+    /** @Transactional : [CampEntity.libelle] ne pose pas de souci (colonne propre), mais
+     * [EffectifEngageEntity.utilisateur] et [ConvocationEntity.utilisateur] (relations LAZY)
+     * sont désormais comparées directement ci-dessous. */
+    @Transactional
     fun getPresences(matchId: UUID, requesterId: UUID): PresencesDto {
         val match = findMatchDeuxZero(matchId)
-        val saisonId = match.saisonId ?: throw ResourceNotFoundException("Saison introuvable pour ce match")
+        val saisonId = match.saison?.id ?: throw ResourceNotFoundException("Saison introuvable pour ce match")
         val deuxZeroId = droits.requireGestionnaireCalendrierPourSaison(saisonId, requesterId)
 
-        val convocations = convocationRepository.findAllByMatchId(matchId)
-        val camps = campRepository.findAllByDeuxZeroId(deuxZeroId)
+        val convocations = convocationRepository.findAllByMatch_Id(matchId)
+        val camps = campRepository.findAllByDeuxZero_Id(deuxZeroId)
 
         val campsDto = camps.map { camp ->
-            val membresDuCamp = camp.id?.let { effectifEngageRepository.findAllByCampId(it) }
+            val membresDuCamp = camp.id?.let { effectifEngageRepository.findAllByCamp_Id(it) }
                 ?.filter { it.dateSortie == null }
-                ?.map { it.utilisateurId }
+                ?.mapNotNull { it.utilisateur.id }
                 ?.toSet() ?: emptySet()
-            val reponsesDuCamp = convocations.filter { it.utilisateurId in membresDuCamp }
+            val reponsesDuCamp = convocations.filter { it.utilisateur.id in membresDuCamp }
 
             PresencesCampDto(
                 campId = camp.id.toString(),
@@ -146,13 +149,13 @@ class ConvocationService(
         return PresencesDto(matchId = matchId.toString(), camps = campsDto)
     }
 
-    private fun membresActifsDesDeuxCamps(deuxZeroId: UUID): List<UUID> =
-        campRepository.findAllByDeuxZeroId(deuxZeroId)
+    private fun membresActifsDesDeuxCamps(deuxZeroId: UUID): List<UserEntity> =
+        campRepository.findAllByDeuxZero_Id(deuxZeroId)
             .mapNotNull { it.id }
-            .flatMap { effectifEngageRepository.findAllByCampId(it) }
+            .flatMap { effectifEngageRepository.findAllByCamp_Id(it) }
             .filter { it.dateSortie == null }
-            .map { it.utilisateurId }
-            .distinct()
+            .map { it.utilisateur }
+            .distinctBy { it.id }
 
     private fun findMatchDeuxZero(matchId: UUID): MatchEntity {
         val match = matchRepository.findById(matchId).orElseThrow { ResourceNotFoundException("Match introuvable") }
@@ -162,15 +165,15 @@ class ConvocationService(
         return match
     }
 
-    private fun ConvocationEntity.toDto(): ConvocationDto {
-        val pseudo = userRepository.findById(utilisateurId).map { it.pseudo }.orElse("")
-        return ConvocationDto(
-            id = id.toString(),
-            matchId = matchId.toString(),
-            utilisateurId = utilisateurId.toString(),
-            pseudo = pseudo,
-            reponse = reponse,
-            dateReponse = dateReponse?.toString(),
-        )
-    }
+    /** Accès à [ConvocationEntity.utilisateur]/[ConvocationEntity.match] (relations LAZY) : tous
+     * les appelants (genererConvocations, listConvocations, repondreConvocation,
+     * relancerConvocations) sont @Transactional. */
+    private fun ConvocationEntity.toDto(): ConvocationDto = ConvocationDto(
+        id = id.toString(),
+        matchId = match.id.toString(),
+        utilisateurId = utilisateur.id.toString(),
+        pseudo = utilisateur.pseudo,
+        reponse = reponse,
+        dateReponse = dateReponse?.toString(),
+    )
 }

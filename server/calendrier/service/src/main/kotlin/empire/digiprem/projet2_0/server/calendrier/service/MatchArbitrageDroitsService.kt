@@ -3,6 +3,7 @@ package empire.digiprem.projet2_0.server.calendrier.service
 import empire.digiprem.projet2_0.server.common.exception.ForbiddenActionException
 import empire.digiprem.projet2_0.server.common.exception.ResourceNotFoundException
 import empire.digiprem.projet2_0.server.deuxzero.infra.repository.DeuxZeroRepository
+import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import java.util.UUID
 
@@ -15,9 +16,11 @@ class MatchArbitrageDroitsService(
     private val deuxZeroRepository: DeuxZeroRepository,
 ) {
 
+    /** @Transactional : accès à la relation LAZY DeuxZeroEntity.organisateur. */
+    @Transactional
     fun requireOrganisateur(deuxZeroId: UUID, requesterId: UUID) {
         val deuxZero = deuxZeroRepository.findById(deuxZeroId).orElseThrow { ResourceNotFoundException("2-0 introuvable") }
-        if (deuxZero.organisateurId != requesterId) {
+        if (deuxZero.organisateur.id != requesterId) {
             throw ForbiddenActionException("Seul l'organisateur du 2-0 peut arbitrer un litige")
         }
     }

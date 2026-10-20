@@ -6,6 +6,7 @@ import empire.digiprem.projet2_0.contracts.validation.validateSignalerRequest
 import empire.digiprem.projet2_0.server.common.util.orThrow
 import empire.digiprem.projet2_0.server.social.infra.entity.SignalementEntity
 import empire.digiprem.projet2_0.server.social.infra.repository.SignalementRepository
+import empire.digiprem.projet2_0.server.user.infra.repository.UserRepository
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import java.util.UUID
@@ -18,6 +19,7 @@ private const val STATUT_EN_ATTENTE = "EN_ATTENTE"
 @Service
 class SocialService(
     private val signalementRepository: SignalementRepository,
+    private val userRepository: UserRepository,
 ) {
 
     @Transactional
@@ -25,7 +27,7 @@ class SocialService(
         validateSignalerRequest(request).orThrow()
         val signalement = signalementRepository.save(
             SignalementEntity(
-                auteurId = requesterId,
+                auteur = userRepository.getReferenceById(requesterId),
                 motif = request.motif.trim(),
                 statut = STATUT_EN_ATTENTE,
                 contenuType = request.contenuType,

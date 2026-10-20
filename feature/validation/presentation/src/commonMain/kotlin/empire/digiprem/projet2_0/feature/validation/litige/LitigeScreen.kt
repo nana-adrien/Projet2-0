@@ -41,6 +41,7 @@ import empire.digiprem.projet2_0.core.presentation.util.ObservableEvent
 import empire.digiprem.projet2_0.feature.matchendirect.model.Evenement
 import empire.digiprem.projet2_0.feature.matchendirect.model.TypeEvenement
 import empire.digiprem.projet2_0.feature.validation.model.DecisionLitige
+import empire.digiprem.projet2_0.feature.validation.model.DecisionValidation
 import kotlinx.coroutines.delay
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -70,6 +71,8 @@ fun LitigeScreen(
     onAction: (LitigeAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    var showJournal by remember { mutableStateOf(false) }
+
     Box(modifier = modifier.fillMaxSize()) {
         Scaffold { padding ->
             when {
@@ -114,8 +117,18 @@ fun LitigeScreen(
                     state.reponseDeRefus?.let { reponse ->
                         item {
                             VersionCard(titre = "Réponse de ${reponse.signatairePseudo}", corps = "Refusée : « ${reponse.commentaire.orEmpty()} »")
-                            Spacer(Modifier.height(PDZSpacing.space6))
+                            Spacer(Modifier.height(PDZSpacing.space3))
                         }
+                    }
+
+                    item {
+                        PDZButton(
+                            text = "Voir le journal complet des saisies",
+                            type = PDZButtonType.Text,
+                            fullWidth = false,
+                            onClick = { showJournal = true },
+                        )
+                        Spacer(Modifier.height(PDZSpacing.space3))
                     }
 
                     item {
@@ -167,6 +180,34 @@ fun LitigeScreen(
                 TextButton(enabled = motif.isNotBlank(), onClick = { onAction(LitigeAction.OnConfirmerDecision(motif)) }) { Text("Confirmer") }
             },
             dismissButton = { TextButton(onClick = { onAction(LitigeAction.OnDismissMotifDialog) }) { Text("Annuler") } },
+        )
+    }
+
+    if (showJournal) {
+        AlertDialog(
+            onDismissRequest = { showJournal = false },
+            title = { Text("Journal complet des saisies") },
+            text = {
+                val journal = state.resultat?.validations.orEmpty().sortedBy { it.horodatage }
+                if (journal.isEmpty()) {
+                    Text("Aucune saisie enregistrée pour l'instant.")
+                } else {
+                    Column {
+                        journal.forEach { validation ->
+                            val action = when (validation.decision) {
+                                DecisionValidation.VALIDE -> "a validé"
+                                DecisionValidation.CONTESTE -> if (validation.correctionProposee != null) "a proposé une correction" else "a refusé"
+                            }
+                            Text(
+                                text = "${validation.horodatage} — ${validation.signatairePseudo} $action",
+                                style = MaterialTheme.typography.bodySmall,
+                            )
+                            Spacer(Modifier.height(4.dp))
+                        }
+                    }
+                }
+            },
+            confirmButton = { TextButton(onClick = { showJournal = false }) { Text("Fermer") } },
         )
     }
 }

@@ -90,6 +90,7 @@ fun GestionClubScreen(
 ) {
     var memberToRemove by remember { mutableStateOf<Membership?>(null) }
     var showLeaveConfirm by remember { mutableStateOf(false) }
+    var showRegenerateConfirm by remember { mutableStateOf(false) }
 
     Box(modifier = modifier.fillMaxSize()) {
         Scaffold { padding ->
@@ -118,7 +119,7 @@ fun GestionClubScreen(
                         CodeCard(
                             club = state.club,
                             isAdmin = state.isCurrentUserAdmin,
-                            onRegenerateClick = { onAction(GestionClubAction.OnRegenerateCodeClick) },
+                            onRegenerateClick = { showRegenerateConfirm = true },
                         )
                     }
 
@@ -235,6 +236,16 @@ fun GestionClubScreen(
             onConfirm = { onAction(GestionClubAction.OnLeaveClubClick) },
             onCancel = {},
             onDismiss = { showLeaveConfirm = false },
+        )
+    }
+
+    if (showRegenerateConfirm) {
+        PDZConfirmDialog(
+            title = "Régénérer le code ?",
+            message = "L'ancien code cessera de fonctionner immédiatement.",
+            onConfirm = { onAction(GestionClubAction.OnRegenerateCodeClick) },
+            onCancel = {},
+            onDismiss = { showRegenerateConfirm = false },
         )
     }
 }

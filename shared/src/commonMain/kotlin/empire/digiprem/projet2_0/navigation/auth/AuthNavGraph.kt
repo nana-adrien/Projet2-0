@@ -45,6 +45,7 @@ fun NavGraphBuilder.authNavGraph(
                     navController.navigate(AuthNavGraphRoute.NewPassword(contact, token))
                 },
                 onLoggedIn = onAuthSuccess,
+                onEditContact = { navController.popBackStack() },
             )
         }
 

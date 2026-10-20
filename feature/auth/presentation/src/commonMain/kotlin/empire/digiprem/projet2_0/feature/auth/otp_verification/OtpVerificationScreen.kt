@@ -1,7 +1,9 @@
 package empire.digiprem.projet2_0.feature.auth.otp_verification
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -33,6 +35,7 @@ fun OtpVerificationRoot(
     onVerifiedForSignup: (contact: String, verificationToken: String) -> Unit,
     onVerifiedForPasswordReset: (contact: String, verificationToken: String) -> Unit,
     onLoggedIn: () -> Unit,
+    onEditContact: () -> Unit = {},
     viewModel: OtpVerificationViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -50,7 +53,7 @@ fun OtpVerificationRoot(
         }
     }
 
-    OtpVerificationScreen(state = state, onAction = viewModel::onAction)
+    OtpVerificationScreen(state = state, onAction = viewModel::onAction, onEditContact = onEditContact)
 }
 
 @Composable
@@ -58,6 +61,7 @@ fun OtpVerificationScreen(
     state: OtpVerificationState,
     onAction: (OtpVerificationAction) -> Unit,
     modifier: Modifier = Modifier,
+    onEditContact: () -> Unit = {},
 ) {
     Scaffold(modifier = modifier) { padding ->
         Column(
@@ -68,11 +72,19 @@ fun OtpVerificationScreen(
             Spacer(Modifier.height(PDZSpacing.space8))
             Text(text = "Entre le code reçu", style = MaterialTheme.typography.headlineSmall)
             Spacer(Modifier.height(PDZSpacing.space2))
-            Text(
-                text = "Envoyé à ${state.contact}.",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = "Envoyé à ${state.contact}. ",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                Text(
+                    text = "Modifier",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.clickable(onClick = onEditContact),
+                )
+            }
             Spacer(Modifier.height(PDZSpacing.space6))
 
             PDZOtpTextField(

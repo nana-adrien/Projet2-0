@@ -37,6 +37,9 @@ import empire.digiprem.projet2_0.feature.deuxzero.model.Camp
 import empire.digiprem.projet2_0.feature.deuxzero.model.DeuxZeroVisibilite
 import org.koin.compose.viewmodel.koinViewModel
 
+/** Valeur de départ proposée quand le capitaine choisit "Libre" (modifiable via le Stepper). */
+private const val DUREE_MI_TEMPS_LIBRE = 40
+
 @Composable
 fun CreateDeuxZeroRoot(
     clubId: String,
@@ -163,6 +166,17 @@ private fun StepRegles(state: CreateDeuxZeroState, onAction: (CreateDeuxZeroActi
                 onClick = { onAction(CreateDeuxZeroAction.OnDureeMiTempsChange(minutes)) },
                 label = { Text("$minutes min") },
             )
+        }
+        FilterChip(
+            selected = state.dureeMiTempsMinutes !in listOf(45, 60),
+            onClick = { onAction(CreateDeuxZeroAction.OnDureeMiTempsChange(DUREE_MI_TEMPS_LIBRE)) },
+            label = { Text("Libre") },
+        )
+    }
+    if (state.dureeMiTempsMinutes !in listOf(45, 60)) {
+        Spacer(Modifier.height(PDZSpacing.space2))
+        Stepper(label = "Minutes par mi-temps", value = state.dureeMiTempsMinutes, range = 5..120) {
+            onAction(CreateDeuxZeroAction.OnDureeMiTempsChange(it))
         }
     }
     Spacer(Modifier.height(PDZSpacing.space4))

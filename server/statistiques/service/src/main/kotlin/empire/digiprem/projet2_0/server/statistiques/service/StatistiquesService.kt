@@ -17,6 +17,7 @@ import empire.digiprem.projet2_0.server.deuxzero.infra.repository.CampRepository
 import empire.digiprem.projet2_0.server.deuxzero.infra.repository.SaisonRepository
 import empire.digiprem.projet2_0.server.statistiques.infra.repository.VoteRepository
 import empire.digiprem.projet2_0.server.user.infra.repository.UserRepository
+import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 import java.util.UUID
@@ -29,6 +30,10 @@ import java.util.UUID
  * volontairement exclu de ce jalon (limitation documentée, pas une dépendance sur un module en
  * cours d'intégration parallèle). "Meilleur gardien" n'est pas implémenté : aucune donnée
  * d'arrêt/clean-sheet n'existe dans le modèle Evenement actuel.
+ *
+ * Toutes les méthodes publiques (et les helpers internes partagés avec [BilanService]) sont
+ * désormais @Transactional : elles naviguent les relations LAZY MatchEntity.saison, CampEntity.
+ * deuxZero/club, etc.
  */
 @Service
 class StatistiquesService(
@@ -42,9 +47,10 @@ class StatistiquesService(
     private val voteRepository: VoteRepository,
 ) {
 
+    @Transactional
     fun getTableauSaison(saisonId: UUID): TableauSaisonDto {
         val saison = saisonRepository.findById(saisonId).orElseThrow { ResourceNotFoundException("Saison introuvable") }
-        val (campAId, campBId) = deuxCampsDe(saison.deuxZeroId)
+        val (campAId, campBId) = deuxCampsDe(saison.deuxZero.id!!)
         val matchs = matchsOfficielsDeuxZero(saisonId).sortedWith(compareBy({ it.date }, { it.heure }))
 
         var victoiresCampA = 0
@@ -89,11 +95,12 @@ class StatistiquesService(
         )
     }
 
+    @Transactional
     fun getClassements(saisonId: UUID): ClassementsDto {
         saisonRepository.findById(saisonId).orElseThrow { ResourceNotFoundException("Saison introuvable") }
         val matchs = matchsOfficielsDeuxZero(saisonId)
-        val evenements = matchs.flatMap { evenementRepository.findAllByMatchIdOrderByPeriodeAscMinuteAsc(it.id!!) }
-        val compositions = matchs.flatMap { compositionRepository.findAllByMatchId(it.id!!) }
+        val evenements = matchs.flatMap { evenementRepository.findAllByMatch_IdOrderByPeriodeAscMinuteAsc(it.id!!) }
+        val compositions = matchs.flatMap { compositionRepository.findAllByMatch_Id(it.id!!) }
 
         val buts = StatistiquesAggregator.butsParJoueur(evenements)
         val passes = StatistiquesAggregator.passesParJoueur(evenements)
@@ -101,7 +108,7 @@ class StatistiquesService(
         val butsPasseurs = StatistiquesAggregator.combine(buts, passes)
 
         val hommesDuMatch = matchs
-            .flatMap { calculerGagnantsVote(voteRepository.findAllByMatchId(it.id!!)) }
+            .flatMap { calculerGagnantsVote(voteRepository.findAllByMatch_Id(it.id!!)) }
             .groupingBy { it }
             .eachCount()
 
@@ -118,12 +125,13 @@ class StatistiquesService(
         )
     }
 
+    @Transactional
     fun getStatistiquesClub(clubId: UUID, dateDebut: String?, dateFin: String?): StatistiquesClubDto {
         clubRepository.findById(clubId).orElseThrow { ResourceNotFoundException("Club introuvable") }
         val debut = dateDebut?.let(LocalDate::parse)
         val fin = dateFin?.let(LocalDate::parse)
 
-        val campsDuClub = campRepository.findAll().filter { it.clubId == clubId }
+        val campsDuClub = campRepository.findAll().filter { it.club?.id == clubId }
 
         var nombreMatchs = 0
         var victoires = 0
@@ -133,9 +141,9 @@ class StatistiquesService(
         var butsEncaisses = 0
 
         campsDuClub.forEach { camp ->
-            val (campAId, campBId) = deuxCampsDe(camp.deuxZeroId)
+            val (campAId, campBId) = deuxCampsDe(camp.deuxZero.id!!)
             val estCampA = camp.id == campAId
-            matchsOfficielsDuDeuxZero(camp.deuxZeroId, debut, fin).forEach { match ->
+            matchsOfficielsDuDeuxZero(camp.deuxZero.id!!, debut, fin).forEach { match ->
                 val scoreFor = if (estCampA) match.scoreCampA ?: 0 else match.scoreCampB ?: 0
                 val scoreAgainst = if (estCampA) match.scoreCampB ?: 0 else match.scoreCampA ?: 0
                 nombreMatchs++
@@ -160,24 +168,25 @@ class StatistiquesService(
         )
     }
 
+    @Transactional
     fun getConfrontations(clubAId: UUID, clubBId: UUID, dateDebut: String?, dateFin: String?): ConfrontationsDto {
         clubRepository.findById(clubAId).orElseThrow { ResourceNotFoundException("Club A introuvable") }
         clubRepository.findById(clubBId).orElseThrow { ResourceNotFoundException("Club B introuvable") }
         val debut = dateDebut?.let(LocalDate::parse)
         val fin = dateFin?.let(LocalDate::parse)
 
-        val campsParDeuxZero = campRepository.findAll().groupBy { it.deuxZeroId }
+        val campsParDeuxZero = campRepository.findAll().groupBy { it.deuxZero.id }
         val confrontations = campsParDeuxZero.filter { (_, camps) ->
-            camps.size == 2 && setOf(camps[0].clubId, camps[1].clubId) == setOf(clubAId, clubBId)
+            camps.size == 2 && setOf(camps[0].club?.id, camps[1].club?.id) == setOf(clubAId, clubBId)
         }
 
         val matchsDto = confrontations
             .flatMap { (deuxZeroId, camps) ->
                 // "campA" au sens de MatchEntity.scoreCampA correspond à camps[0] (même convention
                 // que deuxCampsDe/EvenementService.deuxCampsDe).
-                val clubIdDuCampA = camps[0].clubId
-                val clubIdDuCampB = camps[1].clubId
-                matchsOfficielsDuDeuxZero(deuxZeroId, debut, fin).map { match ->
+                val clubIdDuCampA = camps[0].club?.id
+                val clubIdDuCampB = camps[1].club?.id
+                matchsOfficielsDuDeuxZero(deuxZeroId!!, debut, fin).map { match ->
                     val scoreA = match.scoreCampA ?: 0
                     val scoreB = match.scoreCampB ?: 0
                     val vainqueurClubId = when {
@@ -201,19 +210,22 @@ class StatistiquesService(
 
     // --- Helpers internes partagés avec BilanService ---
 
+    @Transactional
     internal fun matchsOfficielsDeuxZero(saisonId: UUID): List<MatchEntity> =
-        matchRepository.findAllBySaisonIdAndStatut(saisonId, STATUT_OFFICIEL).filter { it.type == TYPE_MATCH_DEUX_ZERO }
+        matchRepository.findAllBySaison_IdAndStatut(saisonId, STATUT_OFFICIEL).filter { it.type == TYPE_MATCH_DEUX_ZERO }
 
-    private fun matchsOfficielsDuDeuxZero(deuxZeroId: UUID, debut: LocalDate?, fin: LocalDate?): List<MatchEntity> =
-        saisonRepository.findAllByDeuxZeroId(deuxZeroId)
+    @Transactional
+    internal fun matchsOfficielsDuDeuxZero(deuxZeroId: UUID, debut: LocalDate?, fin: LocalDate?): List<MatchEntity> =
+        saisonRepository.findAllByDeuxZero_Id(deuxZeroId)
             .flatMap { matchsOfficielsDeuxZero(it.id!!) }
             .filter { (debut == null || !it.date.isBefore(debut)) && (fin == null || !it.date.isAfter(fin)) }
 
     /** RG-04 : toujours exactement 2 camps par 2-0 ; l'ordre (A/B) suit l'ordre de retour du
      * repository (même convention que EvenementService.deuxCampsDe, dupliquée ici car le module
      * calendrier ne peut pas être modifié pour exposer cette logique). */
+    @Transactional
     internal fun deuxCampsDe(deuxZeroId: UUID): Pair<UUID, UUID> {
-        val camps = campRepository.findAllByDeuxZeroId(deuxZeroId)
+        val camps = campRepository.findAllByDeuxZero_Id(deuxZeroId)
         if (camps.size != 2) throw ResourceNotFoundException("Ce 2-0 n'a pas exactement 2 camps")
         return camps[0].id!! to camps[1].id!!
     }

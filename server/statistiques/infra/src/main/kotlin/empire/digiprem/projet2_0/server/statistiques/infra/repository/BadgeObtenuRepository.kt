@@ -6,9 +6,9 @@ import java.util.UUID
 
 /** CU25 — accès aux badges obtenus (profil/progression, bilan de saison). */
 interface BadgeObtenuRepository : JpaRepository<BadgeObtenuEntity, UUID> {
-    fun findAllByUtilisateurId(utilisateurId: UUID): List<BadgeObtenuEntity>
+    fun findAllByUtilisateur_Id(utilisateurId: UUID): List<BadgeObtenuEntity>
 
-    fun existsByUtilisateurIdAndType(utilisateurId: UUID, type: String): Boolean
+    fun existsByUtilisateur_IdAndType(utilisateurId: UUID, type: String): Boolean
 
-    fun countByUtilisateurIdAndType(utilisateurId: UUID, type: String): Long
+    fun countByUtilisateur_IdAndType(utilisateurId: UUID, type: String): Long
 }

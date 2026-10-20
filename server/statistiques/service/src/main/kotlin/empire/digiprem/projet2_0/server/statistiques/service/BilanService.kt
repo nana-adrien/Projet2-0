@@ -9,6 +9,7 @@ import empire.digiprem.projet2_0.server.calendrier.infra.repository.EvenementRep
 import empire.digiprem.projet2_0.server.common.exception.ForbiddenActionException
 import empire.digiprem.projet2_0.server.common.exception.ResourceNotFoundException
 import empire.digiprem.projet2_0.server.deuxzero.infra.entity.SaisonEntity
+import empire.digiprem.projet2_0.server.deuxzero.infra.repository.CampRepository
 import empire.digiprem.projet2_0.server.deuxzero.infra.repository.SaisonRepository
 import empire.digiprem.projet2_0.server.deuxzero.service.SaisonService
 import empire.digiprem.projet2_0.server.user.infra.repository.UserRepository
@@ -30,6 +31,7 @@ import java.util.UUID
 class BilanService(
     private val saisonRepository: SaisonRepository,
     private val saisonService: SaisonService,
+    private val campRepository: CampRepository,
     private val evenementRepository: EvenementRepository,
     private val compositionRepository: CompositionRepository,
     private val userRepository: UserRepository,
@@ -44,12 +46,12 @@ class BilanService(
         val saison = findSaison(saisonId)
         val bilan = calculerBilan(saison)
 
-        if (bilan.campChampionId != saison.campChampionId?.toString()) {
+        if (bilan.campChampionId != saison.campChampion?.id?.toString()) {
             saisonRepository.save(
                 SaisonEntity(
-                    id = saison.id, deuxZeroId = saison.deuxZeroId, libelle = saison.libelle,
+                    id = saison.id, deuxZero = saison.deuxZero, libelle = saison.libelle,
                     dateDebut = saison.dateDebut, dateFin = saison.dateFin, statut = saison.statut,
-                    campChampionId = bilan.campChampionId?.let(UUID::fromString),
+                    campChampion = bilan.campChampionId?.let { campRepository.getReferenceById(UUID.fromString(it)) },
                 ),
             )
         }
@@ -58,6 +60,7 @@ class BilanService(
 
     /** Lecture idempotente : recalcule le bilan à partir des données (immuables une fois la
      * saison clôturée et les matchs OFFICIEL) — ne modifie rien en base. */
+    @Transactional
     fun bilan(saisonId: UUID): BilanDto {
         val saison = findSaison(saisonId)
         if (saison.statut != STATUT_CLOTUREE) {
@@ -66,15 +69,16 @@ class BilanService(
         return calculerBilan(saison)
     }
 
+    @Transactional
     fun palmares(deuxZeroId: UUID): List<PalmaresEntryDto> =
-        saisonRepository.findAllByDeuxZeroId(deuxZeroId)
+        saisonRepository.findAllByDeuxZero_Id(deuxZeroId)
             .filter { it.statut == STATUT_CLOTUREE }
             .sortedByDescending { it.dateDebut }
-            .map { PalmaresEntryDto(saisonId = it.id.toString(), libelle = it.libelle, campChampionId = it.campChampionId?.toString()) }
+            .map { PalmaresEntryDto(saisonId = it.id.toString(), libelle = it.libelle, campChampionId = it.campChampion?.id?.toString()) }
 
     private fun calculerBilan(saison: SaisonEntity): BilanDto {
         val saisonId = saison.id!!
-        val (campAId, campBId) = statistiquesService.deuxCampsDe(saison.deuxZeroId)
+        val (campAId, campBId) = statistiquesService.deuxCampsDe(saison.deuxZero.id!!)
         val matchs = statistiquesService.matchsOfficielsDeuxZero(saisonId).sortedWith(compareBy({ it.date }, { it.heure }))
 
         var victoiresA = 0
@@ -94,8 +98,8 @@ class BilanService(
 
         val (campChampionId, egaliteTotale) = determinerChampion(matchs, campAId, campBId, victoiresA, victoiresB, butsA, butsB)
 
-        val evenements = matchs.flatMap { evenementRepository.findAllByMatchIdOrderByPeriodeAscMinuteAsc(it.id!!) }
-        val compositions = matchs.flatMap { compositionRepository.findAllByMatchId(it.id!!) }
+        val evenements = matchs.flatMap { evenementRepository.findAllByMatch_IdOrderByPeriodeAscMinuteAsc(it.id!!) }
+        val compositions = matchs.flatMap { compositionRepository.findAllByMatch_Id(it.id!!) }
         val meilleurButeur = StatistiquesAggregator.butsParJoueur(evenements).meilleurOuNull()
         val meilleurPasseur = StatistiquesAggregator.passesParJoueur(evenements).meilleurOuNull()
         val plusAssidu = StatistiquesAggregator.presencesParJoueur(compositions).meilleurOuNull()

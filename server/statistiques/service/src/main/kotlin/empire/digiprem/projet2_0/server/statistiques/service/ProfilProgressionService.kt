@@ -12,6 +12,7 @@ import empire.digiprem.projet2_0.server.common.exception.ResourceNotFoundExcepti
 import empire.digiprem.projet2_0.server.deuxzero.infra.repository.CampRepository
 import empire.digiprem.projet2_0.server.deuxzero.infra.repository.SaisonRepository
 import empire.digiprem.projet2_0.server.user.infra.repository.UserRepository
+import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import java.util.UUID
 
@@ -33,6 +34,7 @@ class ProfilProgressionService(
     private val campRepository: CampRepository,
 ) {
 
+    @Transactional
     fun getProfilPublic(userId: UUID, viewerId: UUID, deuxZeroId: UUID?, clubId: UUID?): ProfilPublicDto {
         val user = userRepository.findById(userId).orElseThrow { ResourceNotFoundException("Utilisateur introuvable") }
         val matchs = matchsConcernes(userId, deuxZeroId, clubId)
@@ -50,6 +52,7 @@ class ProfilProgressionService(
         )
     }
 
+    @Transactional
     fun getProgression(userId: UUID, deuxZeroId: UUID?, granularite: String): ProgressionMensuelleDto {
         userRepository.findById(userId).orElseThrow { ResourceNotFoundException("Utilisateur introuvable") }
         val matchs = matchsConcernes(userId, deuxZeroId, clubId = null)
@@ -69,8 +72,8 @@ class ProfilProgressionService(
 
     private fun progressionParSaison(userId: UUID, matchs: List<MatchEntity>): List<PointProgressionDto> =
         matchs
-            .filter { it.saisonId != null }
-            .groupBy { it.saisonId!! }
+            .filter { it.saison != null }
+            .groupBy { it.saison!!.id!! }
             .entries
             .mapNotNull { (saisonId, matchsDeLaSaison) ->
                 val saison = saisonRepository.findById(saisonId).orElse(null) ?: return@mapNotNull null
@@ -80,16 +83,16 @@ class ProfilProgressionService(
             .map { it.second }
 
     private fun pointPour(periode: String, userId: UUID, matchs: List<MatchEntity>): PointProgressionDto {
-        val evenements = matchs.flatMap { evenementRepository.findAllByMatchIdOrderByPeriodeAscMinuteAsc(it.id!!) }
-        val compositions = matchs.flatMap { compositionRepository.findAllByMatchId(it.id!!) }
+        val evenements = matchs.flatMap { evenementRepository.findAllByMatch_IdOrderByPeriodeAscMinuteAsc(it.id!!) }
+        val compositions = matchs.flatMap { compositionRepository.findAllByMatch_Id(it.id!!) }
         val buts = StatistiquesAggregator.butsParJoueur(evenements)[userId] ?: 0
         val presences = StatistiquesAggregator.presencesParJoueur(compositions)[userId] ?: 0
         return PointProgressionDto(periode = periode, buts = buts, presences = presences)
     }
 
     private fun statistiquesDe(userId: UUID, matchs: List<MatchEntity>): StatistiquesUtilisateurDto {
-        val evenements = matchs.flatMap { evenementRepository.findAllByMatchIdOrderByPeriodeAscMinuteAsc(it.id!!) }
-        val compositions = matchs.flatMap { compositionRepository.findAllByMatchId(it.id!!) }
+        val evenements = matchs.flatMap { evenementRepository.findAllByMatch_IdOrderByPeriodeAscMinuteAsc(it.id!!) }
+        val compositions = matchs.flatMap { compositionRepository.findAllByMatch_Id(it.id!!) }
         val buts = StatistiquesAggregator.butsParJoueur(evenements)[userId] ?: 0
         val passes = StatistiquesAggregator.passesParJoueur(evenements)[userId] ?: 0
         val presences = StatistiquesAggregator.presencesParJoueur(compositions)[userId] ?: 0
@@ -110,13 +113,13 @@ class ProfilProgressionService(
     private fun matchsConcernes(userId: UUID, deuxZeroId: UUID?, clubId: UUID?): List<MatchEntity> {
         val deuxZeroIds: List<UUID> = when {
             deuxZeroId != null -> listOf(deuxZeroId)
-            clubId != null -> campRepository.findAll().filter { it.clubId == clubId }.map { it.deuxZeroId }.distinct()
+            clubId != null -> campRepository.findAll().filter { it.club?.id == clubId }.mapNotNull { it.deuxZero.id }.distinct()
             else -> null
         } ?: return matchRepository.findAll().filter { it.type == TYPE_MATCH_DEUX_ZERO && it.statut == STATUT_OFFICIEL }
 
         return deuxZeroIds
-            .flatMap { saisonRepository.findAllByDeuxZeroId(it) }
-            .flatMap { matchRepository.findAllBySaisonIdAndStatut(it.id!!, STATUT_OFFICIEL) }
+            .flatMap { saisonRepository.findAllByDeuxZero_Id(it) }
+            .flatMap { matchRepository.findAllBySaison_IdAndStatut(it.id!!, STATUT_OFFICIEL) }
             .filter { it.type == TYPE_MATCH_DEUX_ZERO }
     }
 }

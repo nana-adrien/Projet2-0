@@ -7,6 +7,8 @@ import empire.digiprem.projet2_0.server.common.exception.ForbiddenActionExceptio
 import empire.digiprem.projet2_0.server.common.exception.ResourceNotFoundException
 import empire.digiprem.projet2_0.server.statistiques.infra.entity.BadgeObtenuEntity
 import empire.digiprem.projet2_0.server.statistiques.infra.repository.BadgeObtenuRepository
+import empire.digiprem.projet2_0.server.user.infra.repository.UserRepository
+import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import java.util.UUID
 
@@ -44,27 +46,29 @@ private const val SEUIL_PASSEUR_DE_GENIE = 2
  * (DOUBLE/TRIPLE/QUADRUPLE/PASSEUR_DE_GENIE), [matchId] est inclus explicitement dans le texte
  * de [BadgeObtenuEntity.contexte], et on vérifie l'absence d'un badge au contexte strictement
  * identique avant insertion. PREMIER_BUT est naturellement idempotent (un seul par utilisateur
- * à vie, via [BadgeObtenuRepository.existsByUtilisateurIdAndType]).
+ * à vie, via [BadgeObtenuRepository.existsByUtilisateur_IdAndType]).
  */
 @Service
 class BadgeAttributionService(
     private val matchRepository: MatchRepository,
     private val evenementRepository: EvenementRepository,
     private val badgeObtenuRepository: BadgeObtenuRepository,
+    private val userRepository: UserRepository,
 ) {
 
+    @Transactional
     fun calculerBadges(matchId: UUID): List<BadgeObtenuDto> {
         val match = matchRepository.findById(matchId).orElseThrow { ResourceNotFoundException("Match introuvable") }
         if (match.statut != STATUT_OFFICIEL_MATCH) {
             throw ForbiddenActionException("Les badges ne sont calculés que pour un match OFFICIEL")
         }
 
-        val evenements = evenementRepository.findAllByMatchIdOrderByPeriodeAscMinuteAsc(matchId).filter { !it.annule }
+        val evenements = evenementRepository.findAllByMatch_IdOrderByPeriodeAscMinuteAsc(matchId).filter { !it.annule }
         val nouveauxBadges = mutableListOf<BadgeObtenuEntity>()
 
         val butsParJoueur = StatistiquesAggregator.butsParJoueur(evenements)
         butsParJoueur.forEach { (joueurId, nombreDeButs) ->
-            if (!badgeObtenuRepository.existsByUtilisateurIdAndType(joueurId, BADGE_PREMIER_BUT)) {
+            if (!badgeObtenuRepository.existsByUtilisateur_IdAndType(joueurId, BADGE_PREMIER_BUT)) {
                 ajouterSiAbsent(nouveauxBadges, joueurId, BADGE_PREMIER_BUT, "Match du ${match.date} — 1er but de la carrière")
             }
             val typeMultiple = when {
@@ -92,8 +96,9 @@ class BadgeAttributionService(
         return badgeObtenuRepository.saveAll(nouveauxBadges).map { it.toDto() }
     }
 
+    @Transactional
     fun getBadgesUtilisateur(userId: UUID): List<BadgeObtenuDto> =
-        badgeObtenuRepository.findAllByUtilisateurId(userId).map { it.toDto() }
+        badgeObtenuRepository.findAllByUtilisateur_Id(userId).map { it.toDto() }
 
     private fun ajouterSiAbsent(
         accumulateur: MutableList<BadgeObtenuEntity>,
@@ -101,15 +106,17 @@ class BadgeAttributionService(
         type: String,
         contexte: String,
     ) {
-        val dejaObtenu = badgeObtenuRepository.findAllByUtilisateurId(utilisateurId).any { it.type == type && it.contexte == contexte }
+        val dejaObtenu = badgeObtenuRepository.findAllByUtilisateur_Id(utilisateurId).any { it.type == type && it.contexte == contexte }
         if (!dejaObtenu) {
-            accumulateur += BadgeObtenuEntity(utilisateurId = utilisateurId, type = type, contexte = contexte)
+            accumulateur += BadgeObtenuEntity(utilisateur = userRepository.getReferenceById(utilisateurId), type = type, contexte = contexte)
         }
     }
 
+    /** Accès à la relation LAZY BadgeObtenuEntity.utilisateur : appelants (calculerBadges,
+     * getBadgesUtilisateur) déjà @Transactional. */
     private fun BadgeObtenuEntity.toDto() = BadgeObtenuDto(
         id = id.toString(),
-        utilisateurId = utilisateurId.toString(),
+        utilisateurId = utilisateur.id.toString(),
         type = type,
         contexte = contexte,
         date = date.toString(),

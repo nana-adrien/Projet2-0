@@ -6,7 +6,7 @@ import java.util.UUID
 
 /** CU24 — accès aux votes "homme du match". */
 interface VoteRepository : JpaRepository<VoteEntity, UUID> {
-    fun findAllByMatchId(matchId: UUID): List<VoteEntity>
+    fun findAllByMatch_Id(matchId: UUID): List<VoteEntity>
 
-    fun findByMatchIdAndVotantId(matchId: UUID, votantId: UUID): VoteEntity?
+    fun findByMatch_IdAndVotant_Id(matchId: UUID, votantId: UUID): VoteEntity?
 }

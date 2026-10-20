@@ -16,14 +16,21 @@ internal const val TYPE_MATCH_DEUX_ZERO = "DEUX_ZERO"
  * [BilanService] (meilleur buteur/passeur/assidu du bilan de saison CU25), pour ne pas dupliquer
  * la même règle de calcul à deux endroits. Seuls BUT et PENALTY_MARQUE comptent comme buts
  * personnels (BUT_CONTRE_SON_CAMP en est explicitement exclu, cf. RG classements) ; seul le
- * type BUT porte une passe décisive ([EvenementEntity.joueurSecondaireId]) dans le modèle actuel. */
+ * type BUT porte une passe décisive ([EvenementEntity.joueurSecondaire]) dans le modèle actuel.
+ *
+ * Objet utilitaire pur (pas un @Service Spring) : les relations LAZY [EvenementEntity.joueur]/
+ * [EvenementEntity.joueurSecondaire]/[CompositionEntity.utilisateur] ne peuvent pas être protégées
+ * par une annotation @Transactional ici — chaque appelant (StatistiquesService, BilanService,
+ * ProfilProgressionService) doit garantir que les listes passées en paramètre ont été chargées
+ * dans une transaction encore active au moment de l'appel (vérifié : tous les appelants sont
+ * @Transactional). */
 internal object StatistiquesAggregator {
 
     fun butsParJoueur(evenements: List<EvenementEntity>): Map<UUID, Int> =
         evenements
             .asSequence()
             .filter { !it.annule && (it.type == TYPE_BUT || it.type == TYPE_PENALTY_MARQUE) }
-            .mapNotNull { it.joueurId }
+            .mapNotNull { it.joueur?.id }
             .groupingBy { it }
             .eachCount()
 
@@ -31,7 +38,7 @@ internal object StatistiquesAggregator {
         evenements
             .asSequence()
             .filter { !it.annule && it.type == TYPE_BUT }
-            .mapNotNull { it.joueurSecondaireId }
+            .mapNotNull { it.joueurSecondaire?.id }
             .groupingBy { it }
             .eachCount()
 
@@ -39,7 +46,7 @@ internal object StatistiquesAggregator {
         compositions
             .asSequence()
             .filter { it.present }
-            .groupingBy { it.utilisateurId }
+            .groupingBy { it.utilisateur.id!! }
             .eachCount()
 
     /** Fusionne [buts] et [passes] en un total combiné par joueur (classement "buteur+passeur"). */

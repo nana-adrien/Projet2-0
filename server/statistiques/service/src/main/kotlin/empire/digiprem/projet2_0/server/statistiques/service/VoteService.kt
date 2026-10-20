@@ -33,7 +33,7 @@ private const val FENETRE_VOTE_HEURES = 24L
  * **Fenêtre de vote — choix temporaire.** Il n'existe pas encore de timestamp explicite
  * "officialisation du match" (CU19/CU20, Jalon 4, en cours de récupération en parallèle, non
  * disponible ici). On utilise comme proxy le dernier événement non annulé du match
- * ([EvenementRepository.findFirstByMatchIdAndAnnuleFalseOrderByHorodatageDesc], typiquement un
+ * ([EvenementRepository.findFirstByMatch_IdAndAnnuleFalseOrderByHorodatageDesc], typiquement un
  * FIN_PERIODE) + 24h. **À revoir dès que CU19/20 ajoutera un vrai timestamp d'officialisation.**
  *
  * **Présence — interprétation.** [CompositionEntity.present] est positionné par le capitaine
@@ -63,7 +63,7 @@ class VoteService(
             throw ValidationException(listOf("candidatId: impossible de voter pour soi-même"))
         }
 
-        val compositionVotant = compositionRepository.findByMatchIdAndUtilisateurId(matchId, votantId)
+        val compositionVotant = compositionRepository.findByMatch_IdAndUtilisateur_Id(matchId, votantId)
         if (compositionVotant == null || !compositionVotant.present) {
             throw ForbiddenActionException("Seul un joueur présent sur la feuille de match peut voter")
         }
@@ -72,18 +72,27 @@ class VoteService(
             throw ForbiddenActionException("La fenêtre de vote (24h après la fin du match) est fermée")
         }
 
-        if (voteRepository.findByMatchIdAndVotantId(matchId, votantId) != null) {
+        if (voteRepository.findByMatch_IdAndVotant_Id(matchId, votantId) != null) {
             throw ConflictException("Ce joueur a déjà voté pour ce match")
         }
 
-        val saved = voteRepository.save(VoteEntity(matchId = matchId, votantId = votantId, candidatId = candidatId))
+        val saved = voteRepository.save(
+            VoteEntity(
+                match = match,
+                votant = userRepository.getReferenceById(votantId),
+                candidat = userRepository.getReferenceById(candidatId),
+            )
+        )
         return saved.toDto()
     }
 
+    /** @Transactional : [VoteEntity.candidat]/[VoteEntity.votant] (relations LAZY) navigués par
+     * [calculerGagnantsVote] et [toDto] (via la boucle de voix ci-dessous). */
+    @Transactional
     fun resultat(matchId: UUID): VoteResultatDto {
         findMatch(matchId)
-        val votes = voteRepository.findAllByMatchId(matchId)
-        val voixParCandidat = votes.groupingBy { it.candidatId }.eachCount()
+        val votes = voteRepository.findAllByMatch_Id(matchId)
+        val voixParCandidat = votes.groupingBy { it.candidat.id!! }.eachCount()
         val gagnants = calculerGagnantsVote(votes)
 
         return VoteResultatDto(
@@ -98,7 +107,7 @@ class VoteService(
 
     /** Fenêtre de 24h depuis le dernier événement non annulé du match (cf. KDoc de la classe). */
     private fun fenetreVoteOuverte(matchId: UUID): Boolean {
-        val dernierEvenement = evenementRepository.findFirstByMatchIdAndAnnuleFalseOrderByHorodatageDesc(matchId)
+        val dernierEvenement = evenementRepository.findFirstByMatch_IdAndAnnuleFalseOrderByHorodatageDesc(matchId)
             ?: return false
         return Instant.now().isBefore(dernierEvenement.horodatage.plus(FENETRE_VOTE_HEURES, ChronoUnit.HOURS))
     }
@@ -108,11 +117,12 @@ class VoteService(
 
     private fun pseudoDe(userId: UUID): String = userRepository.findById(userId).map { it.pseudo }.orElse("")
 
+    /** Accès aux relations LAZY VoteEntity.match/votant/candidat : appelant (voter) @Transactional. */
     private fun VoteEntity.toDto() = VoteDto(
         id = id.toString(),
-        matchId = matchId.toString(),
-        votantId = votantId.toString(),
-        candidatId = candidatId.toString(),
+        matchId = match.id.toString(),
+        votantId = votant.id.toString(),
+        candidatId = candidat.id.toString(),
         horodatage = horodatage.toString(),
     )
 }

@@ -4,6 +4,8 @@
 **/build/
 xcuserdata
 !src/**/build/
+!docs/*
+!uml/*
 local.properties
 .idea
 .DS_Store

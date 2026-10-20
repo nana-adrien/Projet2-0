@@ -11,3 +11,9 @@
 | Règles | RG-17 ; F-BIL-01 à F-BIL-06 |
 
 Diagramme de séquence : `../sequences/CU25-cloturer-la-saison-et-consulter-le-bilan.puml`.
+
+Note (Jalon 5) : parmi les récompenses individuelles de F-BIL-03, « meilleur gardien » n'est
+**pas** calculé par `BilanService` — même limitation que pour CU22/F-STA-02 (aucune donnée
+d'arrêt/clean-sheet fiable dans le modèle `Evenement` actuel), pas un oubli. F-BIL-04 (vote
+alternatif), F-BIL-05 (visuel partageable) et F-REC-04 (badges personnalisés) restent P3,
+non implémentés ce jalon.

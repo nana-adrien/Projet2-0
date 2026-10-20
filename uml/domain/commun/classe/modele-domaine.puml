@@ -192,12 +192,18 @@ end note
 
 class Vote {
   - id : UUID
+  - votantId : UUID
+  - candidatId : UUID
   - horodatage : Instant
 }
 note right of Vote
   RG-16 : seuls les joueurs présents sur la
   feuille de match votent ; pas de vote pour
   soi-même ; vote ouvert 24h après validation.
+  Jalon 5 (CU24) : [votantId]/[candidatId] ajoutés au modèle pour
+  combler la lacune documentée en tête de V1__schema_initial.sql
+  (aucune référence au votant ni au candidat) ; implémentés en base
+  par la migration V5__vote_jalon5.sql (VoteEntity).
 end note
 
 class BadgeObtenu {
@@ -206,6 +212,18 @@ class BadgeObtenu {
   - contexte : String
   - date : Instant
 }
+note right of BadgeObtenu
+  Jalon 5 (CU24/F-REC-02) : pas de référence à un match (choix
+  délibéré, cf. absence d'association Match -- BadgeObtenu) ;
+  [contexte] (texte libre) porte le détail du match le cas échéant.
+  Badges réellement calculés par BadgeAttributionService : PREMIER_BUT,
+  DOUBLE, TRIPLE, QUADRUPLE, PASSEUR_DE_GENIE (seuil >= 2 passes
+  décisives — interprétation, aucune règle quantitative confirmée côté
+  produit). FIDELE, MUR, INVAINCU, HOMME_FORT, TOUJOURS_LA, PERSONNALISE
+  (F-REC-04, P3) : non implémentés, aucune règle quantitative définie
+  et MUR/INVAINCU nécessiteraient des données de clean-sheet absentes
+  du modèle Evenement actuel.
+end note
 
 class Notification {
   - id : UUID

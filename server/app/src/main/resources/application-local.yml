@@ -4,8 +4,6 @@
 # tournait déjà sur les ports par défaut sur cette machine (voir supabase/config.toml).
 
 spring:
-
-
   datasource:
     url: jdbc:postgresql://127.0.0.1:54332/postgres
     username: postgres

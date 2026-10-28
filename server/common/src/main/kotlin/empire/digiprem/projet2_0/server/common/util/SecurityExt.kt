@@ -2,6 +2,7 @@ package empire.digiprem.projet2_0.server.common.util
 
 import empire.digiprem.projet2_0.server.common.exception.InvalidTokenException
 import org.springframework.security.core.context.SecurityContextHolder
+import java.util.UUID
 
 /**
  * Returns the userId (as String) of the currently authenticated user from the SecurityContext.
@@ -11,4 +12,7 @@ fun currentUserId(): String {
     val principal = SecurityContextHolder.getContext().authentication?.principal
     return principal as? String
         ?: throw InvalidTokenException("No authenticated user found in security context")
+}
+fun String.toUUID(): UUID{
+  return  UUID.fromString(this)
 }

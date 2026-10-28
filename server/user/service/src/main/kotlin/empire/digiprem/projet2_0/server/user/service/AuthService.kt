@@ -25,6 +25,7 @@ import empire.digiprem.projet2_0.server.common.util.orThrow
 import empire.digiprem.projet2_0.server.user.infra.entity.RefreshTokenEntity
 import empire.digiprem.projet2_0.server.user.infra.entity.UserEntity
 import empire.digiprem.projet2_0.server.user.infra.repository.RefreshTokenRepository
+import empire.digiprem.projet2_0.server.user.infra.repository.UserDeviceConfigRepository
 import empire.digiprem.projet2_0.server.user.infra.repository.UserRepository
 import jakarta.transaction.Transactional
 import org.springframework.context.ApplicationEventPublisher
@@ -42,6 +43,7 @@ class AuthService(
     private val passwordEncoder: PasswordEncoder,
     private val jwtService: JwtService,
     private val otpService: OtpService,
+    private val userFcmTokenRepository: UserDeviceConfigRepository,
     private val eventPublisher: ApplicationEventPublisher,
 ) {
 
@@ -157,10 +159,13 @@ class AuthService(
     }
 
     @Transactional
-    fun logout(refreshToken: String) {
+    fun logout(refreshToken: String,fcmToken: String?=null) {
         runCatching {
             val userId = UUID.fromString(jwtService.getUserIdFromToken(refreshToken))
             refreshTokenRepository.deleteByUser_IdAndHashedToken(userId, hashToken(refreshToken))
+            if (fcmToken!=null){
+                userFcmTokenRepository.deleteByUserIdAndToken(userId = userId, token = fcmToken)
+            }
         }
     }
 

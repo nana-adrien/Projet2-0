@@ -1,5 +1,6 @@
 package empire.digiprem.projet2_0.server.common.event
 
+import java.time.Instant
 import java.util.UUID
 
 /**
@@ -10,4 +11,22 @@ import java.util.UUID
 data class UserRegisteredEvent(
     val userId: UUID,
     val clubCode: String?,
+)
+
+data class SendOTPEvent(
+    val contact: String,
+    val otp: String,
+    val reason: SendOTPReason,
+    val isEmail: Boolean,
+    val expiresAt: Instant,
+){
+    enum class SendOTPReason{
+        SIGNUP, LOGIN, PASSWORD_RESET
+    }
+}
+data class SendNotificationEvent(
+   val userId: UUID,
+   val title: String,
+   val body: String,
+   val data: Map<String, String> = emptyMap()
 )

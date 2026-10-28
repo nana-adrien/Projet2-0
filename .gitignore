@@ -25,4 +25,5 @@ template.config.properties
 .gradle/
 .idea/
 google-services.json
+firebase-service-account.json
 GoogleService-Info.plist

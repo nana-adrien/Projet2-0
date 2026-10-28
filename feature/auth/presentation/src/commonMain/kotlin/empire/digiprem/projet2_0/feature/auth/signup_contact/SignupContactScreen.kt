@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -47,7 +48,32 @@ fun SignupContactScreen(
     onAction: (SignupContactAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Scaffold(modifier = modifier) { padding ->
+    Scaffold(
+        modifier = modifier,
+
+        bottomBar = {
+
+            BottomAppBar {
+                Column {
+                    PDZButton(
+                        text = "Recevoir le code",
+                        onClick = { onAction(SignupContactAction.OnSubmit) },
+                        isLoading = state.isLoading,
+                        enabled = state.isFormValid,
+                    )
+
+                    Spacer(Modifier.height(PDZSpacing.space4))
+                    Text(
+                        text = "En continuant, tu acceptes les conditions d'utilisation et la politique de confidentialité.",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+
+            }
+        }
+
+        ) { padding ->
         Column(
             modifier = Modifier.fillMaxSize().padding(padding).padding(horizontal = PDZSpacing.space4),
             verticalArrangement = Arrangement.Top,
@@ -84,19 +110,7 @@ fun SignupContactScreen(
             )
 
             Spacer(Modifier.height(PDZSpacing.space6))
-            PDZButton(
-                text = "Recevoir le code",
-                onClick = { onAction(SignupContactAction.OnSubmit) },
-                isLoading = state.isLoading,
-                enabled = state.isFormValid,
-            )
 
-            Spacer(Modifier.height(PDZSpacing.space4))
-            Text(
-                text = "En continuant, tu acceptes les conditions d'utilisation et la politique de confidentialité.",
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
         }
     }
 }

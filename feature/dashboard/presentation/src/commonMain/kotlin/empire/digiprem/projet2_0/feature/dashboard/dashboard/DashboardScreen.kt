@@ -54,9 +54,9 @@ fun DashboardScreen(
     modifier: Modifier = Modifier,
 ) {
     val windowWidth = LocalWindowInfo.current.containerSize.width
-    val isCompact   = windowWidth < 600f
+    val isCompact   =  windowWidth < 600f
 
-    if (isCompact) {
+    if (!isCompact) {
         Scaffold(
             modifier  = modifier,
             bottomBar = {

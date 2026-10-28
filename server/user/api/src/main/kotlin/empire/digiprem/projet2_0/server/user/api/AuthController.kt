@@ -28,7 +28,7 @@ class AuthController(
         summary = "Demander un code de vérification",
         description = "Envoie un code à usage unique par SMS ou e-mail. `purpose` accepte SIGNUP, LOGIN ou PASSWORD_RESET (F-CPT-01, F-CPT-03)."
     )
-    @PostMapping("/otp")
+    @PostMapping("/send-verify-code")
     fun requestOtp(@RequestBody body: RequestOtpRequest): ApiResponse {
         authService.requestOtp(body)
         return ApiResponse.ok()
@@ -38,7 +38,7 @@ class AuthController(
         summary = "Vérifier un code OTP",
         description = "Contrôle le code reçu et renvoie un jeton de vérification à utiliser pour l'inscription, la connexion par OTP ou la réinitialisation du mot de passe."
     )
-    @PostMapping("/otp/verify")
+    @PostMapping("/verify-identity")
     fun verifyOtp(@RequestBody body: VerifyOtpRequest) = authService.verifyOtp(body).toApiResponse()
 
     @Operation(
@@ -76,13 +76,16 @@ class AuthController(
         summary = "Rafraîchir la session",
         description = "Échange un jeton de rafraîchissement valide contre un nouveau couple de jetons d'accès et de rafraîchissement."
     )
-    @PostMapping("/refresh")
+    @PostMapping("/refresh-token")
     fun refresh(@RequestBody body: RefreshTokenRequest) = authService.refresh(body.refreshToken).toApiResponse()
 
     @Operation(
         summary = "Se déconnecter",
         description = "Invalide le jeton de rafraîchissement fourni et met fin à la session sur l'appareil."
     )
+
+
+
     @PostMapping("/logout")
     fun logout(@RequestBody body: RefreshTokenRequest): ApiResponse {
         authService.logout(body.refreshToken)

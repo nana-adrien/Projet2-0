@@ -95,6 +95,9 @@ create table club (
     delegation_capitaines boolean not null default false
 );
 
+
+
+
 -- AdhesionClub
 create table adhesion_club (
     id uuid primary key default gen_random_uuid(),

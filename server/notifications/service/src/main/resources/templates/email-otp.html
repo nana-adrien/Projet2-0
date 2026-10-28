@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2-0 • Alerte Terrain</title>
+    <style>
+        /* Chargement des polices officielles Google Fonts du projet 2-0 */
+        @import url('https://googleapis.com');
+
+        body { font-family: 'Barlow', Arial, sans-serif; background-color: #F4F6F3; padding: 40px 15px; margin: 0; color: #18201D; -webkit-font-smoothing: antialiased; }
+        .stadium-container { max-width: 600px; margin: 0 auto; }
+
+        /* REPRODUCTION EXACTE DU COMPOSANT SIGNATURE : SeasonBoard */
+        .season-board {
+            background-color: #15664A; /* --gazon */
+            position: relative;
+            padding: 42px 4px;
+            border-radius: 16px; /* r-l */
+            color: #FFFFFF;
+            text-align: center;
+            box-shadow: 0 12px 32px rgba(24,32,29,0.16); /* e3 */
+            overflow: hidden;
+            border: 1.5px solid rgba(255,255,255,0.1);
+        }
+
+        /* Tracés réglementaires du terrain à 22% d'opacité (Spécification de la charte) */
+        .season-board::before {
+            content: ""; position: absolute; top: 30px; left: 30px; right: 30px; bottom: 30px;
+            border: 1.5px solid rgba(255,255,255,0.22); pointer-events: none;
+        }
+        .pitch-lines {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none;
+        }
+        .pitch-center-circle {
+            position: absolute; top: 50%; left: 50%; width: 96px; height: 96px;
+            margin-top: -48px; margin-left: -48px;
+            border: 1.5px solid rgba(255,255,255,0.22); border-radius: 50%;
+        }
+        .pitch-median {
+            position: absolute; top: 50%; left: 30px; right: 30px; height: 0;
+            border-top: 1.5px solid rgba(255,255,255,0.22);
+        }
+
+        /* Contenu au-dessus des lignes */
+        .board-content { position: relative; z-index: 2; }
+
+        .logo-txt { font-family: 'Barlow Condensed', sans-serif; font-size: 56px; font-weight: 700; color: #FFFFFF; line-height: 1; margin-bottom: 4px; }
+        .tag-live { display: inline-flex; align-items: center; gap: 6px; background-color: #E5322D; /* --live */ color: #FFFFFF; font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 32px; }
+        .tag-live-dot { width: 6px; height: 6px; background-color: #FFFFFF; border-radius: 50%; }
+
+        h2 { font-family: 'Barlow Condensed', sans-serif; font-size: 32px; font-weight: 700; margin: 0 0 12px 0; text-transform: uppercase; letter-spacing: -0.5px; color: #FFFFFF; }
+        p { font-size: 16px; line-height: 24px; color: rgba(255, 255, 255, 0.85); margin: 0 0 28px 0; padding: 0 8px; }
+
+        /* ÉCRAN MARQUEUR EN FOND SOMBRE (Gazon 900 + Chiffres Tabulaires Ligne) */
+        .digital-display {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 64px; /* ScoreBarlow scale */
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+            color: #FFC21A; /* --ligne */
+            background-color: #0B3A2A; /* --gazon-900 (Écran marqueur) */
+            padding: 14px;
+            border-radius: 12px;
+            letter-spacing: 8px;
+            display: inline-block;
+            min-width: 220px;
+            margin: 0 auto 28px auto;
+            border: 1.5px solid rgba(255, 255, 255, 0.08);
+            box-shadow: inset 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        /* ALERTE SÉMANTIQUE HORS CONNEXION / ATTENTE */
+        .toast-warning {
+            font-size: 13px; font-weight: 600; color: #6B4600; background-color: #FFF3D6; /* Spécification Alerte */
+            padding: 10px 16px; border-radius: 10px; display: inline-block; margin-top: 4px;
+        }
+
+        .footer { font-size: 13px; color: #5B6661; text-align: center; margin-top: 32px; line-height: 20px; padding: 0 16px; }
+        .footer strong { color: #18201D; }
+    </style>
+</head>
+<body>
+<div class="stadium-container">
+
+    <!-- COMPOSANT SEASONBOARD THYMELEAF SWITCH -->
+    <div class="season-board" th:switch="${reason.name()}">
+
+        <!-- Tracés CSS du City Stade -->
+        <div class="pitch-lines">
+            <div class="pitch-median"></div>
+            <div class="pitch-center-circle"></div>
+        </div>
+
+        <!-- Contenu de la notification -->
+        <div class="board-content">
+            <div class="logo-txt">2-0</div>
+            <div class="tag-live">
+                <span class="tag-live-dot"></span>En direct du stade
+            </div>
+
+            <!-- BLOC UNIQUE : SIGNUP -->
+            <div th:case="'SIGNUP'">
+                <h2>Création de ton profil</h2>
+                <p>Moussa compose l'équipe et attend ses joueurs sur le synthétique. Pour rejoindre le club et lancer ta saison, valide ton identité avec ce code :</p>
+            </div>
+
+            <!-- BLOC UNIQUE : LOGIN -->
+            <div th:case="'LOGIN'">
+                <h2>Connexion vestiaire</h2>
+                <p>Content de te revoir au bord du terrain. Tes stats de la saison et tes badges t'attendent. Entre ce code pour déverrouiller l'application :</p>
+            </div>
+
+            <!-- BLOC UNIQUE : PASSWORD_RESET -->
+            <div th:case="'PASSWORD_RESET'">
+                <h2>Arbitrage de sécurité</h2>
+                <p>Un oubli de mot de passe ? Pas de problème, rien ne se perd sur le city. Utilise ce code de secours pour définir tes nouveaux identifiants :</p>
+            </div>
+
+            <!-- PANNEAU D'AFFICHAGE DU SCORE (L'OTP) -->
+            <div>
+                <span class="digital-display" th:text="${otpCode}">341208</span>
+            </div>
+
+            <!-- TOAST SEMANTIQUE D'EXPIRATION -->
+            <div>
+                <span class="toast-warning">
+                    ⏱️ Chrono activé : ce code expire à la 10e minute (temps additionnel).
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- PIED DE PAGE : LES MOTS DU TERRAIN -->
+    <div class="footer">
+        Tu n'as rien demandé ? Pas d'embrouille, ignore cet e-mail. Un joueur a simplement dû faire une erreur de frappe en saisissant son numéro.<br><br>
+        <strong>2-0, le match du quartier, saison après saison.</strong>
+    </div>
+
+</div>
+</body>
+</html>

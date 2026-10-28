@@ -2,6 +2,7 @@ package empire.digiprem.projet2_0.feature.auth.register_profile
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,6 +22,7 @@ import empire.digiprem.projet2_0.core.design_system.components.textfields.PDZPas
 import empire.digiprem.projet2_0.core.design_system.components.textfields.PDZTextField
 import empire.digiprem.projet2_0.core.design_system.extension.asString
 import empire.digiprem.projet2_0.core.design_system.theme.PDZSpacing
+import empire.digiprem.projet2_0.core.domain.model.Poste
 import empire.digiprem.projet2_0.core.presentation.util.ObservableEvent
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -80,7 +82,18 @@ fun RegisterProfileScreen(
                 modifier = Modifier.fillMaxWidth(),
             )
             Spacer(Modifier.height(PDZSpacing.space4))
-
+            Text(text = "Poste préféré", style = MaterialTheme.typography.labelLarge, modifier = Modifier.fillMaxWidth())
+            Spacer(Modifier.height(PDZSpacing.space2))
+            Row(horizontalArrangement = Arrangement.spacedBy(PDZSpacing.space2), modifier = Modifier.fillMaxWidth()) {
+                Poste.entries.forEach { poste ->
+                   /* SegmentedChip(
+                        label    = poste.label,
+                        selected = state.postePrefere == poste,
+                        onClick  = { onAction(ProfileAction.OnPosteChange(poste)) },
+                        modifier = Modifier.weight(1f),
+                    )*/
+                }
+            }
             PDZTextField(
                 value = state.clubCode,
                 onValueChange = { onAction(RegisterProfileAction.OnClubCodeChange(it)) },

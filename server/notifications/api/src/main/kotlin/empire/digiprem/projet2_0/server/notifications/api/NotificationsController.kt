@@ -1,5 +1,6 @@
 package empire.digiprem.projet2_0.server.notifications.api
 
+import empire.digiprem.projet2_0.contracts.notifications.DeviceSyncRequest
 import empire.digiprem.projet2_0.contracts.notifications.NotificationDto
 import empire.digiprem.projet2_0.server.common.util.currentUserId
 import empire.digiprem.projet2_0.server.notifications.service.NotificationsService
@@ -10,6 +11,8 @@ import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
@@ -51,4 +54,5 @@ class NotificationsController(
     fun markAllRead() {
         notificationsService.markAllRead(currentUserId())
     }
+
 }

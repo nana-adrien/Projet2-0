@@ -12,4 +12,5 @@ internal fun Project.configureSpringTarget() {
         "implementation"(libs.findLibrary("kotlin-reflect").get())
         "testImplementation"(libs.findLibrary("spring-boot-starter-test").get())
     }
+
 }

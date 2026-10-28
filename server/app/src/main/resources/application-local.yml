@@ -22,8 +22,8 @@ spring:
     baseline-on-migrate: true
   mail:
     # Configuration pour envoyer les mails de Spring vers le Mailpit de Supabase local
-    host: localhost
-    port: 1025
+    host: 127.0.0.1
+    port: 54325
     # Propriétés de protocole standard
     properties:
       mail.smtp.auth: false
@@ -42,4 +42,6 @@ app:
     access-token-expiry-ms: 900000
     refresh-token-expiry-ms: 604800000
   frontend-url: http://localhost:8085/swagger-ui.html
+
+  api_key: sk.qfpqsfjqlsndflvlqldvlsdnlksnldnsldnvlksdnlwdopweldknls
 

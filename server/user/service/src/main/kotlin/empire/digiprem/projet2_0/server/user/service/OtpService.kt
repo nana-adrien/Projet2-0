@@ -1,11 +1,13 @@
 package empire.digiprem.projet2_0.server.user.service
 
+import empire.digiprem.projet2_0.server.common.event.SendOTPEvent
 import empire.digiprem.projet2_0.server.common.exception.InvalidOtpException
 import empire.digiprem.projet2_0.server.common.exception.OtpLockedException
 import empire.digiprem.projet2_0.server.user.infra.entity.OtpCodeEntity
 import empire.digiprem.projet2_0.server.user.infra.repository.OtpCodeRepository
 import jakarta.transaction.Transactional
 import org.slf4j.LoggerFactory
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.MimeMessageHelper
 import org.springframework.stereotype.Service
@@ -30,6 +32,7 @@ private const val MAX_ATTEMPTS = 5
 class OtpService(
     private val otpCodeRepository: OtpCodeRepository,
     private val mailSender: JavaMailSender?,
+    private val eventPublisher: ApplicationEventPublisher,
 ) {
     private val logger = LoggerFactory.getLogger(javaClass)
 
@@ -37,14 +40,27 @@ class OtpService(
     fun requestCode(contact: String, purpose: OtpPurpose) {
         otpCodeRepository.deleteByContactAndPurpose(contact, purpose.name)
         val code = Random.nextInt(0, 1_000_000).toString().padStart(CODE_LENGTH, '0')
+
+       val expirationTime=Instant.now().plus(CODE_EXPIRY)
         otpCodeRepository.save(
             OtpCodeEntity(
                 contact = contact,
                 purpose = purpose.name,
                 hashedCode = hash(code),
-                expiresAt = Instant.now().plus(CODE_EXPIRY),
+                expiresAt = expirationTime
             )
         )
+        eventPublisher.publishEvent(SendOTPEvent(
+           contact =  contact,
+            otp = code,
+            reason = when(purpose){
+                OtpPurpose.SIGNUP -> SendOTPEvent.SendOTPReason.SIGNUP
+                OtpPurpose.LOGIN -> SendOTPEvent.SendOTPReason.LOGIN
+                OtpPurpose.PASSWORD_RESET -> SendOTPEvent.SendOTPReason.PASSWORD_RESET
+            },
+            isEmail = contact.contains("@"),
+            expiresAt = expirationTime
+        ))
         send(contact, code)
     }
 

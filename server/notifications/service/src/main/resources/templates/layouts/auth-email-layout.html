@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org" lang="fr">
+<head th:fragment="html-head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">2-0</title>
+    <style>
+        @import url('https://googleapis.com');
+        body { font-family: 'Barlow', Arial, sans-serif; background-color: #F4F6F3; padding: 40px 15px; margin: 0; color: #18201D; -webkit-font-smoothing: antialiased; }
+        .stadium-container { max-width: 600px; margin: 0 auto; padding-bottom: 60px; /* Aère le bas de la page globalement */ }
+
+        /* Centralisation native de tout le contenu du stade */
+        .season-board {
+            background-color: #15664A;
+            position: relative;
+            padding: 54px 24px; /* Augmentation de l'espace interne haut/bas */
+            border-radius: 16px;
+            color: #FFFFFF;
+            text-align: center;
+            box-shadow: 0 12px 32px rgba(24,32,29,0.16);
+            overflow: hidden;
+            border: 1.5px solid rgba(255,255,255,0.1);
+        }
+
+        .season-board::before { content: ""; position: absolute; top: 30px; left: 30px; right: 30px; bottom: 30px; border: 1.5px solid rgba(255,255,255,0.22); pointer-events: none; }
+        .pitch-lines { position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; }
+        .pitch-center-circle { position: absolute; top: 50%; left: 50%; width: 96px; height: 96px; margin-top: -48px; margin-left: -48px; border: 1.5px solid rgba(255,255,255,0.22); border-radius: 50%; }
+        .pitch-median { position: absolute; top: 50%; left: 30px; right: 30px; height: 0; border-top: 1.5px solid rgba(255,255,255,0.22); }
+
+        /* Conteneur principal forçant le centrage vertical et horizontal */
+        .board-content {
+            position: relative;
+            z-index: 2;
+            display: block;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .logo-txt { font-family: 'Barlow Condensed', sans-serif; font-size: 56px; font-weight: 700; color: #FFFFFF; line-height: 1; margin: 0 auto 6px auto; text-align: center; }
+
+        /* Centrage du badge flex */
+        .tag-live {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            color: #FFFFFF;
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: 0 auto 36px auto;
+        }
+
+        .tag-live-dot { width: 6px; height: 6px; background-color: #FFFFFF; border-radius: 50%; }
+
+        /* Centrage strict des titres et paragraphes injectés */
+        h2 { font-family: 'Barlow Condensed', sans-serif; font-size: 32px; font-weight: 700; margin: 0 auto 14px auto; text-transform: uppercase; letter-spacing: -0.5px; color: #FFFFFF; text-align: center; }
+        p { font-size: 16px; line-height: 24px; color: rgba(255, 255, 255, 0.85); margin: 0 auto 32px auto; padding: 0 20px; text-align: center; max-width: 460px; }
+
+        .digital-display { font-family: 'Barlow Condensed', sans-serif; font-size: 64px; font-weight: 700; font-variant-numeric: tabular-nums; color: #FFC21A; background-color: #0B3A2A; padding: 14px; border-radius: 12px; letter-spacing: 8px; display: inline-block; min-width: 220px; margin: 0 auto 36px auto; border: 1.5px solid rgba(255, 255, 255, 0.08); box-shadow: inset 0 4px 12px rgba(0,0,0,0.3); text-align: center; }
+
+        /* Protection totale contre le débordement du cadre */
+        .toast-warning {
+            font-size: 13px;
+            font-weight: 600;
+            color: #6B4600;
+            background-color: #FFF3D6;
+            padding: 12px 18px;
+            border-radius: 10px;
+            display: inline-block;
+            margin: 4px auto 0 auto;
+            text-align: center;
+            max-width: 90%;
+            word-wrap: break-word;
+            box-sizing: border-box;
+        }
+
+        .footer { font-size: 13px; color: #5B6661; text-align: center; margin-top: 40px; line-height: 20px; padding: 0 16px; }
+
+        /* ANIMATION INTERACTIVE : BALLON QUI TOURNE */
+        @keyframes spin-ball {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .chrono-ball {
+            display: inline-block;
+            font-size: 14px;
+            margin-right: 6px;
+            vertical-align: middle;
+            line-height: 1;
+            animation: spin-ball 4s infinite linear;
+        }
+    </style>
+</head>
+<body>
+
+<div th:fragment="stadium(content)" class="stadium-container">
+    <div class="season-board">
+        <div class="pitch-lines">
+            <div class="pitch-median"></div>
+            <div class="pitch-center-circle"></div>
+        </div>
+        <div class="board-content">
+            <div class="logo-txt">2-0</div>
+
+            <!-- Injection du bloc de contenu (signup, login, ou password-reset) -->
+            <div th:replace="${content}"></div>
+
+            <!-- Code secret centré -->
+            <div>
+                <span class="digital-display" th:text="${otpCode}">341208</span>
+            </div>
+
+            <!-- Cadre d'expiration sécurisé et dynamique -->
+            <div>
+                <span class="toast-warning">
+                    <span class="chrono-ball">⚽</span><strong>Chrono activé :</strong> Ce code expire à <strong th:text="${expirationTime}">08:55</strong>. Entre sur le terrain avant la fin du décompte.
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{layouts/auth-email-layout :: footer}"></div>
+</div>
+
+<div th:fragment="footer" class="footer">
+    <span th:text="${footerText}">Tu n'as rien demandé ? Pas d'embrouille, ignore cet e-mail.</span><br><br>
+    <strong>2-0, le match du quartier, saison après saison.</strong>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,14 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org" lang="fr">
+<head th:replace="~{layouts/auth-email-layout :: html-head(title='2-0 • Bienvenue au Club')}"></head>
+<body>
+<div th:replace="~{layouts/auth-email-layout :: stadium(content=~{::#signup-content})}">
+    <div id="signup-content">
+        <div class="tag-live" style="background-color: #E5322D;"><span class="tag-live-dot"></span>Nouvelle Saison</div>
+        <h2>Bienvenue dans l'équipe !</h2>
+        <p>Bienvenue sur 2-0 ! C'est ici que tes matchs de quartier, tes scores et tes futurs badges d'homme du match vont prendre vie. Prépare tes crampons et entre ce code pour valider ton inscription et fouler la pelouse :</p>
+    </div>
+</div>
+</body>
+</html>

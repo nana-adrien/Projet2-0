@@ -9,6 +9,8 @@ dependencies {
     implementation(libs.jwt.api)
     runtimeOnly(libs.jwt.impl)
     runtimeOnly(libs.jwt.jackson)
+    implementation("com.google.firebase:firebase-admin:9.3.0")
+
     implementation(libs.jackson.module.kotlin)
     implementation(libs.jackson.datatype.jsr310)
 }

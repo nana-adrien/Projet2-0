@@ -8,6 +8,7 @@ import empire.digiprem.projet2_0.contracts.validation.validateAjouterMatchExcept
 import empire.digiprem.projet2_0.contracts.validation.validateModifierMatchRequest
 import empire.digiprem.projet2_0.server.calendrier.infra.entity.MatchEntity
 import empire.digiprem.projet2_0.server.calendrier.infra.repository.MatchRepository
+import empire.digiprem.projet2_0.server.common.event.SendNotificationEvent
 import empire.digiprem.projet2_0.server.common.exception.ForbiddenActionException
 import empire.digiprem.projet2_0.server.common.exception.ResourceNotFoundException
 import empire.digiprem.projet2_0.server.common.exception.ValidationException
@@ -19,6 +20,7 @@ import empire.digiprem.projet2_0.server.deuxzero.infra.repository.SaisonReposito
 import empire.digiprem.projet2_0.server.notifications.infra.entity.NotificationEntity
 import empire.digiprem.projet2_0.server.notifications.infra.repository.NotificationRepository
 import jakarta.transaction.Transactional
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -49,7 +51,8 @@ class CalendrierService(
     private val deuxZeroRepository: DeuxZeroRepository,
     private val campRepository: CampRepository,
     private val effectifEngageRepository: EffectifEngageRepository,
-    private val notificationRepository: NotificationRepository,
+   //private val notificationRepository: NotificationRepository,
+    private val eventPublisher: ApplicationEventPublisher,
     private val droits: CalendrierDroitsService,
 ) {
 
@@ -185,7 +188,11 @@ class CalendrierService(
             .map { it.utilisateur }
             .distinctBy { it.id }
         destinataires.forEach { user ->
-            notificationRepository.save(NotificationEntity(user = user, title = TITRE_CHANGEMENT_PROGRAMME, body = motif))
+            eventPublisher.publishEvent(SendNotificationEvent(
+                userId = user.id!!,
+                title=TITRE_CHANGEMENT_PROGRAMME,
+                body = motif
+            ))
         }
     }
 

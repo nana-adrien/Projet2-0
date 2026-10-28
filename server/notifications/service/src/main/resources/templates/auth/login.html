@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org" lang="fr">
+<head th:replace="~{layouts/auth-email-layout :: html-head(title='2-0 • Accès Vestiaire')}"></head>
+<body>
+<div th:replace="~{layouts/auth-email-layout :: stadium(content=~{::#login-content})}">
+    <div id="login-content">
+        <div class="tag-live" style="background-color: #2563EB;"><span class="tag-live-dot"></span>Connexion sécurisée</div>
+        <h2>Connexion vestiaire</h2>
+        <p>Content de te revoir au bord du terrain. Tes stats de la saison et tes badges t'attendent. Entre ce code pour déverrouiller l'application :</p>
+    </div>
+</div>
+</body>
+</html>

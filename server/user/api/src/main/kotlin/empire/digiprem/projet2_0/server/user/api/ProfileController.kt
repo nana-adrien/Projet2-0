@@ -1,5 +1,6 @@
 package empire.digiprem.projet2_0.server.user.api
 
+import empire.digiprem.projet2_0.contracts.apiUri.ProfileAPIV1Route
 import empire.digiprem.projet2_0.contracts.profile.UpdateProfileRequest
 import empire.digiprem.projet2_0.contracts.base.ApiResponse
 import empire.digiprem.projet2_0.server.common.dto.toApiResponse
@@ -26,7 +27,7 @@ class ProfileController(
         summary = "Consulter mon profil",
         description = "Profil du joueur connecté : pseudo, photo, poste préféré, pied fort et informations personnelles (F-CPT-05)."
     )
-    @GetMapping
+    @GetMapping(ProfileAPIV1Route.GET_PROFILE_URL)
     fun getProfile() = profileService.getProfile(currentUserId()).toApiResponse()
 
     @Operation(

@@ -1,5 +1,6 @@
 package empire.digiprem.projet2_0.contracts.auth
 
+
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -9,3 +10,5 @@ data class AuthResponse(
     val userId: String,
     val pseudo: String,
 )
+
+

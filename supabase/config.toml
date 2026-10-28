@@ -114,7 +114,7 @@ enabled = true
 # NOTE: décalé de +10 (défaut 54324) — collision réelle avec "MyColoWepApp".
 port = 54334
 # Uncomment to expose additional ports for testing user applications that send emails.
-# smtp_port = 54325
+ smtp_port = 54325
 # pop3_port = 54326
 # admin_email = "admin@email.com"
 # sender_name = "Admin"
@@ -242,8 +242,9 @@ otp_expiry = 3600
 
 # Use a production-ready SMTP server
 # [auth.email.smtp]
-# enabled = true
+#enabled = true
 # host = "smtp.sendgrid.net"
+# host = "localhost"
 # port = 587
 # user = "apikey"
 # pass = "env(SENDGRID_API_KEY)"

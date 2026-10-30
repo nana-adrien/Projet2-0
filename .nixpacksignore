@@ -2,9 +2,8 @@
 
 docker-compose.yml
 # Ignorer les modules mobiles pour le compilateur Railway
-androidApp/
-shared/
-iosApp/
+client/kmp/mobile/
+client/kmp/common/shared/
 
 # Ignorer aussi les fichiers locaux inutiles
 .idea/

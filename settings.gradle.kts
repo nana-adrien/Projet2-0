@@ -150,3 +150,16 @@ include(
     ":feature:social:presentation",
     ":feature:social:config",
 )
+// ── Emplacement physique des modules client ──────────────────────────────────
+// Les chemins Gradle (:core:domain, :feature:auth:data…) restent inchangés,
+// seuls les dossiers sont regroupés sous client/kmp/{mobile,common}.
+fun ProjectDescriptor.relocateTo(dir: File) {
+    projectDir = dir
+    children.forEach { it.relocateTo(dir.resolve(it.name)) }
+}
+
+val kmpDir = file("client/kmp")
+project(":androidApp").relocateTo(kmpDir.resolve("mobile/androidApp"))
+project(":shared").relocateTo(kmpDir.resolve("common/shared"))
+project(":core").relocateTo(kmpDir.resolve("common/core"))
+project(":feature").relocateTo(kmpDir.resolve("common/feature"))

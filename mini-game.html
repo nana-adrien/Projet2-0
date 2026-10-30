@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mini Game: Catch the Ball</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+    }
+
+    canvas {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="gameCanvas"></canvas>
+
+  <script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let score = 0;
+    const player = {
+      x: canvas.width / 2,
+      y: canvas.height - 50,
+      width: 80,
+      height: 20,
+      color: 'blue',
+    };
+
+    const ball = {
+      x: Math.random() * canvas.width,
+      y: 50,
+      radius: 15,
+      color: 'red',
+      speedY: 2,
+    };
+
+    function drawPlayer() {
+      ctx.fillStyle = player.color;
+      ctx.fillRect(player.x, player.y, player.width, player.height);
+    }
+
+    function drawBall() {
+      ctx.beginPath();
+      ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+      ctx.fillStyle = ball.color;
+      ctx.fill();
+      ctx.closePath();
+    }
+
+    function updateBall() {
+      ball.y += ball.speedY;
+
+      if (ball.y + ball.radius > player.y &&
+          ball.x > player.x &&
+          ball.x < player.x + player.width) {
+        score++;
+        resetBall();
+      }
+
+      if (ball.y - ball.radius > canvas.height) {
+        alert('Game Over! Your Score: ' + score);
+        document.location.reload();
+      }
+    }
+
+    function resetBall() {
+      ball.x = Math.random() * canvas.width;
+      ball.y = 50;
+    }
+
+    function movePlayer(event) {
+      if (event.key === 'ArrowLeft' && player.x > 0) {
+        player.x -= 20;
+      } else if (event.key === 'ArrowRight' && player.x + player.width < canvas.width) {
+        player.x += 20;
+      }
+    }
+
+    function gameLoop() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      drawPlayer();
+      drawBall();
+      updateBall();
+
+      requestAnimationFrame(gameLoop);
+    }
+
+    document.addEventListener('keydown', movePlayer);
+    gameLoop();
+  </script>
+</body>
+</html>

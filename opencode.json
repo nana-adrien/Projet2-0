@@ -1,0 +1,9 @@
+{
+	"$schema": "https://opencode.ai/config.json",
+	"instructions": [
+		"/Users/user/.config/opencode/rules/kmp/summary.md",
+		"/Users/user/.config/opencode/rules/projets/projet2-0/projet2-0.md",
+		"/Users/user/.config/opencode/rules/projets/projet2-0/build-logic.md",
+		"/Users/user/.config/opencode/rules/projets/projet2-0/network.md"
+	]
+}

@@ -20,6 +20,10 @@ class SpringCommonPlugin : Plugin<Project> {
             configure<BasePluginExtension>(){
                 // ":server:user:config" -> "server-user-config"
                 archivesName.set(path.removePrefix(":").replace(":", "-"))
+                configure<BasePluginExtension>(){
+                    // ":server:user:config" -> "server-user-config"
+                    archivesName.set(path.removePrefix(":").replace(":", "-"))
+                }
             }
             configure<KotlinJvmProjectExtension> {
 

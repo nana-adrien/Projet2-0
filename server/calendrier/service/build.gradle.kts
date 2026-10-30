@@ -15,7 +15,7 @@ dependencies {
     implementation(project(":server:deuxzero:infra"))
     implementation(project(":server:notifications:infra"))
     implementation(project(":server:user:infra"))
-    implementation(project(":shared-contracts"))
+    implementation(project(":client-serveur-contrat"))
     // MatchEnDirectBroadcaster (CU18) utilise WebSocketSession/TextMessage directement : c'est
     // un @Service appelé par EvenementService (CU17), pas seulement par le handler de :websocket.
     implementation(libs.spring.boot.starter.websocket)

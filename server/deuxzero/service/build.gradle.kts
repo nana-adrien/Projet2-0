@@ -10,5 +10,5 @@ dependencies {
     // UserRepository — seuls les repositories sont nécessaires, jamais les :service.
     implementation(project(":server:clubs:infra"))
     implementation(project(":server:user:infra"))
-    implementation(project(":shared-contracts"))
+    implementation(project(":client-serveur-contrat"))
 }

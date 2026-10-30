@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 /**
  * CU21 — Organiser un match amical (F-AMI-01, F-AMI-03, RG-14, RG-15).
  * Scope serveur limité au scénario nominal mobile (E26) : adversaire "équipe invitée" uniquement.
- * Pas de valeur par défaut (cf. shared-contracts/base/ApiResponse.kt — encodeDefaults = false
+ * Pas de valeur par défaut (cf. client-serveur-contrat/base/ApiResponse.kt — encodeDefaults = false
  * côté serveur omettrait silencieusement tout champ égal à sa valeur par défaut Kotlin).
  */
 @Serializable

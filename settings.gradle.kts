@@ -34,7 +34,7 @@ plugins {
 }
 
 include(":client:kmp:common:shared")
-include(":shared-contracts")
+include(":client-serveur-contrat")
 include(":client:kmp:mobile:androidApp")
 
 include(

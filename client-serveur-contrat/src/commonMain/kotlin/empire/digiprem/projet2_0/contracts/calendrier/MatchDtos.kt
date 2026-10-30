@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
  * `match.statut`) mais sont pilotés par la saisie de résultat (CU16, Jalon 3) — hors scope ici. */
 enum class StatutMatchModifiable { PROGRAMME, REPORTE, ANNULE }
 
-// Pas de valeur par défaut (cf. shared-contracts/base/ApiResponse.kt).
+// Pas de valeur par défaut (cf. client-serveur-contrat/base/ApiResponse.kt).
 @Serializable
 data class MatchDto(
     val id: String,

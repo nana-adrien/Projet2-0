@@ -2,7 +2,7 @@ package empire.digiprem.projet2_0.contracts.profile
 
 import kotlinx.serialization.Serializable
 
-// Pas de valeur par défaut (cf. shared-contracts/base/ApiResponse.kt) : chaque appelant passe
+// Pas de valeur par défaut (cf. client-serveur-contrat/base/ApiResponse.kt) : chaque appelant passe
 // des valeurs explicites, sans quoi Jackson sérialise ces propriétés en objet vide côté serveur.
 @Serializable
 data class ProfileDto(

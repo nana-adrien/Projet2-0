@@ -6,6 +6,6 @@ plugins {
 dependencies {
     implementation(project(":server:common"))
     implementation(project(":server:user:infra"))
-    implementation(project(":shared-contracts"))
+    implementation(project(":client-serveur-contrat"))
     implementation(libs.spring.boot.starter.mail) // OtpService envoie les codes OTP par email
 }

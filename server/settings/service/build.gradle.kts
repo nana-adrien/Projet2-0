@@ -6,5 +6,5 @@ plugins {
 dependencies {
     implementation(project(":server:common"))
     implementation(project(":server:settings:infra"))
-    implementation(project(":shared-contracts"))
+    implementation(project(":client-serveur-contrat"))
 }

@@ -2,7 +2,7 @@ package empire.digiprem.projet2_0.contracts.statistiques
 
 import kotlinx.serialization.Serializable
 
-// Pas de valeur par défaut (cf. shared-contracts/base/ApiResponse.kt).
+// Pas de valeur par défaut (cf. client-serveur-contrat/base/ApiResponse.kt).
 
 /** CU23 (F-PRO-04/06) — profil public d'un joueur. [nom]/[prenom]/[dateNaissance] sont masqués
  * côté serveur (ProfilProgressionService) selon les préférences de confidentialité de

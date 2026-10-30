@@ -27,7 +27,7 @@ val Project.logicalPath: String
     get() = path.replaceFirst(Regex("^:client:kmp:(common|mobile)(?=:)"), "")
 
 fun Project.relativePackageName(): String {
-    // '-' n'est pas un caractère valide dans un identifiant Java/Kotlin (ex. ":shared-contracts").
+    // '-' n'est pas un caractère valide dans un identifiant Java/Kotlin (ex. ":client-serveur-contrat").
     return logicalPath.replace(':', '.').replace('-', '_').lowercase()
 }
 

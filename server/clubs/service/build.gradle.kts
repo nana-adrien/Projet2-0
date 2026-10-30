@@ -9,5 +9,5 @@ dependencies {
     // ClubService.requestJoinByCode résout l'adhésion via UserRepository (pseudo, existence) :
     // seul le repository est nécessaire, jamais le :service de la feature user.
     implementation(project(":server:user:infra"))
-    implementation(project(":shared-contracts"))
+    implementation(project(":client-serveur-contrat"))
 }

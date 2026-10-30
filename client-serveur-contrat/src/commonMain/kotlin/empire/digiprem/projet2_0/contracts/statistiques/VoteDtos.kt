@@ -2,7 +2,7 @@ package empire.digiprem.projet2_0.contracts.statistiques
 
 import kotlinx.serialization.Serializable
 
-// Pas de valeur par défaut (cf. shared-contracts/base/ApiResponse.kt).
+// Pas de valeur par défaut (cf. client-serveur-contrat/base/ApiResponse.kt).
 
 /** CU24 — vote "homme du match". RG-16 : un seul vote par joueur et par match, jamais pour
  * soi-même, fenêtre de 24h, joueur présent sur la feuille de match requis (cf. VoteService). */

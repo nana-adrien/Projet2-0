@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
  * joueur — c'est l'état initial par défaut de [ConvocationDto.reponse] (voir ConvocationEntity). */
 enum class ReponseConvocation { PRESENT, ABSENT, INCERTAIN }
 
-// Pas de valeur par défaut (cf. shared-contracts/base/ApiResponse.kt).
+// Pas de valeur par défaut (cf. client-serveur-contrat/base/ApiResponse.kt).
 @Serializable
 data class ConvocationDto(
     val id: String,

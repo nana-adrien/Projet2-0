@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":shared-contracts"))
+    implementation(project(":client-serveur-contrat"))
     api(libs.spring.boot.starter.security)
     implementation(libs.jwt.api)
     runtimeOnly(libs.jwt.impl)

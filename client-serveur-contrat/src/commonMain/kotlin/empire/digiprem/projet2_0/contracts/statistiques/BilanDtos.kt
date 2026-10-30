@@ -2,7 +2,7 @@ package empire.digiprem.projet2_0.contracts.statistiques
 
 import kotlinx.serialization.Serializable
 
-// Pas de valeur par défaut (cf. shared-contracts/base/ApiResponse.kt).
+// Pas de valeur par défaut (cf. client-serveur-contrat/base/ApiResponse.kt).
 
 /** CU25 — bilan de clôture de saison. RG-17 : si l'égalité persiste jusqu'au dernier critère de
  * départage (résultat du dernier match officiel), [campChampionId] reste nul et

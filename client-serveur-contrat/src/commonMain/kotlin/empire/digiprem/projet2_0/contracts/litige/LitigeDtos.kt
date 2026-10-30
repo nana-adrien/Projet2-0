@@ -5,7 +5,7 @@ import empire.digiprem.projet2_0.contracts.matchendirect.EvenementDto
 import kotlinx.serialization.Serializable
 
 /** CU19/CU20 (Jalon 4) — validation du résultat et arbitrage de litige.
- * Pas de valeur par défaut (cf. shared-contracts/base/ApiResponse.kt) : encodeDefaults = false
+ * Pas de valeur par défaut (cf. client-serveur-contrat/base/ApiResponse.kt) : encodeDefaults = false
  * côté serveur ferait silencieusement disparaître du JSON tout champ égal à sa valeur par défaut. */
 @Serializable
 data class ValidationDto(

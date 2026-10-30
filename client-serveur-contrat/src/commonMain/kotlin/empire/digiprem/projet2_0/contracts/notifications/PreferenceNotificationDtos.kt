@@ -3,7 +3,7 @@ package empire.digiprem.projet2_0.contracts.notifications
 import kotlinx.serialization.Serializable
 
 /** CU26 — Gérer ses préférences de notification (F-NOT-02). Une préférence par couple
- * (utilisateur, 2-0). Pas de valeur par défaut (cf. shared-contracts/base/ApiResponse.kt). */
+ * (utilisateur, 2-0). Pas de valeur par défaut (cf. client-serveur-contrat/base/ApiResponse.kt). */
 enum class NiveauNotification { TOUT, BUTS_ET_SCORE_FINAL, ME_CONCERNANT, AUCUNE }
 
 @Serializable

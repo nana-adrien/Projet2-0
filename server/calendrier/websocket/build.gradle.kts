@@ -7,6 +7,6 @@ dependencies {
     // CU18 — MatchEnDirectWebSocketHandler consomme EvenementService/MatchEnDirectBroadcaster.
     implementation(project(":server:calendrier:service"))
     // MatchEnDirectWebSocketHandler référence MatchEnDirectDto (retour de EvenementService).
-    implementation(project(":shared-contracts"))
+    implementation(project(":client-serveur-contrat"))
     implementation(libs.spring.boot.starter.websocket)
 }

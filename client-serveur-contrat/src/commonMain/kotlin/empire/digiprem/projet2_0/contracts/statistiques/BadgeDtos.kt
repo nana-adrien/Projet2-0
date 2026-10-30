@@ -2,7 +2,7 @@ package empire.digiprem.projet2_0.contracts.statistiques
 
 import kotlinx.serialization.Serializable
 
-// Pas de valeur par défaut (cf. shared-contracts/base/ApiResponse.kt).
+// Pas de valeur par défaut (cf. client-serveur-contrat/base/ApiResponse.kt).
 
 /** CU24/CU25 (F-REC-02) — badge obtenu par un utilisateur. Seuls PREMIER_BUT, DOUBLE, TRIPLE,
  * QUADRUPLE et PASSEUR_DE_GENIE sont calculés par BadgeAttributionService ; FIDELE, MUR,

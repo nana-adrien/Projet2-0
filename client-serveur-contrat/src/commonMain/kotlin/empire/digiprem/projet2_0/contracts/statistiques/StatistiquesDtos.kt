@@ -2,7 +2,7 @@ package empire.digiprem.projet2_0.contracts.statistiques
 
 import kotlinx.serialization.Serializable
 
-// Pas de valeur par défaut (cf. shared-contracts/base/ApiResponse.kt) : kotlinx.serialization
+// Pas de valeur par défaut (cf. client-serveur-contrat/base/ApiResponse.kt) : kotlinx.serialization
 // avec encodeDefaults=false omet silencieusement tout champ égal à sa valeur par défaut Kotlin.
 
 /** CU22 (F-STA-01) — un point de l'évolution mensuelle des buts d'une saison. */

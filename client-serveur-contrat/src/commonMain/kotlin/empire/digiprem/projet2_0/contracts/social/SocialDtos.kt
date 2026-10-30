@@ -10,7 +10,7 @@ import kotlinx.serialization.Serializable
  */
 enum class TypeContenuSignale { PROFIL_UTILISATEUR }
 
-// Pas de valeur par défaut (cf. shared-contracts/base/ApiResponse.kt).
+// Pas de valeur par défaut (cf. client-serveur-contrat/base/ApiResponse.kt).
 @Serializable
 data class SignalerRequest(
     val contenuType: String,

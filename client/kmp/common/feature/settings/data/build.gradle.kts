@@ -9,7 +9,7 @@ kotlin {
             api(project(":client:kmp:common:core:data"))
             implementation(project(":client:kmp:common:feature:settings:domain"))
             implementation(libs.bundles.dataStore.common)
-            implementation(projects.sharedContracts)
+            implementation(projects.clientServeurContrat)
 
         }
 

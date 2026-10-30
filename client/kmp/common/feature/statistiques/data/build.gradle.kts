@@ -11,7 +11,7 @@ kotlin {
             implementation(project(":client:kmp:common:feature:deuxzero:data"))
             implementation(project(":client:kmp:common:feature:calendrier:data"))
             implementation(project(":client:kmp:common:feature:matchendirect:data"))
-            implementation(projects.sharedContracts)
+            implementation(projects.clientServeurContrat)
             implementation(libs.kotlinx.serialization.json)
         }
     }

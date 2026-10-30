@@ -18,5 +18,5 @@ dependencies {
     // ne pas dupliquer cette règle métier — seul cas où statistiques dépend d'un :service
     // externe plutôt que du :infra correspondant.
     implementation(project(":server:deuxzero:service"))
-    implementation(project(":shared-contracts"))
+    implementation(project(":client-serveur-contrat"))
 }

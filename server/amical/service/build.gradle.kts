@@ -10,5 +10,5 @@ dependencies {
     implementation(project(":server:common"))
     implementation(project(":server:calendrier:infra"))
     implementation(project(":server:clubs:infra"))
-    implementation(project(":shared-contracts"))
+    implementation(project(":client-serveur-contrat"))
 }

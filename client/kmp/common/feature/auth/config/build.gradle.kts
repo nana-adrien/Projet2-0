@@ -5,9 +5,9 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            api(project(":feature:auth:domain"))
-            api(project(":feature:auth:data"))
-            api(project(":feature:auth:presentation"))
+            api(project(":client:kmp:common:feature:auth:domain"))
+            api(project(":client:kmp:common:feature:auth:data"))
+            api(project(":client:kmp:common:feature:auth:presentation"))
         }
     }
 }

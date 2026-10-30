@@ -5,9 +5,9 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            api(project(":feature:dashboard:presentation"))
-            implementation(project(":feature:calendrier:domain"))
-            implementation(project(":feature:deuxzero:domain"))
+            api(project(":client:kmp:common:feature:dashboard:presentation"))
+            implementation(project(":client:kmp:common:feature:calendrier:domain"))
+            implementation(project(":client:kmp:common:feature:deuxzero:domain"))
         }
     }
 }

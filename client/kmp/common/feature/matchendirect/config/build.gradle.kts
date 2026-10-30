@@ -5,9 +5,9 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            api(project(":feature:matchendirect:domain"))
-            api(project(":feature:matchendirect:data"))
-            api(project(":feature:matchendirect:presentation"))
+            api(project(":client:kmp:common:feature:matchendirect:domain"))
+            api(project(":client:kmp:common:feature:matchendirect:data"))
+            api(project(":client:kmp:common:feature:matchendirect:presentation"))
         }
     }
 }

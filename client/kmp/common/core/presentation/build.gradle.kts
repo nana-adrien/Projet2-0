@@ -5,7 +5,7 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            api(project(":core:domain"))
+            api(project(":client:kmp:common:core:domain"))
         }
     }
 }

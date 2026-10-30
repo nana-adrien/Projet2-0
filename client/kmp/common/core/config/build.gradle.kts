@@ -5,8 +5,8 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            api(project(":core:domain"))
-            api(project(":core:data"))
+            api(project(":client:kmp:common:core:domain"))
+            api(project(":client:kmp:common:core:data"))
             implementation(libs.koin.core)
             implementation(libs.ktor.client.core)
             implementation(libs.kermit)

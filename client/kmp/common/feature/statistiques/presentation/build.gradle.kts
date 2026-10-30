@@ -5,14 +5,14 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation(project(":core:domain"))
-            api(project(":core:presentation"))
-            implementation(project(":core:design_system"))
-            implementation(project(":feature:statistiques:domain"))
-            implementation(project(":feature:deuxzero:domain"))
-            implementation(project(":feature:deuxzero:presentation"))
-            implementation(project(":feature:social:domain"))
-            implementation(project(":feature:social:presentation"))
+            implementation(project(":client:kmp:common:core:domain"))
+            api(project(":client:kmp:common:core:presentation"))
+            implementation(project(":client:kmp:common:core:design_system"))
+            implementation(project(":client:kmp:common:feature:statistiques:domain"))
+            implementation(project(":client:kmp:common:feature:deuxzero:domain"))
+            implementation(project(":client:kmp:common:feature:deuxzero:presentation"))
+            implementation(project(":client:kmp:common:feature:social:domain"))
+            implementation(project(":client:kmp:common:feature:social:presentation"))
         }
     }
 }

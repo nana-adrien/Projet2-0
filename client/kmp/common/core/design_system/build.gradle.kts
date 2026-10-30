@@ -11,8 +11,8 @@ compose.resources {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            api(project(":core:domain"))
-            api(project(":core:presentation"))
+            api(project(":client:kmp:common:core:domain"))
+            api(project(":client:kmp:common:core:presentation"))
             implementation(libs.coil.compose)
             implementation(libs.coil.network)
             implementation(libs.compose.materialIconsCore)

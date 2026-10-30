@@ -5,10 +5,10 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            api(project(":feature:notifications:domain"))
-            api(project(":feature:notifications:data"))
-            api(project(":feature:notifications:presentation"))
-            implementation(project(":feature:deuxzero:domain"))
+            api(project(":client:kmp:common:feature:notifications:domain"))
+            api(project(":client:kmp:common:feature:notifications:data"))
+            api(project(":client:kmp:common:feature:notifications:presentation"))
+            implementation(project(":client:kmp:common:feature:deuxzero:domain"))
         }
     }
 }

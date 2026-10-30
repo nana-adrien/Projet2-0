@@ -33,9 +33,9 @@ plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
 
-include(":shared")
+include(":client:kmp:common:shared")
 include(":shared-contracts")
-include(":androidApp")
+include(":client:kmp:mobile:androidApp")
 
 include(
     ":server:common",
@@ -79,87 +79,74 @@ include(
 )
 
 include(
-    ":core:domain",
-    ":core:data",
-    ":core:presentation",
-    ":core:design_system",
-    ":core:config",
+    ":client:kmp:common:core:domain",
+    ":client:kmp:common:core:data",
+    ":client:kmp:common:core:presentation",
+    ":client:kmp:common:core:design_system",
+    ":client:kmp:common:core:config",
 )
 
 include(
-    ":feature:auth:domain",
-    ":feature:auth:data",
-    ":feature:auth:presentation",
-    ":feature:auth:config",
+    ":client:kmp:common:feature:auth:domain",
+    ":client:kmp:common:feature:auth:data",
+    ":client:kmp:common:feature:auth:presentation",
+    ":client:kmp:common:feature:auth:config",
 
-    ":feature:profile:domain",
-    ":feature:profile:data",
-    ":feature:profile:presentation",
-    ":feature:profile:config",
+    ":client:kmp:common:feature:profile:domain",
+    ":client:kmp:common:feature:profile:data",
+    ":client:kmp:common:feature:profile:presentation",
+    ":client:kmp:common:feature:profile:config",
 
-    ":feature:notifications:domain",
-    ":feature:notifications:data",
-    ":feature:notifications:presentation",
-    ":feature:notifications:config",
+    ":client:kmp:common:feature:notifications:domain",
+    ":client:kmp:common:feature:notifications:data",
+    ":client:kmp:common:feature:notifications:presentation",
+    ":client:kmp:common:feature:notifications:config",
 
-    ":feature:settings:domain",
-    ":feature:settings:data",
-    ":feature:settings:presentation",
-    ":feature:settings:config",
+    ":client:kmp:common:feature:settings:domain",
+    ":client:kmp:common:feature:settings:data",
+    ":client:kmp:common:feature:settings:presentation",
+    ":client:kmp:common:feature:settings:config",
 
-    ":feature:dashboard:presentation",
-    ":feature:dashboard:config",
+    ":client:kmp:common:feature:dashboard:presentation",
+    ":client:kmp:common:feature:dashboard:config",
 
-    ":feature:clubs:domain",
-    ":feature:clubs:data",
-    ":feature:clubs:presentation",
-    ":feature:clubs:config",
+    ":client:kmp:common:feature:clubs:domain",
+    ":client:kmp:common:feature:clubs:data",
+    ":client:kmp:common:feature:clubs:presentation",
+    ":client:kmp:common:feature:clubs:config",
 
-    ":feature:deuxzero:domain",
-    ":feature:deuxzero:data",
-    ":feature:deuxzero:presentation",
-    ":feature:deuxzero:config",
+    ":client:kmp:common:feature:deuxzero:domain",
+    ":client:kmp:common:feature:deuxzero:data",
+    ":client:kmp:common:feature:deuxzero:presentation",
+    ":client:kmp:common:feature:deuxzero:config",
 
-    ":feature:calendrier:domain",
-    ":feature:calendrier:data",
-    ":feature:calendrier:presentation",
-    ":feature:calendrier:config",
+    ":client:kmp:common:feature:calendrier:domain",
+    ":client:kmp:common:feature:calendrier:data",
+    ":client:kmp:common:feature:calendrier:presentation",
+    ":client:kmp:common:feature:calendrier:config",
 
-    ":feature:matchendirect:domain",
-    ":feature:matchendirect:data",
-    ":feature:matchendirect:presentation",
-    ":feature:matchendirect:config",
+    ":client:kmp:common:feature:matchendirect:domain",
+    ":client:kmp:common:feature:matchendirect:data",
+    ":client:kmp:common:feature:matchendirect:presentation",
+    ":client:kmp:common:feature:matchendirect:config",
 
-    ":feature:validation:domain",
-    ":feature:validation:data",
-    ":feature:validation:presentation",
-    ":feature:validation:config",
+    ":client:kmp:common:feature:validation:domain",
+    ":client:kmp:common:feature:validation:data",
+    ":client:kmp:common:feature:validation:presentation",
+    ":client:kmp:common:feature:validation:config",
 
-    ":feature:statistiques:domain",
-    ":feature:statistiques:data",
-    ":feature:statistiques:presentation",
-    ":feature:statistiques:config",
+    ":client:kmp:common:feature:statistiques:domain",
+    ":client:kmp:common:feature:statistiques:data",
+    ":client:kmp:common:feature:statistiques:presentation",
+    ":client:kmp:common:feature:statistiques:config",
 
-    ":feature:amical:domain",
-    ":feature:amical:data",
-    ":feature:amical:presentation",
-    ":feature:amical:config",
+    ":client:kmp:common:feature:amical:domain",
+    ":client:kmp:common:feature:amical:data",
+    ":client:kmp:common:feature:amical:presentation",
+    ":client:kmp:common:feature:amical:config",
 
-    ":feature:social:domain",
-    ":feature:social:data",
-    ":feature:social:presentation",
-    ":feature:social:config",
+    ":client:kmp:common:feature:social:domain",
+    ":client:kmp:common:feature:social:data",
+    ":client:kmp:common:feature:social:presentation",
+    ":client:kmp:common:feature:social:config",
 )
-// ── Emplacement physique des modules client ──────────────────────────────────
-// Les chemins Gradle (:core:domain, :feature:auth:data…) restent inchangés,
-// seuls les dossiers sont regroupés sous client/kmp/{mobile,common}.
-fun ProjectDescriptor.relocateTo(dir: File) {
-    projectDir = dir
-    children.forEach { it.relocateTo(dir.resolve(it.name)) }
-}
-
-val kmpDir = file("client/kmp")
-project(":androidApp").relocateTo(kmpDir.resolve("mobile/androidApp"))
-project(":shared").relocateTo(kmpDir.resolve("common/shared"))
-project(":core").relocateTo(kmpDir.resolve("common/core"))
-project(":feature").relocateTo(kmpDir.resolve("common/feature"))

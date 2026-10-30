@@ -5,15 +5,15 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation(project(":core:domain"))
-            api(project(":core:presentation"))
-            implementation(project(":core:design_system"))
-            implementation(project(":feature:validation:domain"))
-            implementation(project(":feature:calendrier:domain"))
-            implementation(project(":feature:calendrier:presentation"))
-            implementation(project(":feature:deuxzero:domain"))
-            implementation(project(":feature:deuxzero:presentation"))
-            implementation(project(":feature:matchendirect:domain"))
+            implementation(project(":client:kmp:common:core:domain"))
+            api(project(":client:kmp:common:core:presentation"))
+            implementation(project(":client:kmp:common:core:design_system"))
+            implementation(project(":client:kmp:common:feature:validation:domain"))
+            implementation(project(":client:kmp:common:feature:calendrier:domain"))
+            implementation(project(":client:kmp:common:feature:calendrier:presentation"))
+            implementation(project(":client:kmp:common:feature:deuxzero:domain"))
+            implementation(project(":client:kmp:common:feature:deuxzero:presentation"))
+            implementation(project(":client:kmp:common:feature:matchendirect:domain"))
         }
     }
 }

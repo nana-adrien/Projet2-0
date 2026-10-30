@@ -5,10 +5,10 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation(project(":core:domain"))
-            api(project(":core:presentation"))
-            implementation(project(":core:design_system"))
-            implementation(project(":feature:settings:domain"))
+            implementation(project(":client:kmp:common:core:domain"))
+            api(project(":client:kmp:common:core:presentation"))
+            implementation(project(":client:kmp:common:core:design_system"))
+            implementation(project(":client:kmp:common:feature:settings:domain"))
         }
     }
 }

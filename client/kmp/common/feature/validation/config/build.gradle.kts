@@ -5,9 +5,9 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            api(project(":feature:validation:domain"))
-            api(project(":feature:validation:data"))
-            api(project(":feature:validation:presentation"))
+            api(project(":client:kmp:common:feature:validation:domain"))
+            api(project(":client:kmp:common:feature:validation:data"))
+            api(project(":client:kmp:common:feature:validation:presentation"))
         }
     }
 }

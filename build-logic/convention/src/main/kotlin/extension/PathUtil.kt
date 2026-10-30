@@ -18,9 +18,17 @@ val Project.kmpTargets: KmpTargets
         web     = false,
     )
 
+/**
+ * Chemin Gradle sans le préfixe de regroupement physique du client KMP
+ * (":client:kmp:common:core:domain" → ":core:domain"), afin que namespaces,
+ * préfixes de ressources et noms de frameworks restent stables.
+ */
+val Project.logicalPath: String
+    get() = path.replaceFirst(Regex("^:client:kmp:(common|mobile)(?=:)"), "")
+
 fun Project.relativePackageName(): String {
     // '-' n'est pas un caractère valide dans un identifiant Java/Kotlin (ex. ":shared-contracts").
-    return path.replace(':', '.').replace('-', '_').lowercase()
+    return logicalPath.replace(':', '.').replace('-', '_').lowercase()
 }
 
 fun Project.pathToPackageName(): String {
@@ -29,11 +37,11 @@ fun Project.pathToPackageName(): String {
 }
 
 fun Project.pathToResourcePrefix(): String {
-    return path.replace(':', '_').lowercase().drop(1) + "_"
+    return logicalPath.replace(':', '_').lowercase().drop(1) + "_"
 }
 
 fun Project.pathToFrameworkName(): String {
-    val parts = path.split(":", "_", "-", " ")
+    val parts = logicalPath.split(":", "_", "-", " ")
     return parts.joinToString("") { part ->
         part.replaceFirstChar { it.titlecase(Locale.ROOT) }
     }

@@ -5,9 +5,9 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            api(project(":feature:clubs:domain"))
-            api(project(":feature:clubs:data"))
-            api(project(":feature:clubs:presentation"))
+            api(project(":client:kmp:common:feature:clubs:domain"))
+            api(project(":client:kmp:common:feature:clubs:data"))
+            api(project(":client:kmp:common:feature:clubs:presentation"))
         }
     }
 }

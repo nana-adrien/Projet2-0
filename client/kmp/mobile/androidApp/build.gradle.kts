@@ -12,7 +12,7 @@ kotlin {
     }
 }
 dependencies {
-    implementation(projects.shared)
+    implementation(projects.client.kmp.common.shared)
 
     implementation(libs.androidx.activity.compose)
     implementation(libs.koin.android)
